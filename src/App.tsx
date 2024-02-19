@@ -6,7 +6,6 @@ import {
   ErrorComponent,
   ThemedLayoutV2,
   ThemedSiderV2,
-  ThemedTitleV2,
   useNotificationProvider,
 } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
@@ -21,9 +20,21 @@ import { App as AntdApp, ConfigProvider } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import authProvider from "./authProvider";
 import { Header } from "./components/header";
-import { PaloxCreate, PaloxEdit, PaloxList, PaloxShow } from "./pages/paloxs";
 import { supabaseClient } from "./utility";
 import { LincassableTitle } from "./components/title";
+import {
+  PointDeCollecteCreate,
+  PointDeCollecteEdit,
+  PointDeCollecteList,
+  PointDeCollecteShow,
+} from "./pages/points-de-collecte";
+import {
+  TauxDeRemplissageCreate,
+  TauxDeRemplissageEdit,
+  TauxDeRemplissageList,
+  TauxDeRemplissageShow,
+} from "./pages/taux-remplissage";
+import { CreateTauxDeRemplissage } from "./pages/points-de-collecte/createTauxDeRemplissage";
 
 function App() {
   return (
@@ -51,11 +62,21 @@ function App() {
                 notificationProvider={useNotificationProvider}
                 resources={[
                   {
-                    name: "paloxs",
-                    list: "/paloxs",
-                    create: "/paloxs/create",
-                    edit: "/paloxs/edit/:id",
-                    show: "/paloxs/show/:id",
+                    name: "point_de_collecte",
+                    list: "/point-de-collecte",
+                    create: "/point-de-collecte/create",
+                    edit: "/point-de-collecte/edit/:id",
+                    show: "/point-de-collecte/show/:id",
+                    meta: {
+                      canDelete: true,
+                    },
+                  },
+                  {
+                    name: "taux_de_remplissage",
+                    list: "/taux-de-remplissage",
+                    create: "/taux-de-remplissage/create",
+                    edit: "/taux-de-remplissage/edit/:id",
+                    show: "/taux-de-remplissage/show/:id",
                     meta: {
                       canDelete: true,
                     },
@@ -69,6 +90,10 @@ function App() {
                 }}
               >
                 <Routes>
+                  <Route
+                    path="point-de-collecte/taux-remplissage/:id"
+                    element={<CreateTauxDeRemplissage />}
+                  />
                   <Route
                     element={
                       <Authenticated
@@ -94,13 +119,39 @@ function App() {
                   >
                     <Route
                       index
-                      element={<NavigateToResource resource="paloxs" />}
+                      element={
+                        <NavigateToResource resource="point-de-collecte" />
+                      }
                     />
-                    <Route path="/paloxs">
-                      <Route index element={<PaloxList />} />
-                      <Route path="create" element={<PaloxCreate />} />
-                      <Route path="edit/:id" element={<PaloxEdit />} />
-                      <Route path="show/:id" element={<PaloxShow />} />
+                    <Route path="/point-de-collecte">
+                      <Route index element={<PointDeCollecteList />} />
+                      <Route
+                        path="create"
+                        element={<PointDeCollecteCreate />}
+                      />
+                      <Route
+                        path="edit/:id"
+                        element={<PointDeCollecteEdit />}
+                      />
+                      <Route
+                        path="show/:id"
+                        element={<PointDeCollecteShow />}
+                      />
+                    </Route>
+                    <Route path="/taux-de-remplissage">
+                      <Route index element={<TauxDeRemplissageList />} />
+                      <Route
+                        path="create"
+                        element={<TauxDeRemplissageCreate />}
+                      />
+                      <Route
+                        path="edit/:id"
+                        element={<TauxDeRemplissageEdit />}
+                      />
+                      <Route
+                        path="show/:id"
+                        element={<TauxDeRemplissageShow />}
+                      />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>

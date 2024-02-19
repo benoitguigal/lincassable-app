@@ -1,6 +1,6 @@
 import { IResourceComponentsProps } from "@refinedev/core";
 import { AntdCreateInferencer } from "@refinedev/inferencer/antd";
 
-export const PaloxCreate: React.FC<IResourceComponentsProps> = () => {
+export const PointDeCollecteCreate: React.FC<IResourceComponentsProps> = () => {
   return <AntdCreateInferencer />;
 };
