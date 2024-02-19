@@ -1,16 +1,15 @@
-import { Authenticated, GitHubBanner, Refine } from "@refinedev/core";
+import { Authenticated, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-
 import {
   AuthPage,
   ErrorComponent,
   ThemedLayoutV2,
   ThemedSiderV2,
+  ThemedTitleV2,
   useNotificationProvider,
 } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
-
 import routerBindings, {
   CatchAllNavigate,
   DocumentTitleHandler,
@@ -18,31 +17,30 @@ import routerBindings, {
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
 import { dataProvider, liveProvider } from "@refinedev/supabase";
-import { App as AntdApp } from "antd";
+import { App as AntdApp, ConfigProvider } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import authProvider from "./authProvider";
 import { Header } from "./components/header";
-import { ColorModeContextProvider } from "./contexts/color-mode";
-import {
-  BlogPostCreate,
-  BlogPostEdit,
-  BlogPostList,
-  BlogPostShow,
-} from "./pages/blog-posts";
-import {
-  CategoryCreate,
-  CategoryEdit,
-  CategoryList,
-  CategoryShow,
-} from "./pages/categories";
+import { PaloxCreate, PaloxEdit, PaloxList, PaloxShow } from "./pages/paloxs";
 import { supabaseClient } from "./utility";
+import { LincassableTitle } from "./components/title";
 
 function App() {
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
-        <ColorModeContextProvider>
+        <ConfigProvider
+          theme={{
+            token: {
+              // Seed Token
+              colorPrimary: "#253d39",
+              colorPrimaryBg: "#bbc7c3",
+              borderRadius: 2,
+              // Alias Token
+              colorBgContainer: "#eaedeb",
+            },
+          }}
+        >
           <AntdApp>
             <DevtoolsProvider>
               <Refine
@@ -53,21 +51,11 @@ function App() {
                 notificationProvider={useNotificationProvider}
                 resources={[
                   {
-                    name: "blog_posts",
-                    list: "/blog-posts",
-                    create: "/blog-posts/create",
-                    edit: "/blog-posts/edit/:id",
-                    show: "/blog-posts/show/:id",
-                    meta: {
-                      canDelete: true,
-                    },
-                  },
-                  {
-                    name: "categories",
-                    list: "/categories",
-                    create: "/categories/create",
-                    edit: "/categories/edit/:id",
-                    show: "/categories/show/:id",
+                    name: "paloxs",
+                    list: "/paloxs",
+                    create: "/paloxs/create",
+                    edit: "/paloxs/edit/:id",
+                    show: "/paloxs/show/:id",
                     meta: {
                       canDelete: true,
                     },
@@ -89,7 +77,15 @@ function App() {
                       >
                         <ThemedLayoutV2
                           Header={() => <Header sticky />}
-                          Sider={(props) => <ThemedSiderV2 {...props} fixed />}
+                          Sider={(props) => (
+                            <ThemedSiderV2
+                              {...props}
+                              fixed
+                              Title={(titleProps) => (
+                                <LincassableTitle {...titleProps} />
+                              )}
+                            />
+                          )}
                         >
                           <Outlet />
                         </ThemedLayoutV2>
@@ -98,19 +94,13 @@ function App() {
                   >
                     <Route
                       index
-                      element={<NavigateToResource resource="blog_posts" />}
+                      element={<NavigateToResource resource="paloxs" />}
                     />
-                    <Route path="/blog-posts">
-                      <Route index element={<BlogPostList />} />
-                      <Route path="create" element={<BlogPostCreate />} />
-                      <Route path="edit/:id" element={<BlogPostEdit />} />
-                      <Route path="show/:id" element={<BlogPostShow />} />
-                    </Route>
-                    <Route path="/categories">
-                      <Route index element={<CategoryList />} />
-                      <Route path="create" element={<CategoryCreate />} />
-                      <Route path="edit/:id" element={<CategoryEdit />} />
-                      <Route path="show/:id" element={<CategoryShow />} />
+                    <Route path="/paloxs">
+                      <Route index element={<PaloxList />} />
+                      <Route path="create" element={<PaloxCreate />} />
+                      <Route path="edit/:id" element={<PaloxEdit />} />
+                      <Route path="show/:id" element={<PaloxShow />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
@@ -156,7 +146,7 @@ function App() {
               <DevtoolsPanel />
             </DevtoolsProvider>
           </AntdApp>
-        </ColorModeContextProvider>
+        </ConfigProvider>
       </RefineKbarProvider>
     </BrowserRouter>
   );
