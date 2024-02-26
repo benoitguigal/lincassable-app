@@ -91,7 +91,7 @@ function App() {
               >
                 <Routes>
                   <Route
-                    path="point-de-collecte/taux-remplissage/:id"
+                    path="point-de-collecte/taux-de-remplissage/:id"
                     element={<CreateTauxDeRemplissage />}
                   />
                   <Route
