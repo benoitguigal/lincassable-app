@@ -116,7 +116,7 @@ function App() {
                     <Route
                       index
                       element={
-                        <NavigateToResource resource="point-de-collecte" />
+                        <NavigateToResource resource="point_de_collecte" />
                       }
                     />
                     <Route path="/point-de-collecte">
@@ -171,12 +171,8 @@ function App() {
                       element={
                         <AuthPage
                           type="login"
-                          formProps={{
-                            initialValues: {
-                              email: "info@refine.dev",
-                              password: "refine-supabase",
-                            },
-                          }}
+                          registerLink={false}
+                          title={<LincassableTitle collapsed={false} />}
                         />
                       }
                     />
