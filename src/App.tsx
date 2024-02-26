@@ -91,10 +91,6 @@ function App() {
               >
                 <Routes>
                   <Route
-                    path="point-de-collecte/taux-de-remplissage/:id"
-                    element={<CreateTauxDeRemplissage />}
-                  />
-                  <Route
                     element={
                       <Authenticated
                         key="authenticated-inner"
@@ -155,6 +151,11 @@ function App() {
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
+                  {/* Formulaire point de vente */}
+                  <Route
+                    path="/point-de-collecte/taux-de-remplissage/:id"
+                    element={<CreateTauxDeRemplissage />}
+                  />
                   <Route
                     element={
                       <Authenticated
