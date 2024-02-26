@@ -22,7 +22,9 @@ export const CreateTauxDeRemplissage: React.FC<
   //   },
   // });
 
-  const { id } = useParams();
+  const { id: parmamId } = useParams();
+
+  const id = parmamId ?? "1";
 
   const { data: pointDeCollecteData, error: pointDeCollecteError } = useOne({
     resource: "point_de_collecte",

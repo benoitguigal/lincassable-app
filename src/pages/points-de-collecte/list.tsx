@@ -11,6 +11,7 @@ import {
   EmailField,
 } from "@refinedev/antd";
 import { Table, Space } from "antd";
+import { Link } from "react-router-dom";
 
 export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
   const { tableProps } = useTable({
@@ -46,6 +47,15 @@ export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
         />
         <Table.Column dataIndex="telephone_1" title="Telephone 1" />
         <Table.Column dataIndex="horaires" title="Horaires" />
+        <Table.Column
+          dataIndex="id"
+          title="Formulaire taux de remplissage"
+          render={(value: any) => (
+            <Link to={`/point-de-collecte/taux-de-remplissage/${value}`}>
+              Lien
+            </Link>
+          )}
+        />
         <Table.Column
           title="Actions"
           dataIndex="actions"
