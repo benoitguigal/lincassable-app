@@ -14,10 +14,12 @@ import {
   DateField,
   EmailField,
   FilterDropdown,
+  TextField,
 } from "@refinedev/antd";
 import { Table, Space, theme, Input, Select } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { PointDeCollecteType } from "../../components/pointsDeCollecte";
+import { pointDeCollecteTypeOptions } from "../../utility/options";
 
 export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
   const { token } = theme.useToken();
@@ -27,7 +29,14 @@ export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
     pagination: { mode: "off" },
     filters: {
       mode: "server",
-      initial: [{ field: "nom", operator: "contains", value: "" }],
+      initial: [
+        { field: "nom", operator: "contains", value: "" },
+        // { field: "type", operator: "eq", value: "" },
+      ],
+    },
+    sorters: {
+      mode: "server",
+      initial: [{ field: "nom", order: "asc" }],
     },
   });
 
@@ -40,9 +49,9 @@ export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
           sorter
           filterIcon={(filtered) => (
             <SearchOutlined
-              style={{
-                color: filtered ? token.colorPrimary : undefined,
-              }}
+            // style={{
+            //   color: filtered ? token.colorPrimary : undefined,
+            // }}
             />
           )}
           defaultFilteredValue={getDefaultFilter("nom", filters, "contains")}
@@ -64,10 +73,7 @@ export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
           filterDropdown={(props) => (
             <FilterDropdown {...props}>
               <Select
-                options={[
-                  { value: "Magasin", label: "Magasin" },
-                  { value: "Producteur", label: "Producteur" },
-                ]}
+                options={pointDeCollecteTypeOptions}
                 style={{ width: "200px" }}
                 allowClear
                 mode="multiple"
@@ -76,32 +82,46 @@ export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
             </FilterDropdown>
           )}
         />
-        <Table.Column dataIndex="contact" title="Contact" />
         <Table.Column
-          dataIndex="email_1"
-          title="Email 1"
-          render={(value: string) => <EmailField value={value} />}
-        />
-        <Table.Column
-          dataIndex="email_2"
-          title="Email 2"
-          render={(value: string) => <EmailField value={value} />}
-        />
-        <Table.Column
-          dataIndex="email_3"
-          title="Email 3"
-          render={(value: string) => <EmailField value={value} />}
-        />
-        <Table.Column dataIndex="telephone_1" title="Telephone 1" />
-        {/* <Table.Column
-          dataIndex="id"
-          title="Formulaire taux de remplissage"
-          render={(value: any) => (
-            <Link to={`/point-de-collecte/taux-de-remplissage/${value}`}>
-              Lien
-            </Link>
+          dataIndex="contacts"
+          title="Contact"
+          render={(contacts: string[]) => (
+            <div>
+              {contacts.map((Contacts) => (
+                <div style={{ whiteSpace: "nowrap" }}>
+                  <TextField value={Contacts} />
+                </div>
+              ))}
+            </div>
           )}
-        /> */}
+        />
+        <Table.Column
+          dataIndex="emails"
+          title="E-mail"
+          render={(emails: string[]) => (
+            <div>
+              {emails.map((email) => (
+                <div style={{ whiteSpace: "nowrap" }}>
+                  <EmailField value={email} />
+                </div>
+              ))}
+            </div>
+          )}
+        />
+        <Table.Column
+          dataIndex="telephones"
+          title="N° de téléphone"
+          render={(telephones: string[]) => (
+            <div>
+              {telephones.map((telephone) => (
+                <div style={{ whiteSpace: "nowrap" }}>
+                  <TextField value={telephone} />
+                </div>
+              ))}
+            </div>
+          )}
+        />
+
         <Table.Column
           title="Actions"
           dataIndex="actions"

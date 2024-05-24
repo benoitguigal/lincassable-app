@@ -2,7 +2,7 @@ import { Tag } from "antd";
 import React from "react";
 
 type PointDeCollecteTypeProps = {
-  value: "Magasin" | "Producteur";
+  value: "Magasin" | "Producteur" | "Massification";
 };
 
 export const PointDeCollecteType: React.FC<PointDeCollecteTypeProps> = ({
@@ -17,6 +17,10 @@ export const PointDeCollecteType: React.FC<PointDeCollecteTypeProps> = ({
       break;
     case "Producteur":
       color = "#FDEA18";
+      style = { color: "black" };
+      break;
+    case "Massification":
+      color = "#EAEDEC";
       style = { color: "black" };
       break;
   }
