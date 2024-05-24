@@ -4,6 +4,7 @@ import {
   BaseRecord,
   getDefaultFilter,
   useSelect,
+  useExport,
 } from "@refinedev/core";
 import {
   useTable,
@@ -15,16 +16,19 @@ import {
   EmailField,
   FilterDropdown,
   TextField,
+  ExportButton,
+  CreateButton,
 } from "@refinedev/antd";
 import { Table, Space, theme, Input, Select } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { PointDeCollecteType } from "../../components/pointsDeCollecte";
 import { pointDeCollecteTypeOptions } from "../../utility/options";
+import { title } from "process";
 
 export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
   const { token } = theme.useToken();
 
-  const { tableProps, filters } = useTable({
+  const { tableProps, filters, sorters } = useTable({
     syncWithLocation: true,
     pagination: { mode: "off" },
     filters: {
@@ -40,20 +44,47 @@ export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
     },
   });
 
+  const { isLoading, triggerExport } = useExport({
+    sorters,
+    filters,
+    // pageSize: 50,
+    // maxItemCount: 50,
+    // mapData: (item) => {
+    //   return {
+    //     id: item.id,
+    //     amount: item.amount,
+    //     orderNumber: item.orderNumber,
+    //     status: item.status.text,
+    //     store: item.store.title,
+    //     user: item.user.firstName,
+    //   };
+    // },
+  });
+
   return (
-    <List breadcrumb={false}>
+    <List
+      title="Points de collecte"
+      canCreate={true}
+      breadcrumb={false}
+      headerButtons={(props) => [
+        <ExportButton
+          style={{ marginRight: "10px" }}
+          onClick={triggerExport}
+          loading={isLoading}
+        >
+          Exporter
+        </ExportButton>,
+        <CreateButton {...props.createButtonProps}>
+          Ajouter un point de collecte
+        </CreateButton>,
+      ]}
+    >
       <Table {...tableProps} size="small" rowKey="id">
         <Table.Column
           dataIndex="nom"
           title="Nom"
           sorter
-          filterIcon={(filtered) => (
-            <SearchOutlined
-            // style={{
-            //   color: filtered ? token.colorPrimary : undefined,
-            // }}
-            />
-          )}
+          filterIcon={<SearchOutlined />}
           defaultFilteredValue={getDefaultFilter("nom", filters, "contains")}
           filterDropdown={(props) => (
             <FilterDropdown {...props}>
