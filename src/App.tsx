@@ -16,7 +16,7 @@ import routerBindings, {
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
 import { dataProvider, liveProvider } from "@refinedev/supabase";
-import { App as AntdApp, ConfigProvider } from "antd";
+import { App as AntdApp, ConfigProvider, theme } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import authProvider from "./authProvider";
 import { Header } from "./components/header";
@@ -27,14 +27,9 @@ import {
   PointDeCollecteEdit,
   PointDeCollecteList,
   PointDeCollecteShow,
-} from "./pages/points-de-collecte";
-import {
-  TauxDeRemplissageCreate,
-  TauxDeRemplissageEdit,
-  TauxDeRemplissageList,
-  TauxDeRemplissageShow,
-} from "./pages/taux-remplissage";
-import { CreateTauxDeRemplissage } from "./pages/points-de-collecte/createTauxDeRemplissage";
+} from "./pages/point-de-collecte";
+import { CreateTauxDeRemplissage } from "./pages/point-de-collecte/createTauxDeRemplissage";
+import { BouteilleIconSvg } from "./components/icons";
 
 function App() {
   return (
@@ -42,6 +37,7 @@ function App() {
       <RefineKbarProvider>
         <ConfigProvider
           theme={{
+            algorithm: theme.compactAlgorithm,
             token: {
               // Seed Token
               colorPrimary: "#253d39",
@@ -62,6 +58,13 @@ function App() {
                 notificationProvider={useNotificationProvider}
                 resources={[
                   {
+                    name: "Collecte",
+                    meta: {
+                      label: "Collecte",
+                      icon: BouteilleIconSvg({}),
+                    },
+                  },
+                  {
                     name: "point_de_collecte",
                     list: "/point-de-collecte",
                     create: "/point-de-collecte/create",
@@ -69,16 +72,8 @@ function App() {
                     show: "/point-de-collecte/show/:id",
                     meta: {
                       canDelete: true,
-                    },
-                  },
-                  {
-                    name: "taux_de_remplissage",
-                    list: "/taux-de-remplissage",
-                    create: "/taux-de-remplissage/create",
-                    edit: "/taux-de-remplissage/edit/:id",
-                    show: "/taux-de-remplissage/show/:id",
-                    meta: {
-                      canDelete: true,
+                      parent: "Collecte",
+                      label: "Points de collecte",
                     },
                   },
                 ]}
@@ -132,21 +127,6 @@ function App() {
                       <Route
                         path="show/:id"
                         element={<PointDeCollecteShow />}
-                      />
-                    </Route>
-                    <Route path="/taux-de-remplissage">
-                      <Route index element={<TauxDeRemplissageList />} />
-                      <Route
-                        path="create"
-                        element={<TauxDeRemplissageCreate />}
-                      />
-                      <Route
-                        path="edit/:id"
-                        element={<TauxDeRemplissageEdit />}
-                      />
-                      <Route
-                        path="show/:id"
-                        element={<TauxDeRemplissageShow />}
                       />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
