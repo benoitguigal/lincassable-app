@@ -3,6 +3,11 @@
 const GEOAPIFY_API_URL = "https://api.geoapify.com/v1"
 const GEOAPIFY_API_TOKEN = "dc44242606f34bf69bba442fe959d02e"
 
+export type LatLng = {
+  lat: number;
+  lng: number;
+};
+
 
 export type Feature = {
   geometry: {
