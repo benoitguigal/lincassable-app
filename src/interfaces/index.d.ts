@@ -1,6 +1,6 @@
 
 
-export type PointDeCollecteTypeEnum = "Magsin" | "Producteur" | "Massification"
+export type PointDeCollecteTypeEnum = "Magasin" | "Producteur" | "Massification"
 
 export interface IPointDeCollecte {
   type: PointDeCollecteTypeEnum;
