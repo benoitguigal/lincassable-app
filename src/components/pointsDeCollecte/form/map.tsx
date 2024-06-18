@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { LatLng } from "../../../utility/geocoding";
-import mapboxgl, { Map, Marker } from "mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
+import mapboxgl, { Map, Marker } from "mapbox-gl";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiYmVub2l0Z3VpZ2FsIiwiYSI6ImNseGFudTJ0bzM2NmQya3FzZHF4YWZ5bDcifQ.vmlhxYdp1EDG6_IFQihxyQ";
@@ -14,24 +14,26 @@ export const PointDeCollecteMap: React.FC<Props> = ({
   latLng,
   handleDragEnd,
 }) => {
-  const mapContainer = useRef(null);
-  const map = useRef<Map>(null);
-  const marker = useRef<Marker>(null);
+  const mapContainer = useRef<HTMLDivElement | null>(null);
+  const map = useRef<Map | null>(null);
+  const marker = useRef<Marker | null>(null);
 
   useEffect(() => {
-    if (!map.current) {
+    if (!map.current && mapContainer.current) {
       // initialize map only once
-      map.current = new mapboxgl.Map({
+      map.current = new Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/streets-v12",
         center: [latLng.lng, latLng.lat],
         zoom: 13,
       });
-      marker.current = new mapboxgl.Marker(
+      marker.current = new Marker(
         handleDragEnd ? { draggable: true } : {}
-      )
-        .setLngLat([latLng.lng, latLng.lat])
-        .addTo(map.current);
+      ).setLngLat([latLng.lng, latLng.lat]);
+
+      if (map.current) {
+        marker.current.addTo(map.current);
+      }
 
       if (handleDragEnd) {
         marker.current.on("dragend", () => {
@@ -41,7 +43,7 @@ export const PointDeCollecteMap: React.FC<Props> = ({
           }
         });
       }
-    } else {
+    } else if (map.current) {
       map.current.setCenter([latLng.lng, latLng.lat]);
       marker.current?.setLngLat([latLng.lng, latLng.lat]);
     }

@@ -1,8 +1,8 @@
 import { useList } from "@refinedev/core";
 import { IPointDeCollecte, PointDeCollecteTypeEnum } from "../../../interfaces";
-import { Flex, Spin } from "antd";
+import { Flex } from "antd";
 import { useEffect, useMemo, useRef } from "react";
-import mapboxgl, { Map, Marker } from "mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
+import mapboxgl, { Map, Marker, Popup } from "mapbox-gl";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiYmVub2l0Z3VpZ2FsIiwiYSI6ImNseGFudTJ0bzM2NmQya3FzZHF4YWZ5bDcifQ.vmlhxYdp1EDG6_IFQihxyQ";
@@ -31,12 +31,12 @@ export const PointsDeCollecteMap: React.FC = () => {
     [pointsDeCollecteData]
   );
 
-  const mapContainer = useRef(null);
-  const map = useRef<Map>(null);
+  const mapContainer = useRef<HTMLDivElement | null>(null);
+  const map = useRef<Map | null>(null);
 
   useEffect(() => {
-    if (!map.current && pointsDeCollecte)
-      map.current = new mapboxgl.Map({
+    if (!map.current && pointsDeCollecte && mapContainer.current)
+      map.current = new Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/streets-v12",
         center: [5.53, 43.69],
@@ -48,13 +48,15 @@ export const PointsDeCollecteMap: React.FC = () => {
         const popupContent =
           `<div><b>${pointDeCollecte.nom}</b></div>` +
           `<div>${pointDeCollecte.adresse}</div>`;
-        const popup = new mapboxgl.Popup().setHTML(popupContent);
-        const marker = new mapboxgl.Marker({
+        const popup = new Popup().setHTML(popupContent);
+        const marker = new Marker({
           color: getMarkerColor(pointDeCollecte.type),
         })
           .setLngLat([pointDeCollecte.longitude, pointDeCollecte.latitude])
           .setPopup(popup);
-        marker.addTo(map.current);
+        if (map.current) {
+          marker.addTo(map.current);
+        }
       }
     }
   }, [pointsDeCollecte]);
