@@ -14,12 +14,13 @@ import {
   TextField,
 } from "@refinedev/antd";
 import { Input, Select, Space, Table } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { EnvironmentOutlined, SearchOutlined } from "@ant-design/icons";
 import { PointDeCollecteType } from "../type";
 import { pointDeCollecteTypeOptions } from "../../../utility/options";
+import { IPointDeCollecte } from "../../../interfaces";
 
 export const PointDeCollecteListTable: React.FC = () => {
-  const { tableProps, filters } = useTable({
+  const { tableProps, filters } = useTable<IPointDeCollecte>({
     syncWithLocation: true,
     pagination: { mode: "off" },
     filters: {
@@ -49,7 +50,18 @@ export const PointDeCollecteListTable: React.FC = () => {
           </FilterDropdown>
         )}
       />
-      <Table.Column dataIndex="adresse" title="Adresse" />
+      <Table.Column<IPointDeCollecte>
+        dataIndex="adresse"
+        title="Adresse"
+        render={(value, record) => (
+          <div>
+            {record.latitude && record.longitude && (
+              <EnvironmentOutlined style={{ marginRight: "3px" }} />
+            )}
+            <span>{value}</span>
+          </div>
+        )}
+      />
       <Table.Column
         dataIndex="type"
         title="Type"

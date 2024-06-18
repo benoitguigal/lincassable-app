@@ -30,6 +30,8 @@ import {
 } from "./pages/point-de-collecte";
 import { CreateTauxDeRemplissage } from "./pages/point-de-collecte/createTauxDeRemplissage";
 import { BouteilleIconSvg } from "./components/icons";
+import { DashboardPage } from "./pages/dashboard";
+import { DashboardOutlined } from "@ant-design/icons";
 
 function App() {
   return (
@@ -57,6 +59,14 @@ function App() {
                 routerProvider={routerBindings}
                 notificationProvider={useNotificationProvider}
                 resources={[
+                  {
+                    name: "dashboard",
+                    list: "/",
+                    meta: {
+                      label: "Tableau de bord",
+                      icon: <DashboardOutlined />,
+                    },
+                  },
                   {
                     name: "Collecte",
                     meta: {
@@ -108,12 +118,7 @@ function App() {
                       </Authenticated>
                     }
                   >
-                    <Route
-                      index
-                      element={
-                        <NavigateToResource resource="point_de_collecte" />
-                      }
-                    />
+                    <Route index element={<DashboardPage />} />
                     <Route path="/point-de-collecte">
                       <Route index element={<PointDeCollecteList />} />
                       <Route

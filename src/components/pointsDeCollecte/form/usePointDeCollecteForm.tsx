@@ -14,7 +14,7 @@ export const usePointDeCollecteForm = ({ action }: Props) => {
 
   const [features, setFeatures] = useState<Feature[]>([]);
 
-  const [latLng, setLatLng] = useState<LatLng | null>(null);
+  const [latLng, setLatLng] = useState<Partial<LatLng> | null>(null);
 
   const pointDeCollecte = form.queryResult?.data?.data;
 
@@ -51,6 +51,14 @@ export const usePointDeCollecteForm = ({ action }: Props) => {
     }
   }
 
+  function handleLatitudeChange(latitude: string) {
+    setLatLng({ lat: parseFloat(latitude), lng: latLng?.lng });
+  }
+
+  function handleLongitudeChange(longitude: string) {
+    setLatLng({ lng: parseFloat(longitude), lat: latLng?.lat });
+  }
+
   async function handleDragEnd(latLng: LatLng) {
     if (setFieldValue) {
       setFieldValue("longitude", latLng.lng);
@@ -64,6 +72,8 @@ export const usePointDeCollecteForm = ({ action }: Props) => {
     handleAdresseSelected,
     handleAdresseSearch,
     handleDragEnd,
+    handleLatitudeChange,
+    handleLongitudeChange,
     latLng,
     adressOptions: features.map((f) => ({ value: f.properties.formatted })),
   };

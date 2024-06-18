@@ -8,10 +8,12 @@ import { IPointDeCollecte } from "../../../interfaces";
 import { PointDeCollecteMap } from "./map";
 
 type Props = UseFormReturnType<IPointDeCollecte> & {
-  latLng: LatLng | null;
+  latLng: Partial<LatLng> | null;
   handleAdresseSelected: (text: string) => void;
   handleAdresseSearch: (text: string) => void;
   handleDragEnd: (latLng: LatLng) => void;
+  handleLatitudeChange: (latitude: string) => void;
+  handleLongitudeChange: (longitude: string) => void;
   adressOptions: { value: string }[];
 };
 
@@ -21,6 +23,8 @@ export const PointDeCollecteForm: React.FC<Props> = ({
   handleAdresseSearch,
   handleAdresseSelected,
   handleDragEnd,
+  handleLatitudeChange,
+  handleLongitudeChange,
   formProps,
 }) => {
   return (
@@ -62,14 +66,23 @@ export const PointDeCollecteForm: React.FC<Props> = ({
         />
       </Form.Item>
       <Form.Item label="Latitude" name="latitude">
-        <Input type="number" value={10} disabled={true} />
+        <Input
+          type="number"
+          onChange={(e) => handleLatitudeChange(e.target.value)}
+        />
       </Form.Item>
       <Form.Item label="Longitude" name="longitude">
-        <Input type="number" disabled={true} />
+        <Input
+          type="number"
+          onChange={(e) => handleLongitudeChange(e.target.value)}
+        />
       </Form.Item>
 
-      {latLng && (
-        <PointDeCollecteMap latLng={latLng} handleDragEnd={handleDragEnd} />
+      {latLng && latLng.lat && latLng.lng && (
+        <PointDeCollecteMap
+          latLng={{ lat: latLng.lat, lng: latLng.lng }}
+          handleDragEnd={handleDragEnd}
+        />
       )}
 
       <Form.Item label="Horaires" name={["horaires"]}>

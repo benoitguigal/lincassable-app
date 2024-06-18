@@ -4,7 +4,7 @@ import { List, ExportButton, CreateButton } from "@refinedev/antd";
 import { PointDeCollecteListTable } from "../../components/pointsDeCollecte/list-table";
 import { Segmented } from "antd";
 import { EnvironmentOutlined, UnorderedListOutlined } from "@ant-design/icons";
-import { PointDeCollecteMap } from "../../components/pointsDeCollecte/map";
+import { PointsDeCollecteMap } from "../../components/pointsDeCollecte/map";
 
 type View = "table" | "map";
 
@@ -58,7 +58,7 @@ export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
       ]}
     >
       {view === "table" && <PointDeCollecteListTable />}
-      {view === "map" && <PointDeCollecteMap />}
+      {view === "map" && <PointsDeCollecteMap />}
     </List>
   );
 };

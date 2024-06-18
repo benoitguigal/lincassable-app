@@ -6,40 +6,62 @@ import {
   DateField,
   TagField,
   TextField,
+  EmailField,
 } from "@refinedev/antd";
 import { Typography } from "antd";
+import { IPointDeCollecte } from "../../interfaces";
+import { PointDeCollecteMap } from "../../components/pointsDeCollecte/form/map";
+import { PointDeCollecteType } from "../../components/pointsDeCollecte";
 
 const { Title } = Typography;
 
 export const PointDeCollecteShow = () => {
-  const { queryResult } = useShow();
+  const { queryResult } = useShow<IPointDeCollecte>();
   const { data, isLoading } = queryResult;
 
-  const record = data?.data;
+  const pointDeCollecte = data?.data;
 
   return (
     <Show isLoading={isLoading} breadcrumb={false}>
       <Title level={5}>Nom</Title>
-      <TextField value={record?.nom} />
+      <TextField value={pointDeCollecte?.nom} />
       <Title level={5}>Adresse</Title>
-      <TextField value={record?.adresse} />
+      <TextField value={pointDeCollecte?.adresse} />
+      {pointDeCollecte?.latitude && pointDeCollecte?.longitude && (
+        <PointDeCollecteMap
+          latLng={{
+            lat: pointDeCollecte.latitude,
+            lng: pointDeCollecte.longitude,
+          }}
+        />
+      )}
+
       <Title level={5}>Type</Title>
-      <TextField value={record?.type} />
-      <Title level={5}>Info</Title>
-      <TextField value={record?.info} />
-      <Title level={5}>Emails</Title>
+      {pointDeCollecte?.type && (
+        <PointDeCollecteType value={pointDeCollecte.type} />
+      )}
+      <Title level={5}>Contacts</Title>
       <>
-        {record?.emails?.map((item: any) => (
-          <TagField value={item} key={item} />
+        {pointDeCollecte?.contacts?.map((item: any) => (
+          <div>
+            <TextField value={item} key={item} />
+          </div>
         ))}
       </>
-      <Title level={5}>Contacts</Title>
-      {record?.contacts?.map((item: any) => (
-        <TagField value={item} key={item} />
-      ))}
+
+      <Title level={5}>Emails</Title>
+      <>
+        {pointDeCollecte?.emails?.map((item: any) => (
+          <div>
+            <EmailField value={item} key={item} />
+          </div>
+        ))}
+      </>
       <Title level={5}>Telephones</Title>
-      {record?.telephones?.map((item: any) => (
-        <TagField value={item} key={item} />
+      {pointDeCollecte?.telephones?.map((item: any) => (
+        <div>
+          <TextField value={item} key={item} />
+        </div>
       ))}
     </Show>
   );

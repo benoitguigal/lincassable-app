@@ -9,6 +9,7 @@ export interface IPointDeCollecte {
   longitude: number;
   latitude: number;
   horaires: string;
+  contacts: string[];
   emails: string[];
   telephones: string[]
 }

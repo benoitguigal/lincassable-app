@@ -18,10 +18,8 @@ function getMarkerColor(type: PointDeCollecteTypeEnum) {
   }
 }
 
-const PopupContent: React.FC = () => <div>hello</div>;
-
-export const PointDeCollecteMap: React.FC = () => {
-  const { data: pointsDeCollecteData, isLoading } = useList<IPointDeCollecte>({
+export const PointsDeCollecteMap: React.FC = () => {
+  const { data: pointsDeCollecteData } = useList<IPointDeCollecte>({
     resource: "point_de_collecte",
     pagination: {
       mode: "off",
@@ -59,17 +57,6 @@ export const PointDeCollecteMap: React.FC = () => {
         marker.addTo(map.current);
       }
     }
-
-    // marker.current = new mapboxgl.Marker({ draggable: true })
-    //   .setLngLat([latLng.lng, latLng.lat])
-    //   .addTo(map.current);
-
-    // marker.current.on("dragend", () => {
-    //   console.log("dragend");
-    //   const newLngLat = marker.current?.getLngLat();
-    //   if (newLngLat) {
-    //     handleDragEnd(newLngLat);
-    //   }
   }, [pointsDeCollecte]);
 
   return (

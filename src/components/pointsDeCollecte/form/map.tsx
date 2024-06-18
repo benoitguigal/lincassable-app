@@ -7,7 +7,7 @@ mapboxgl.accessToken =
 
 type Props = {
   latLng: LatLng;
-  handleDragEnd: (latLng: LatLng) => void;
+  handleDragEnd?: (latLng: LatLng) => void;
 };
 
 export const PointDeCollecteMap: React.FC<Props> = ({
@@ -27,17 +27,20 @@ export const PointDeCollecteMap: React.FC<Props> = ({
         center: [latLng.lng, latLng.lat],
         zoom: 13,
       });
-      marker.current = new mapboxgl.Marker({ draggable: true })
+      marker.current = new mapboxgl.Marker(
+        handleDragEnd ? { draggable: true } : {}
+      )
         .setLngLat([latLng.lng, latLng.lat])
         .addTo(map.current);
 
-      marker.current.on("dragend", () => {
-        console.log("dragend");
-        const newLngLat = marker.current?.getLngLat();
-        if (newLngLat) {
-          handleDragEnd(newLngLat);
-        }
-      });
+      if (handleDragEnd) {
+        marker.current.on("dragend", () => {
+          const newLngLat = marker.current?.getLngLat();
+          if (newLngLat) {
+            handleDragEnd(newLngLat);
+          }
+        });
+      }
     } else {
       map.current.setCenter([latLng.lng, latLng.lat]);
       marker.current?.setLngLat([latLng.lng, latLng.lat]);
