@@ -1,0 +1,143 @@
+{
+  "pages": {
+    "login": {
+      "title": "Se connecter",
+      "signin": "Se connecter",
+      "signup": "Créer un compte",
+      "divider": "ou",
+      "fields": {
+        "email": "Email",
+        "password": "Mot de passe"
+      },
+      "errors": {
+        "validEmail": "Adresse e-mail invalide",
+        "requiredEmail": "Email requis",
+        "requiredPassword": "Mot de passe requis"
+      },
+      "buttons": {
+        "submit": "Connexion",
+        "forgotPassword": "Mot de passe oublié ?",
+        "noAccount": "Pas encore de compte ?",
+        "rememberMe": "Rester connecté"
+      }
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié ?",
+      "fields": {
+        "email": "Email"
+      },
+      "errors": {
+        "validEmail": "Adresse e-mail invalide",
+        "requiredEmail": "Email requis"
+      },
+      "buttons": {
+        "submit": "Envoyer un e-mail de réinitialisation"
+      }
+    },
+    "register": {
+      "title": "Créer un compte",
+      "fields": {
+        "email": "Email",
+        "password": "Mot de passe"
+      },
+      "errors": {
+        "validEmail": "Adresse e-mail invalide",
+        "requiredEmail": "Email requis",
+        "requiredPassword": "Mot de passe requis"
+      },
+      "buttons": {
+        "submit": "Créer un compte",
+        "haveAccount": "Déjà un compte ?"
+      }
+    },
+    "updatePassword": {
+      "title": "Mettre à jour le mot de passe",
+      "fields": {
+        "password": "Nouveau mot de passe",
+        "confirmPassword": "Confirmation du mot de passe"
+      },
+      "errors": {
+        "confirmPasswordNotMatch": "Les mots de passe ne correspondent pas",
+        "requiredPassword": "Mot de passe requis",
+        "requiredConfirmPassword": "Le mot de passe de confirmation est requis"
+      },
+      "buttons": {
+        "submit": "Mettre à jour"
+      }
+    },
+    "error": {
+      "info": "You may have forgotten to add the {{action}} component to {{resource}} resource.",
+      "404": "Cette page n'existe pas",
+      "resource404": "Are you sure you have created the {{resource}} resource.",
+      "backHome": "Back Home"
+    }
+  },
+  "actions": {
+    "list": "Liste",
+    "create": "Créer",
+    "edit": "Modifier",
+    "show": "Afficher"
+  },
+  "buttons": {
+    "create": "Créer",
+    "save": "Sauvegarder",
+    "logout": "Se déconnecter",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "cancel": "Annuler",
+    "confirm": "Êtes vous sûr ?",
+    "filter": "Filtrer",
+    "clear": "Effacer",
+    "refresh": "Actualiser",
+    "show": "Afficher",
+    "undo": "Annuler",
+    "import": "Importer",
+    "clone": "Dupliquer",
+    "notAccessTitle": "Vous n'avez pas la permission d'accéder"
+  },
+  "warnWhenUnsavedChanges": "Êtes vous sûr de vouloir quitter ? Vous avez des changements non enregistrés.",
+  "notifications": {
+    "success": "Successful",
+    "error": "Error (status code: {{statusCode}})",
+    "undoable": "You have {{seconds}} seconds to undo",
+    "createSuccess": "Successfully created {{resource}}",
+    "createError": "There was an error creating {{resource}} (status code: {{statusCode}})",
+    "deleteSuccess": "Successfully deleted {{resource}}",
+    "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
+    "editSuccess": "Successfully edited {{resource}}",
+    "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
+    "importProgress": "Importing: {{processed}}/{{total}}"
+  },
+  "loading": "Chargement",
+  "tags": {
+    "clone": "Dupliquer"
+  },
+  "table": {
+    "actions": "Actions"
+  },
+  "documentTitle": {
+    "default": "refine",
+    "suffix": " | Refine",
+    "point_de_collecte": {
+      "list": "Posts | Refine",
+      "show": "#{{id}} Show Post | Refine",
+      "edit": "#{{id}} Edit Post | Refine",
+      "create": "Create new Post | Refine",
+      "clone": "#{{id}} Clone Post | Refine"
+    }
+  },
+  "autoSave": {
+    "success": "saved",
+    "error": "auto save failure",
+    "loading": "saving...",
+    "idle": "waiting for changes"
+  },
+  "point_de_collecte": {
+    "titles": {
+      "list": "Liste des points de collecte",
+      "edit": "Modifier point de collecte",
+      "show": "Afficher point de collecte",
+      "create": "Ajouter un point de collecte"
+    }
+  }
+}

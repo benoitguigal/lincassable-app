@@ -1,4 +1,4 @@
-import { Authenticated, Refine } from "@refinedev/core";
+import { Authenticated, Refine, I18nProvider } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import {
@@ -32,8 +32,18 @@ import { CreateTauxDeRemplissage } from "./pages/point-de-collecte/createTauxDeR
 import { BouteilleIconSvg } from "./components/icons";
 import { DashboardPage } from "./pages/dashboard";
 import { DashboardOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 function App() {
+  const { t, i18n } = useTranslation();
+
+  const i18nProvider: I18nProvider = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    translate: (key: string, options?: any) => String(t(key, options)),
+    changeLocale: (lang: string) => i18n.changeLanguage(lang),
+    getLocale: () => i18n.language,
+  };
+
   return (
     <BrowserRouter>
       <RefineKbarProvider>
@@ -54,6 +64,7 @@ function App() {
             <DevtoolsProvider>
               <Refine
                 dataProvider={dataProvider(supabaseClient)}
+                i18nProvider={i18nProvider}
                 liveProvider={liveProvider(supabaseClient)}
                 authProvider={authProvider}
                 routerProvider={routerBindings}
