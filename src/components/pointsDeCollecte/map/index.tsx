@@ -2,10 +2,10 @@ import { useList } from "@refinedev/core";
 import { IPointDeCollecte, PointDeCollecteTypeEnum } from "../../../interfaces";
 import { Flex } from "antd";
 import { useEffect, useMemo, useRef } from "react";
-import mapboxgl, { Map, Marker, Popup } from "mapbox-gl";
+import { Map, Marker, Popup } from "mapbox-gl";
+import { initMapbox } from "../../../utility/mapboxClient";
 
-mapboxgl.accessToken =
-  "pk.eyJ1IjoiYmVub2l0Z3VpZ2FsIiwiYSI6ImNseGFudTJ0bzM2NmQya3FzZHF4YWZ5bDcifQ.vmlhxYdp1EDG6_IFQihxyQ";
+initMapbox();
 
 function getMarkerColor(type: PointDeCollecteTypeEnum) {
   switch (type) {
