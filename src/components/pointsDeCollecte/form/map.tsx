@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { LatLng } from "../../../utility/geocoding";
-import mapboxgl, { Map, Marker } from "mapbox-gl";
+import { Map, Marker } from "mapbox-gl";
+import { initMapbox } from "../../../utility/mapboxClient";
 
-mapboxgl.accessToken =
-  "pk.eyJ1IjoiYmVub2l0Z3VpZ2FsIiwiYSI6ImNseGFudTJ0bzM2NmQya3FzZHF4YWZ5bDcifQ.vmlhxYdp1EDG6_IFQihxyQ";
+initMapbox();
 
 type Props = {
   latLng: LatLng;
