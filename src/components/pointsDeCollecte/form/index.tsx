@@ -88,24 +88,19 @@ export const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item label="Horaires" name={["horaires"]}>
         <Input />
       </Form.Item>
-      <FormListItem
-        name="contacts"
-        label="Contacts"
-        labelSingular="contact"
-        placeholder="Nom du contact"
-      />
-      <FormListItem
-        name="emails"
-        label="E-mails"
-        labelSingular="e-mail"
-        placeholder="E-mail de contact"
-      />
+      <FormListItem name="contacts" label="Contacts" labelSingular="contact">
+        <Input placeholder="Nom du contact" style={{ width: "60%" }} />
+      </FormListItem>
+      <FormListItem name="emails" label="E-mails" labelSingular="e-mail">
+        <Input placeholder="E-mail de contact" style={{ width: "60%" }} />
+      </FormListItem>
       <FormListItem
         name="telephones"
         label="Téléphones"
         labelSingular="télephone"
-        placeholder="Téléphone du contact"
-      />
+      >
+        <Input placeholder="Téléphone du contact" style={{ width: "60%" }} />
+      </FormListItem>
     </Form>
   );
 };
