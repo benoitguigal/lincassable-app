@@ -159,10 +159,8 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
           title="Chargement total"
           render={(_, record: BaseRecord) => {
             if (record.id) {
-              const collecteItems = tourneeById[record.id].collectes.flatMap(
-                (c) => c.items
-              );
-              return <Chargement items={collecteItems} />;
+              const collectes = tourneeById[record.id].collectes;
+              return <Chargement collectes={collectes} />;
             }
             return null;
           }}

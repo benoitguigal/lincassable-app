@@ -1,6 +1,6 @@
 import { IPointDeCollecte, ITournee } from "../../../interfaces";
 import dayjs from "dayjs";
-import { DatePicker, Form, FormProps, Select } from "antd";
+import { DatePicker, Form, Select } from "antd";
 import { UseFormReturnType, useSelect } from "@refinedev/antd";
 import {
   transporteurOptions,

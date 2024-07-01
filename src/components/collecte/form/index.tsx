@@ -1,4 +1,8 @@
-import { UseModalFormReturnType, useSelect } from "@refinedev/antd";
+import {
+  NumberField,
+  UseModalFormReturnType,
+  useSelect,
+} from "@refinedev/antd";
 import { ICollecte, IPointDeCollecte } from "../../../interfaces";
 import { Form, Input, Select } from "antd";
 
@@ -26,6 +30,30 @@ export const CollecteForm: React.FC<Props> = ({ formProps }) => {
           style={{ width: 300 }}
           {...selectProps}
         />
+      </Form.Item>
+      <Form.Item
+        name="livraison_nb_casier_75_vide"
+        label="Livraison - Nombre de casiers 75 vides"
+      >
+        <Input type="number" defaultValue={0} style={{ width: 300 }} />
+      </Form.Item>
+      <Form.Item
+        name="livraison_nb_palox_vide"
+        label="Livraison - Nombre de paloxs vides"
+      >
+        <Input type="number" defaultValue={0} style={{ width: 300 }} />
+      </Form.Item>
+      <Form.Item
+        name="collecte_nb_casier_75_plein"
+        label="Collecte - Nombre de casiers 75 pleins"
+      >
+        <Input type="number" defaultValue={0} style={{ width: 300 }} />
+      </Form.Item>
+      <Form.Item
+        name="collecte_nb_palox_plein"
+        label="Collecte - Nombre de paloxs pleins"
+      >
+        <Input type="number" defaultValue={0} style={{ width: 300 }} />
       </Form.Item>
     </Form>
   );

@@ -28,6 +28,10 @@ export interface ICollecte {
   id: number;
   point_de_collecte_id: number;
   tournee_id: number;
+  livraison_nb_casier_75_vide: number;
+  livraison_nb_palox_vide: number;
+  collecte_nb_casier_75_plein: number;
+  collecte_nb_palox_plein: number;
 }
 
 export interface ICollecteItem {
