@@ -38,7 +38,7 @@ export const DashboardPage: React.FC = () => {
       <div style={{ marginTop: "15px" }}>
         <h3>Collecte</h3>
         <Row gutter={16}>
-          <Col span={6}>
+          <Col span={4}>
             <Card>
               <Statistic
                 title="Nombre total de points de collecte"
@@ -47,7 +47,7 @@ export const DashboardPage: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col>
+          <Col span={4}>
             <Card>
               <Statistic
                 title="Nombre de magasins points de collecte"
@@ -56,7 +56,7 @@ export const DashboardPage: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col>
+          <Col span={4}>
             <Card>
               <Statistic
                 title="Nombre de producteurs points de collecte"
@@ -65,7 +65,7 @@ export const DashboardPage: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col>
+          <Col span={4}>
             <Card>
               <Statistic
                 title="Nombre de points de massification secondaires"

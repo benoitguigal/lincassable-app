@@ -33,6 +33,10 @@ import { BouteilleIconSvg } from "./components/icons";
 import { DashboardPage } from "./pages/dashboard";
 import { DashboardOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import { AntdInferencer } from "@refinedev/inferencer/antd";
+import { TourneeList } from "./pages/tournee/list";
+import { TourneeCreate } from "./pages/tournee/create";
+import { EditCreate } from "./pages/tournee/edit";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -97,6 +101,19 @@ function App() {
                       label: "Points de collecte",
                     },
                   },
+                  {
+                    name: "tournee",
+                    list: "/tournee",
+                    create: "/tournee/create",
+                    edit: "/tournee/edit/:id",
+                    show: "/tournee/show/:id",
+                    meta: {
+                      canDelete: true,
+                      parent: "Collecte",
+                      label: "Tournées",
+                    },
+                  },
+                  { name: "collecte" },
                 ]}
                 options={{
                   syncWithLocation: true,
@@ -144,6 +161,12 @@ function App() {
                         path="show/:id"
                         element={<PointDeCollecteShow />}
                       />
+                    </Route>
+                    <Route path="/tournee">
+                      <Route index element={<TourneeList />} />
+                      <Route path="create" element={<TourneeCreate />} />
+                      <Route path="edit/:id" element={<EditCreate />} />
+                      <Route path="show/:id" element={<AntdInferencer />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>

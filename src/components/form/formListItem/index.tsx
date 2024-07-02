@@ -1,18 +1,19 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Form, Input } from "antd";
+import { Button, Form } from "antd";
+import { ReactNode } from "react";
 
 type FormListItemProps = {
   name: string;
   label: string;
   labelSingular: string;
-  placeholder: string;
+  children: ReactNode;
 };
 
 export const FormListItem: React.FC<FormListItemProps> = ({
   name,
   label,
   labelSingular,
-  placeholder,
+  children,
 }) => {
   return (
     <Form.List name={name}>
@@ -36,14 +37,13 @@ export const FormListItem: React.FC<FormListItemProps> = ({
                 ]}
                 noStyle
               >
-                <Input placeholder={placeholder} style={{ width: "60%" }} />
+                {children}
               </Form.Item>
-              {fields.length > 1 ? (
-                <MinusCircleOutlined
-                  className="dynamic-delete-button"
-                  onClick={() => remove(field.name)}
-                />
-              ) : null}
+
+              <MinusCircleOutlined
+                className="dynamic-delete-button"
+                onClick={() => remove(field.name)}
+              />
             </Form.Item>
           ))}
           <Form.Item>
