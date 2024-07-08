@@ -1,13 +1,11 @@
 -- Create the auth hook function
-create or replace function public.set_role_and_permissions(event jsonb) 
+create or replace function public.set_role(event jsonb) 
 returns jsonb 
 language plpgsql stable 
 as $$ 
-
 declare 
   claims jsonb;
   user_role public.app_role;
-  user_permissions public.app_permission [];
 
 begin -- Fetch the user role in the user_roles table
 select
@@ -22,21 +20,6 @@ claims := event -> 'claims';
 if user_role is not null then -- Set the claim
 claims := jsonb_set(claims, '{user_role}', to_jsonb(user_role));
 
-select
-  array (
-    select
-      permission
-    from
-      public.role_permissions
-    where
-      role = user_role
-  ) into user_permissions;
-
-claims := jsonb_set(
-  claims,
-  '{user_permissions}',
-  to_jsonb(user_permissions)
-);
 
 else claims := jsonb_set(claims, '{user_role}', 'null');
 

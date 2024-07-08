@@ -1,24 +1,36 @@
 import { AccessControlProvider } from "@refinedev/core";
 import authProvider from "./authProvider";
-import { UserPermission } from "./interfaces";
-
-const sidebarPermissions = ["collecte_menu.list", "dashboard.list"];
 
 const accessControlProvider: AccessControlProvider = {
   can: async ({ resource, action }) => {
     const permissionResponse = await authProvider.getPermissions();
 
-    if (permissionResponse) {
-      const { permissions } = permissionResponse;
-      const permission = `${resource}.${action}`;
-      const allPermissions = [...permissions, ...sidebarPermissions];
-      if (allPermissions.includes(permission as UserPermission)) {
+    if (permissionResponse && resource) {
+      const { role } = permissionResponse;
+
+      if (role === "staff") {
         return { can: true };
+      }
+
+      if (role === "transporteur") {
+        if (resource === "dashboard") {
+          return { can: true };
+        }
+
+        if (resource === "collecte_menu") {
+          return { can: true };
+        }
+
+        if (resource === "tournee") {
+          if (action === "list" || action === "show") {
+            return { can: true };
+          }
+        }
       }
     }
     return {
       can: false,
-      reason: "Unauthorized",
+      reason: "Vous n'êtes pas autorisé",
     };
   },
 };
