@@ -42,3 +42,17 @@ export interface ICollecteItem {
   remplissage: "plein" | "vide";
   nombre: number;
 }
+
+export type UserRole = "staff" | "transporter";
+
+export type UserPermission =
+  | "point_de_collecte.list"
+  | "point_de_collecte.show"
+  | "point_de_collecte.create"
+  | "point_de_collecte.edit"
+  | "point_de_collecte.delete"
+  | "tournee.list"
+  | "tournee.show"
+  | "tournee.create"
+  | "tournee.edit"
+  | "tournee.delete";

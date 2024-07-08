@@ -37,6 +37,7 @@ import { AntdInferencer } from "@refinedev/inferencer/antd";
 import { TourneeList } from "./pages/tournee/list";
 import { TourneeCreate } from "./pages/tournee/create";
 import { EditCreate } from "./pages/tournee/edit";
+import accessControlProvider from "./accessControlProvider";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -71,6 +72,7 @@ function App() {
                 i18nProvider={i18nProvider}
                 liveProvider={liveProvider(supabaseClient)}
                 authProvider={authProvider}
+                accessControlProvider={accessControlProvider}
                 routerProvider={routerBindings}
                 notificationProvider={useNotificationProvider}
                 resources={[
@@ -83,7 +85,7 @@ function App() {
                     },
                   },
                   {
-                    name: "Collecte",
+                    name: "collecte_menu",
                     meta: {
                       label: "Collecte",
                       icon: BouteilleIconSvg({}),
@@ -97,7 +99,7 @@ function App() {
                     show: "/point-de-collecte/show/:id",
                     meta: {
                       canDelete: true,
-                      parent: "Collecte",
+                      parent: "collecte_menu",
                       label: "Points de collecte",
                     },
                   },
@@ -109,7 +111,7 @@ function App() {
                     show: "/tournee/show/:id",
                     meta: {
                       canDelete: true,
-                      parent: "Collecte",
+                      parent: "collecte_menu",
                       label: "Tournées",
                     },
                   },

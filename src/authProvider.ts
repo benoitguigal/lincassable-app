@@ -1,8 +1,15 @@
-import { AuthBindings } from "@refinedev/core";
-
+import { AuthProvider as RefineAuthProvider } from "@refinedev/core";
 import { supabaseClient } from "./utility";
+import { jwtDecode } from "jwt-decode";
+import { UserPermission, UserRole } from "./interfaces";
 
-const authProvider: AuthBindings = {
+type PermissionResponse = { role: UserRole; permissions: UserPermission[] };
+
+type AuthProvider = Omit<RefineAuthProvider, "getPermissions"> & {
+  getPermissions: () => Promise<PermissionResponse | null>;
+};
+
+const authProvider: AuthProvider = {
   login: async ({ email, password, providerName }) => {
     // sign in with oauth
     try {
@@ -216,12 +223,17 @@ const authProvider: AuthBindings = {
     };
   },
   getPermissions: async () => {
-    const user = await supabaseClient.auth.getUser();
-
-    if (user) {
-      return user.data.user?.role;
+    const { data } = await supabaseClient.auth.getSession();
+    const { session } = data;
+    if (session) {
+      const jwt = jwtDecode<{
+        user_role: UserRole;
+        user_permissions: UserPermission[];
+      }>(session.access_token);
+      const role = jwt.user_role;
+      const permissions = jwt.user_permissions;
+      return { role, permissions };
     }
-
     return null;
   },
   getIdentity: async () => {

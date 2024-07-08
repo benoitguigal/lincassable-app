@@ -1,4 +1,4 @@
-import { ICollecte, ICollecteItem } from "../../../interfaces";
+import { ICollecte } from "../../../interfaces";
 
 export const Chargement: React.FC<{ collectes: ICollecte[] }> = ({
   collectes,
