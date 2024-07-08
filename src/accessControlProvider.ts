@@ -8,10 +8,6 @@ const accessControlProvider: AccessControlProvider = {
   can: async ({ resource, action }) => {
     const permissionResponse = await authProvider.getPermissions();
 
-    console.log(resource);
-    console.log(action);
-    console.log("#######");
-
     if (permissionResponse) {
       const { permissions } = permissionResponse;
       const permission = `${resource}.${action}`;
