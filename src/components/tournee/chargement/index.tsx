@@ -26,10 +26,10 @@ export const Chargement: React.FC<{ collectes: ICollecte[] }> = ({
   return (
     <div>
       {casierLivraison > 0 && (
-        <div>Casiers 75 vides à livrer: {casierLivraison}</div>
+        <div>Casiers 12x75cl vides à livrer: {casierLivraison}</div>
       )}
       {casierCollecte > 0 && (
-        <div>Casiers 75 plein à collecter: {casierCollecte}</div>
+        <div>Casiers 12x75cl plein à collecter: {casierCollecte}</div>
       )}
       {paloxLivraison > 0 && <div>Paloxs vides à livrer: {paloxLivraison}</div>}
       {paloxCollecte > 0 && (

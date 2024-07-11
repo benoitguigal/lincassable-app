@@ -1,11 +1,8 @@
-import { IPointDeCollecte, ITournee } from "../../../interfaces";
+import { IPointDeCollecte, ITournee, ITransporteur } from "../../../interfaces";
 import dayjs from "dayjs";
 import { DatePicker, Form, Select } from "antd";
 import { UseFormReturnType, useSelect } from "@refinedev/antd";
-import {
-  transporteurOptions,
-  zoneDeCollecteOptions,
-} from "../../../utility/options";
+import { zoneDeCollecteOptions } from "../../../utility/options";
 import { FormListItem } from "../../form";
 
 type Props = Pick<UseFormReturnType<ITournee>, "formProps">;
@@ -23,6 +20,11 @@ export const TourneeForm: React.FC<Props> = ({ formProps }) => {
       optionLabel: "nom",
       filters: [{ field: "type", operator: "eq", value: "Massification" }],
     });
+
+  const { selectProps: transporteurSelectProps } = useSelect<ITransporteur>({
+    resource: "transporteur",
+    optionLabel: "nom",
+  });
 
   return (
     <Form {...formProps} layout="vertical">
@@ -58,7 +60,7 @@ export const TourneeForm: React.FC<Props> = ({ formProps }) => {
       </Form.Item>
       <Form.Item
         label="Transporteur"
-        name={["transporteur"]}
+        name={["transporteur_id"]}
         rules={[
           {
             required: true,
@@ -66,10 +68,9 @@ export const TourneeForm: React.FC<Props> = ({ formProps }) => {
         ]}
       >
         <Select
-          options={transporteurOptions}
-          style={{ width: "200px" }}
-          allowClear
+          style={{ width: 300 }}
           placeholder="Transporteur"
+          {...transporteurSelectProps}
         />
       </Form.Item>
       <Form.Item

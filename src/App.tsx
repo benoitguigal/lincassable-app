@@ -116,6 +116,7 @@ function App() {
                     },
                   },
                   { name: "collecte" },
+                  { name: "transporteur" },
                 ]}
                 options={{
                   syncWithLocation: true,

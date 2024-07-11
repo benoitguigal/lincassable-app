@@ -10,7 +10,12 @@ import {
 import { Space, Table } from "antd";
 import dayjs from "dayjs";
 import "dayjs/locale/fr";
-import { ICollecte, IPointDeCollecte, ITournee } from "../../interfaces";
+import {
+  ICollecte,
+  IPointDeCollecte,
+  ITournee,
+  ITransporteur,
+} from "../../interfaces";
 import { useMemo } from "react";
 import { Chargement } from "../../components/tournee/chargement";
 import { CollecteEditButton } from "../../components/collecte/editButton";
@@ -36,38 +41,70 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
     [tableQueryResult]
   );
 
-  const { data: collectesData } = useList<ICollecte>({
-    resource: "collecte",
-    filters: [
-      {
-        field: "tournee_id",
-        operator: "in",
-        value: tourneeList.map((t) => t.id),
+  const { data: collectesData, isLoading: collecteIsLoading } =
+    useList<ICollecte>({
+      resource: "collecte",
+      filters: [
+        {
+          field: "tournee_id",
+          operator: "in",
+          value: tourneeList.map((t) => t.id),
+        },
+      ],
+      queryOptions: {
+        enabled: tourneeList && tourneeList.length > 0,
       },
-    ],
-    queryOptions: {
-      enabled: tourneeList && tourneeList.length > 0,
-    },
-  });
+    });
 
   const collecteList = useMemo(
     () => collectesData?.data ?? [],
     [collectesData]
   );
 
-  const { data: pointsDeCollecteData } = useList<IPointDeCollecte>({
-    resource: "point_de_collecte",
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: collecteList.map((c) => c.point_de_collecte_id),
+  const { data: transporteursData, isLoading: transporteurIsLoading } =
+    useList<ITransporteur>({
+      resource: "transporteur",
+      filters: [
+        {
+          field: "id",
+          operator: "in",
+          value: tourneeList.map((t) => t.transporteur_id),
+        },
+      ],
+      queryOptions: {
+        enabled: tourneeList && tourneeList.length > 0,
       },
-    ],
-    queryOptions: {
-      enabled: collecteList && collecteList.length > 0,
-    },
-  });
+    });
+
+  const transporteursList = useMemo(
+    () => transporteursData?.data ?? [],
+    [transporteursData]
+  );
+
+  const transporteurById = useMemo(
+    () =>
+      transporteursList.reduce<{
+        [key: number]: ITransporteur;
+      }>((acc, t) => {
+        return { ...acc, [t.id]: t };
+      }, {}),
+    [transporteursList]
+  );
+
+  const { data: pointsDeCollecteData, isLoading: pointDeCollecteIsLoading } =
+    useList<IPointDeCollecte>({
+      resource: "point_de_collecte",
+      filters: [
+        {
+          field: "id",
+          operator: "in",
+          value: collecteList.map((c) => c.point_de_collecte_id),
+        },
+      ],
+      queryOptions: {
+        enabled: collecteList && collecteList.length > 0,
+      },
+    });
 
   const pointsDeCollecteList = useMemo(
     () => pointsDeCollecteData?.data ?? [],
@@ -113,9 +150,23 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
     [tourneeWithCollectes]
   );
 
+  const loading = useMemo(
+    () =>
+      tableProps.loading ||
+      collecteIsLoading ||
+      transporteurIsLoading ||
+      pointDeCollecteIsLoading,
+    [
+      tableProps.loading,
+      collecteIsLoading,
+      transporteurIsLoading,
+      pointDeCollecteIsLoading,
+    ]
+  );
+
   return (
     <List title="Tournées" canCreate={true} breadcrumb={false}>
-      <Table {...tableProps} rowKey="id">
+      <Table {...tableProps} loading={loading} rowKey="id">
         <Table.Column
           dataIndex={["date"]}
           title="Date"
@@ -124,7 +175,16 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
           )}
         />
         <Table.Column dataIndex="zone" title="Zone" />
-        <Table.Column dataIndex="transporteur" title="Transporteur" />
+        <Table.Column
+          dataIndex="transporteur_id"
+          title="Transporteur"
+          render={(id: number) => {
+            if (transporteurById && id) {
+              return transporteurById[id]?.nom;
+            }
+            return null;
+          }}
+        />
         <Table.Column
           dataIndex="points_de_collecte"
           title="Collectes"
