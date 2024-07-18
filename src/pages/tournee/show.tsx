@@ -34,7 +34,7 @@ export const TourneeShow = () => {
       <Title level={5}>Transporteur</Title>
       <TextField value={transporteurData?.data?.nom} />
       <Title level={5}>Collectes</Title>
-      {!!record && <CollecteListTable tournee_id={record.id} />}
+      {!!record && <CollecteListTable tournee_id={record.id} canEdit={false} />}
     </Show>
   );
 };

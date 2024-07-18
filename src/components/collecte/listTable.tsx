@@ -1,19 +1,23 @@
 import { useList } from "@refinedev/core";
 import { Collecte, PointDeCollecte } from "../../types";
 import { useMemo } from "react";
-import { CollecteWithPointDeCollecte } from "../../types";
-import { useTable } from "@refinedev/antd";
-import { Table } from "antd";
+import { DeleteButton, useTable } from "@refinedev/antd";
+import { Space, Table } from "antd";
+import { CollecteEditButton } from "./editButton";
+import { CollecteCreateButton } from "./createButton";
 
 type CollecteListTableProps = {
   tournee_id: number;
+  canEdit: boolean;
 };
 
 const CollecteListTable: React.FC<CollecteListTableProps> = ({
   tournee_id,
+  canEdit,
 }) => {
   const { tableProps, tableQueryResult } = useTable<Collecte>({
     resource: "collecte",
+    pagination: { mode: "off" },
     filters: {
       permanent: [{ field: "tournee_id", operator: "eq", value: tournee_id }],
     },
@@ -53,16 +57,6 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
       }, {}),
     [pointsDeCollecteList]
   );
-
-  const collecteListWithPointDeCollecte: CollecteWithPointDeCollecte[] =
-    useMemo(
-      () =>
-        collecteList.map((c) => ({
-          ...c,
-          point_de_collecte: pointDeCollecteById[c.point_de_collecte_id],
-        })),
-      [collecteList, pointDeCollecteById]
-    );
 
   const loading = tableProps.loading || pointDeCollecteIsLoading;
 
@@ -109,6 +103,11 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
             <Table.Summary.Cell index={4}>
               <b>{totalCollectePalox}</b>
             </Table.Summary.Cell>
+            {canEdit && (
+              <Table.Summary.Cell index={5}>
+                <CollecteCreateButton tournee_id={tournee_id} />
+              </Table.Summary.Cell>
+            )}
           </Table.Summary.Row>
         );
       }}
@@ -139,6 +138,23 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
         dataIndex="collecte_nb_palox_plein"
         title="Nbre de paloxs pleins à collecter"
       />
+      {canEdit && (
+        <Table.Column
+          title="Actions"
+          dataIndex="actions"
+          render={(_, record: Collecte) => (
+            <Space>
+              <CollecteEditButton collecte={record} />
+              <DeleteButton
+                hideText
+                size="small"
+                recordItemId={record.id}
+                resource="collecte"
+              />
+            </Space>
+          )}
+        />
+      )}
     </Table>
   );
 };

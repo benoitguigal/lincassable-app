@@ -13,7 +13,7 @@ export const TourneeFormWrapper: React.FC<Props> = ({ action }) => {
 
   return (
     <CreateOrEdit saveButtonProps={form.saveButtonProps} breadcrumb={false}>
-      <TourneeForm formProps={form.formProps} />
+      <TourneeForm form={form} action={action} />
     </CreateOrEdit>
   );
 };
