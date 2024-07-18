@@ -100,7 +100,9 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
       {view === "table" && user && (
         <TourneeListTable user={user} transporteur={transporteur} />
       )}
-      {view === "calendar" && user && <TourneeListCalendar />}
+      {view === "calendar" && user && (
+        <TourneeListCalendar user={user} transporteur={transporteur} />
+      )}
     </List>
   );
 };

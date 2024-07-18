@@ -1,5 +1,6 @@
 import {
   Collecte,
+  CollecteWithPointDeCollecte,
   Identity,
   PointDeCollecte,
   Tournee,
@@ -23,10 +24,6 @@ type TourneeListTableProps = {
   user: Identity;
   transporteur: number | null;
 };
-export type CollecteWithPointDeCollecte = Collecte & {
-  point_de_collecte?: PointDeCollecte | null;
-};
-
 export type TourneeWithCollectes = Tournee & {
   collectes: CollecteWithPointDeCollecte[];
 };

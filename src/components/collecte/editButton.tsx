@@ -1,8 +1,7 @@
 import { Button, Modal } from "antd";
-import { CollecteWithPointDeCollecte } from "../../pages/tournee/list";
 import { EditOutlined } from "@ant-design/icons";
 import { DeleteButton, useModalForm } from "@refinedev/antd";
-import { Collecte } from "../../types";
+import { Collecte, CollecteWithPointDeCollecte } from "../../types";
 import { CollecteForm } from "./form";
 
 type CollecteEditButtonProps = {

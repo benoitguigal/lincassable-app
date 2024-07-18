@@ -1,4 +1,4 @@
-import { Badge, Calendar } from "antd";
+import { Calendar } from "antd";
 import { Identity, Tournee, Transporteur } from "../../../types";
 import { useList } from "@refinedev/core";
 import { useMemo } from "react";
@@ -16,11 +16,20 @@ const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({
   user,
   transporteur,
 }) => {
+  const isTransporteur = user.appRole === "transporteur";
+
   const { data: tourneeData } = useList<Tournee>({
     resource: "tournee",
     pagination: {
       mode: "off",
     },
+    ...(isTransporteur && transporteur
+      ? {
+          filters: [
+            { field: "transporteur_id", operator: "eq", value: transporteur },
+          ],
+        }
+      : {}),
   });
 
   const tourneeList = useMemo(() => {

@@ -36,8 +36,9 @@ import { useTranslation } from "react-i18next";
 import { AntdInferencer } from "@refinedev/inferencer/antd";
 import { TourneeList } from "./pages/tournee/list";
 import { TourneeCreate } from "./pages/tournee/create";
-import { EditCreate } from "./pages/tournee/edit";
+import { TourneeEdit } from "./pages/tournee/edit";
 import accessControlProvider from "./accessControlProvider";
+import { TourneeShow } from "./pages/tournee/show";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -169,8 +170,8 @@ function App() {
                     <Route path="/tournee">
                       <Route index element={<TourneeList />} />
                       <Route path="create" element={<TourneeCreate />} />
-                      <Route path="edit/:id" element={<EditCreate />} />
-                      <Route path="show/:id" element={<AntdInferencer />} />
+                      <Route path="edit/:id" element={<TourneeEdit />} />
+                      <Route path="show/:id" element={<TourneeShow />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
