@@ -1,4 +1,9 @@
-import { BaseRecord, IResourceComponentsProps, useList } from "@refinedev/core";
+import {
+  BaseRecord,
+  IResourceComponentsProps,
+  useGetIdentity,
+  useList,
+} from "@refinedev/core";
 import {
   List,
   useTable,
@@ -12,9 +17,11 @@ import dayjs from "dayjs";
 import "dayjs/locale/fr";
 import {
   ICollecte,
-  ICollecteItem,
+  IIdentity,
   IPointDeCollecte,
   ITournee,
+  ITransporteur,
+  ITransporteurUser,
 } from "../../interfaces";
 import { useMemo } from "react";
 import { Chargement } from "../../components/tournee/chargement";
@@ -25,7 +32,6 @@ dayjs.locale("fr"); // use locale globally
 
 export type ICollecteWithPointDeCollecte = ICollecte & {
   point_de_collecte?: IPointDeCollecte | null;
-  items: ICollecteItem[];
 };
 
 export type ITourneeWithCollectes = ITournee & {
@@ -33,8 +39,47 @@ export type ITourneeWithCollectes = ITournee & {
 };
 
 export const TourneeList: React.FC<IResourceComponentsProps> = () => {
+  const identityResponse = useGetIdentity<IIdentity>();
+
+  const user = useMemo(() => identityResponse.data, [identityResponse]);
+
+  const isTransporteur = user?.appRole === "transporteur";
+  const isStaff = user?.appRole === "staff";
+
+  const {
+    data: transporteurUsersData,
+    isLoading: transporteurUsersIsLoading,
+    status: transporteurUsersStatus,
+  } = useList<ITransporteurUser>({
+    resource: "transporteur_users",
+    queryOptions: { enabled: isTransporteur },
+  });
+
+  const transporteurList = useMemo(
+    () => transporteurUsersData?.data.map((tu) => tu.transporteur_id) ?? [],
+    [transporteurUsersData]
+  );
+
   const { tableProps, tableQueryResult } = useTable<ITournee>({
     syncWithLocation: true,
+    ...(isTransporteur
+      ? {
+          filters: {
+            permanent: [
+              {
+                field: "transporteur_id",
+                operator: "in",
+                value: transporteurList,
+              },
+            ],
+          },
+        }
+      : {}),
+    queryOptions: {
+      enabled:
+        Boolean(user) &&
+        (isStaff || (isTransporteur && transporteurUsersStatus === "success")),
+    },
   });
 
   const tourneeList = useMemo(
@@ -42,59 +87,84 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
     [tableQueryResult]
   );
 
-  const { data: collectesData } = useList<ICollecte>({
-    resource: "collecte",
-    filters: [
-      {
-        field: "tournee_id",
-        operator: "in",
-        value: tourneeList.map((t) => t.id),
+  const { data: collectesData, isLoading: collecteIsLoading } =
+    useList<ICollecte>({
+      resource: "collecte",
+      filters: [
+        {
+          field: "tournee_id",
+          operator: "in",
+          value: tourneeList.map((t) => t.id),
+        },
+      ],
+      queryOptions: {
+        enabled: tourneeList && tourneeList.length > 0,
       },
-    ],
-    queryOptions: {
-      enabled: tourneeList && tourneeList.length > 0,
-    },
-  });
+    });
 
   const collecteList = useMemo(
     () => collectesData?.data ?? [],
     [collectesData]
   );
 
-  const { data: pointsDeCollecteData } = useList<IPointDeCollecte>({
-    resource: "point_de_collecte",
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: collecteList.map((c) => c.point_de_collecte_id),
+  const { data: transporteursData, isLoading: transporteurIsLoading } =
+    useList<ITransporteur>({
+      resource: "transporteur",
+      filters: [
+        {
+          field: "id",
+          operator: "in",
+          value: tourneeList.map((t) => t.transporteur_id),
+        },
+      ],
+      queryOptions: {
+        enabled: tourneeList && tourneeList.length > 0,
       },
-    ],
-    queryOptions: {
-      enabled: collecteList && collecteList.length > 0,
-    },
-  });
+    });
+
+  const transporteursList = useMemo(
+    () => transporteursData?.data ?? [],
+    [transporteursData]
+  );
+
+  const transporteurById = useMemo(
+    () =>
+      transporteursList.reduce<{
+        [key: number]: ITransporteur;
+      }>((acc, t) => {
+        return { ...acc, [t.id]: t };
+      }, {}),
+    [transporteursList]
+  );
+
+  const { data: pointsDeCollecteData, isLoading: pointDeCollecteIsLoading } =
+    useList<IPointDeCollecte>({
+      resource: "point_de_collecte",
+      filters: [
+        {
+          field: "id",
+          operator: "in",
+          value: collecteList.map((c) => c.point_de_collecte_id),
+        },
+      ],
+      queryOptions: {
+        enabled: collecteList && collecteList.length > 0,
+      },
+    });
 
   const pointsDeCollecteList = useMemo(
     () => pointsDeCollecteData?.data ?? [],
     [pointsDeCollecteData]
   );
 
-  const { data: collecteItemsData } = useList<ICollecteItem>({
-    resource: "chargement",
-    filters: [
-      {
-        field: "collecte_id",
-        operator: "in",
-        value: collecteList.map((c) => c.id),
-      },
-    ],
-    queryOptions: { enabled: collecteList && collecteList.length > 0 },
-  });
-
-  const collecteItemsList = useMemo(
-    () => collecteItemsData?.data ?? [],
-    [collecteItemsData]
+  const pointDeCollecteById = useMemo(
+    () =>
+      pointsDeCollecteList.reduce<{
+        [key: number]: IPointDeCollecte;
+      }>((acc, pc) => {
+        return { ...acc, [pc.id]: pc };
+      }, {}),
+    [pointsDeCollecteList]
   );
 
   const collecteListWithPointDeCollecte: ICollecteWithPointDeCollecte[] =
@@ -102,12 +172,9 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
       () =>
         collecteList.map((c) => ({
           ...c,
-          point_de_collecte: pointsDeCollecteList.find(
-            (pc) => pc.id === c.point_de_collecte_id
-          ),
-          items: collecteItemsList.filter((item) => item.collecte_id === c.id),
+          point_de_collecte: pointDeCollecteById[c.point_de_collecte_id],
         })),
-      [collecteList, pointsDeCollecteList, collecteItemsList]
+      [collecteList, pointDeCollecteById]
     );
 
   const tourneeWithCollectes: ITourneeWithCollectes[] = useMemo(
@@ -121,13 +188,34 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
     [tourneeList, collecteListWithPointDeCollecte]
   );
 
-  const tourneeById = tourneeWithCollectes.reduce<{
-    [key: string]: ITourneeWithCollectes;
-  }>((acc, t) => ({ ...acc, [t.id]: t }), {});
+  const tourneeById = useMemo(
+    () =>
+      tourneeWithCollectes.reduce<{
+        [key: string]: ITourneeWithCollectes;
+      }>((acc, t) => ({ ...acc, [t.id]: t }), {}),
+    [tourneeWithCollectes]
+  );
+
+  const loading = useMemo(
+    () =>
+      tableProps.loading ||
+      collecteIsLoading ||
+      transporteurIsLoading ||
+      pointDeCollecteIsLoading ||
+      (isTransporteur && transporteurUsersIsLoading),
+    [
+      tableProps.loading,
+      collecteIsLoading,
+      transporteurIsLoading,
+      pointDeCollecteIsLoading,
+      isTransporteur,
+      transporteurUsersIsLoading,
+    ]
+  );
 
   return (
     <List title="Tournées" canCreate={true} breadcrumb={false}>
-      <Table {...tableProps} rowKey="id">
+      <Table {...tableProps} loading={loading} rowKey="id">
         <Table.Column
           dataIndex={["date"]}
           title="Date"
@@ -136,7 +224,16 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
           )}
         />
         <Table.Column dataIndex="zone" title="Zone" />
-        <Table.Column dataIndex="transporteur" title="Transporteur" />
+        <Table.Column
+          dataIndex="transporteur_id"
+          title="Transporteur"
+          render={(id: number) => {
+            if (transporteurById && id) {
+              return transporteurById[id]?.nom;
+            }
+            return null;
+          }}
+        />
         <Table.Column
           dataIndex="points_de_collecte"
           title="Collectes"

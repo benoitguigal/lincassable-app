@@ -19,7 +19,7 @@ export interface IPointDeCollecte {
 export interface ITournee {
   id: number;
   date: Date;
-  transporteur: "MAIN FORTE";
+  transporteur_id: number;
   point_de_massification_id: number;
   statut: "EN ATTENTE DE VALIDATION" | "VALIDE";
   zone: string;
@@ -34,6 +34,11 @@ export interface ICollecte {
   collecte_nb_palox_plein: number;
 }
 
+export interface ITransporteur {
+  id: number;
+  nom: string;
+}
+
 export interface ICollecteItem {
   id: number;
   collecte_id: number;
@@ -42,3 +47,9 @@ export interface ICollecteItem {
   remplissage: "plein" | "vide";
   nombre: number;
 }
+
+export type UserRole = "staff" | "transporteur";
+
+export type IIdentity = { id: string; email: string; appRole: UserRole };
+
+export type ITransporteurUser = { transporteur_id: number; userId: string };

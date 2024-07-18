@@ -4,7 +4,6 @@ import { EditOutlined } from "@ant-design/icons";
 import { DeleteButton, useModalForm } from "@refinedev/antd";
 import { ICollecte } from "../../interfaces";
 import { CollecteForm } from "./form";
-import { useDelete, useDeleteButton } from "@refinedev/core";
 
 type CollecteEditButtonProps = {
   collecte: ICollecteWithPointDeCollecte;
