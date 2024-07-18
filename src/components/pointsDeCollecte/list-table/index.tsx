@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  IResourceComponentsProps,
-  BaseRecord,
-  getDefaultFilter,
-} from "@refinedev/core";
+import { BaseRecord, getDefaultFilter } from "@refinedev/core";
 import {
   useTable,
   EditButton,
@@ -17,10 +13,10 @@ import { Input, Select, Space, Table } from "antd";
 import { EnvironmentOutlined, SearchOutlined } from "@ant-design/icons";
 import { PointDeCollecteType } from "../type";
 import { pointDeCollecteTypeOptions } from "../../../utility/options";
-import { IPointDeCollecte } from "../../../interfaces";
+import { PointDeCollecte } from "../../../types";
 
 export const PointDeCollecteListTable: React.FC = () => {
-  const { tableProps, filters } = useTable<IPointDeCollecte>({
+  const { tableProps, filters } = useTable<PointDeCollecte>({
     syncWithLocation: true,
     pagination: { mode: "off" },
     filters: {
@@ -50,7 +46,7 @@ export const PointDeCollecteListTable: React.FC = () => {
           </FilterDropdown>
         )}
       />
-      <Table.Column<IPointDeCollecte>
+      <Table.Column<PointDeCollecte>
         dataIndex="adresse"
         title="Adresse"
         render={(value, record) => (

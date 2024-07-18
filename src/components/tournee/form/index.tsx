@@ -1,27 +1,27 @@
-import { IPointDeCollecte, ITournee, ITransporteur } from "../../../interfaces";
+import { PointDeCollecte, Tournee, Transporteur } from "../../../types";
 import dayjs from "dayjs";
 import { DatePicker, Form, Select } from "antd";
 import { UseFormReturnType, useSelect } from "@refinedev/antd";
 import { zoneDeCollecteOptions } from "../../../utility/options";
 import { FormListItem } from "../../form";
 
-type Props = Pick<UseFormReturnType<ITournee>, "formProps">;
+type Props = Pick<UseFormReturnType<Tournee>, "formProps">;
 
 export const TourneeForm: React.FC<Props> = ({ formProps }) => {
   const { selectProps: pointDeCollecteSelectProps } =
-    useSelect<IPointDeCollecte>({
+    useSelect<PointDeCollecte>({
       resource: "point_de_collecte",
       optionLabel: "nom",
     });
 
   const { selectProps: pointDeMassificationSelectProps } =
-    useSelect<IPointDeCollecte>({
+    useSelect<PointDeCollecte>({
       resource: "point_de_collecte",
       optionLabel: "nom",
       filters: [{ field: "type", operator: "eq", value: "Massification" }],
     });
 
-  const { selectProps: transporteurSelectProps } = useSelect<ITransporteur>({
+  const { selectProps: transporteurSelectProps } = useSelect<Transporteur>({
     resource: "transporteur",
     optionLabel: "nom",
   });

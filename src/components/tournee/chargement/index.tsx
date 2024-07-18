@@ -1,6 +1,6 @@
-import { ICollecte } from "../../../interfaces";
+import { Collecte } from "../../../types";
 
-export const Chargement: React.FC<{ collectes: ICollecte[] }> = ({
+export const Chargement: React.FC<{ collectes: Collecte[] }> = ({
   collectes,
 }) => {
   const casierCollecte = collectes.reduce(

@@ -1,22 +1,14 @@
-import React from "react";
 import { useShow } from "@refinedev/core";
-import {
-  Show,
-  NumberField,
-  DateField,
-  TagField,
-  TextField,
-  EmailField,
-} from "@refinedev/antd";
+import { Show, TextField, EmailField } from "@refinedev/antd";
 import { Typography } from "antd";
-import { IPointDeCollecte } from "../../interfaces";
+import { PointDeCollecte } from "../../types";
 import { PointDeCollecteMap } from "../../components/pointsDeCollecte/form/map";
 import { PointDeCollecteType } from "../../components/pointsDeCollecte";
 
 const { Title } = Typography;
 
 export const PointDeCollecteShow = () => {
-  const { queryResult } = useShow<IPointDeCollecte>();
+  const { queryResult } = useShow<PointDeCollecte>();
   const { data, isLoading } = queryResult;
 
   const pointDeCollecte = data?.data;

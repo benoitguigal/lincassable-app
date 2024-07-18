@@ -1,7 +1,7 @@
 import { AuthProvider as RefineAuthProvider } from "@refinedev/core";
 import { supabaseClient } from "./utility";
 import { jwtDecode } from "jwt-decode";
-import { UserRole } from "./interfaces";
+import { UserRole } from "./types";
 
 type PermissionResponse = { role: UserRole };
 

@@ -1,10 +1,10 @@
 import { useList } from "@refinedev/core";
 import { useMemo } from "react";
 import { Card, Col, Row, Statistic } from "antd";
-import { IPointDeCollecte } from "../../../interfaces";
+import { PointDeCollecte } from "../../../types";
 
 export const StaffDashboard: React.FC = () => {
-  const { data: pointsDeCollecteData, isLoading } = useList<IPointDeCollecte>({
+  const { data: pointsDeCollecteData, isLoading } = useList<PointDeCollecte>({
     resource: "point_de_collecte",
     pagination: {
       mode: "off",

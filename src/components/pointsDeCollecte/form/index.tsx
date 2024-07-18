@@ -4,10 +4,10 @@ import { LatLng } from "../../../utility/geocoding";
 import debounce from "../../../utility/debounce";
 import { FormListItem } from "../../form";
 import { UseFormReturnType } from "@refinedev/antd";
-import { IPointDeCollecte } from "../../../interfaces";
+import { PointDeCollecte } from "../../../types";
 import { PointDeCollecteMap } from "./map";
 
-type Props = UseFormReturnType<IPointDeCollecte> & {
+type Props = UseFormReturnType<PointDeCollecte> & {
   latLng: Partial<LatLng> | null;
   handleAdresseSelected: (text: string) => void;
   handleAdresseSearch: (text: string) => void;
