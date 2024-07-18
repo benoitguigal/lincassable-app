@@ -1,4 +1,9 @@
-import { BaseRecord, IResourceComponentsProps, useList } from "@refinedev/core";
+import {
+  BaseRecord,
+  IResourceComponentsProps,
+  useGetIdentity,
+  useList,
+} from "@refinedev/core";
 import {
   List,
   useTable,
@@ -12,9 +17,11 @@ import dayjs from "dayjs";
 import "dayjs/locale/fr";
 import {
   ICollecte,
+  IIdentity,
   IPointDeCollecte,
   ITournee,
   ITransporteur,
+  ITransporteurUser,
 } from "../../interfaces";
 import { useMemo } from "react";
 import { Chargement } from "../../components/tournee/chargement";
@@ -32,8 +39,47 @@ export type ITourneeWithCollectes = ITournee & {
 };
 
 export const TourneeList: React.FC<IResourceComponentsProps> = () => {
+  const identityResponse = useGetIdentity<IIdentity>();
+
+  const user = useMemo(() => identityResponse.data, [identityResponse]);
+
+  const isTransporteur = user?.appRole === "transporteur";
+  const isStaff = user?.appRole === "staff";
+
+  const {
+    data: transporteurUsersData,
+    isLoading: transporteurUsersIsLoading,
+    status: transporteurUsersStatus,
+  } = useList<ITransporteurUser>({
+    resource: "transporteur_users",
+    queryOptions: { enabled: isTransporteur },
+  });
+
+  const transporteurList = useMemo(
+    () => transporteurUsersData?.data.map((tu) => tu.transporteur_id) ?? [],
+    [transporteurUsersData]
+  );
+
   const { tableProps, tableQueryResult } = useTable<ITournee>({
     syncWithLocation: true,
+    ...(isTransporteur
+      ? {
+          filters: {
+            permanent: [
+              {
+                field: "transporteur_id",
+                operator: "in",
+                value: transporteurList,
+              },
+            ],
+          },
+        }
+      : {}),
+    queryOptions: {
+      enabled:
+        Boolean(user) &&
+        (isStaff || (isTransporteur && transporteurUsersStatus === "success")),
+    },
   });
 
   const tourneeList = useMemo(
@@ -155,12 +201,15 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
       tableProps.loading ||
       collecteIsLoading ||
       transporteurIsLoading ||
-      pointDeCollecteIsLoading,
+      pointDeCollecteIsLoading ||
+      (isTransporteur && transporteurUsersIsLoading),
     [
       tableProps.loading,
       collecteIsLoading,
       transporteurIsLoading,
       pointDeCollecteIsLoading,
+      isTransporteur,
+      transporteurUsersIsLoading,
     ]
   );
 

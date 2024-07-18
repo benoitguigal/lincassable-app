@@ -50,4 +50,6 @@ export interface ICollecteItem {
 
 export type UserRole = "staff" | "transporteur";
 
-export type IIdentity = { email: string; appRole: UserRole };
+export type IIdentity = { id: string; email: string; appRole: UserRole };
+
+export type ITransporteurUser = { transporteur_id: number; userId: string };
