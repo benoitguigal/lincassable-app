@@ -16,13 +16,13 @@ import { Space, Table } from "antd";
 import dayjs from "dayjs";
 import "dayjs/locale/fr";
 import {
-  ICollecte,
-  IIdentity,
-  IPointDeCollecte,
-  ITournee,
-  ITransporteur,
-  ITransporteurUser,
-} from "../../interfaces";
+  Collecte,
+  Identity,
+  PointDeCollecte,
+  Tournee,
+  Transporteur,
+  TransporteurUser,
+} from "../../types";
 import { useMemo } from "react";
 import { Chargement } from "../../components/tournee/chargement";
 import { CollecteEditButton } from "../../components/collecte/editButton";
@@ -30,16 +30,16 @@ import { CollecteCreateButton } from "../../components/collecte/createButton";
 
 dayjs.locale("fr"); // use locale globally
 
-export type ICollecteWithPointDeCollecte = ICollecte & {
-  point_de_collecte?: IPointDeCollecte | null;
+export type CollecteWithPointDeCollecte = Collecte & {
+  point_de_collecte?: PointDeCollecte | null;
 };
 
-export type ITourneeWithCollectes = ITournee & {
-  collectes: ICollecteWithPointDeCollecte[];
+export type TourneeWithCollectes = Tournee & {
+  collectes: CollecteWithPointDeCollecte[];
 };
 
 export const TourneeList: React.FC<IResourceComponentsProps> = () => {
-  const identityResponse = useGetIdentity<IIdentity>();
+  const identityResponse = useGetIdentity<Identity>();
 
   const user = useMemo(() => identityResponse.data, [identityResponse]);
 
@@ -50,7 +50,7 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
     data: transporteurUsersData,
     isLoading: transporteurUsersIsLoading,
     status: transporteurUsersStatus,
-  } = useList<ITransporteurUser>({
+  } = useList<TransporteurUser>({
     resource: "transporteur_users",
     queryOptions: { enabled: isTransporteur },
   });
@@ -60,7 +60,7 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
     [transporteurUsersData]
   );
 
-  const { tableProps, tableQueryResult } = useTable<ITournee>({
+  const { tableProps, tableQueryResult } = useTable<Tournee>({
     syncWithLocation: true,
     ...(isTransporteur
       ? {
@@ -88,7 +88,7 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
   );
 
   const { data: collectesData, isLoading: collecteIsLoading } =
-    useList<ICollecte>({
+    useList<Collecte>({
       resource: "collecte",
       filters: [
         {
@@ -108,7 +108,7 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
   );
 
   const { data: transporteursData, isLoading: transporteurIsLoading } =
-    useList<ITransporteur>({
+    useList<Transporteur>({
       resource: "transporteur",
       filters: [
         {
@@ -130,7 +130,7 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
   const transporteurById = useMemo(
     () =>
       transporteursList.reduce<{
-        [key: number]: ITransporteur;
+        [key: number]: Transporteur;
       }>((acc, t) => {
         return { ...acc, [t.id]: t };
       }, {}),
@@ -138,7 +138,7 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
   );
 
   const { data: pointsDeCollecteData, isLoading: pointDeCollecteIsLoading } =
-    useList<IPointDeCollecte>({
+    useList<PointDeCollecte>({
       resource: "point_de_collecte",
       filters: [
         {
@@ -160,14 +160,14 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
   const pointDeCollecteById = useMemo(
     () =>
       pointsDeCollecteList.reduce<{
-        [key: number]: IPointDeCollecte;
+        [key: number]: PointDeCollecte;
       }>((acc, pc) => {
         return { ...acc, [pc.id]: pc };
       }, {}),
     [pointsDeCollecteList]
   );
 
-  const collecteListWithPointDeCollecte: ICollecteWithPointDeCollecte[] =
+  const collecteListWithPointDeCollecte: CollecteWithPointDeCollecte[] =
     useMemo(
       () =>
         collecteList.map((c) => ({
@@ -177,7 +177,7 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
       [collecteList, pointDeCollecteById]
     );
 
-  const tourneeWithCollectes: ITourneeWithCollectes[] = useMemo(
+  const tourneeWithCollectes: TourneeWithCollectes[] = useMemo(
     () =>
       tourneeList.map((t) => ({
         ...t,
@@ -191,7 +191,7 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
   const tourneeById = useMemo(
     () =>
       tourneeWithCollectes.reduce<{
-        [key: string]: ITourneeWithCollectes;
+        [key: string]: TourneeWithCollectes;
       }>((acc, t) => ({ ...acc, [t.id]: t }), {}),
     [tourneeWithCollectes]
   );

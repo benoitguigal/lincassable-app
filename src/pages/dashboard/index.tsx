@@ -1,11 +1,11 @@
 import { PageHeader } from "@refinedev/antd";
 import { StaffDashboard } from "../../components/dashboard/staff";
 import { useGetIdentity } from "@refinedev/core";
-import { IIdentity } from "../../interfaces";
+import { Identity } from "../../types";
 import { TransporteurDashboard } from "../../components/dashboard/transporteur";
 
 export const DashboardPage: React.FC = () => {
-  const { data: identity } = useGetIdentity<IIdentity>();
+  const { data: identity } = useGetIdentity<Identity>();
 
   return (
     <div>

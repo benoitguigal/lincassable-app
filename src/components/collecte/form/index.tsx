@@ -1,15 +1,11 @@
-import {
-  NumberField,
-  UseModalFormReturnType,
-  useSelect,
-} from "@refinedev/antd";
-import { ICollecte, IPointDeCollecte } from "../../../interfaces";
+import { UseModalFormReturnType, useSelect } from "@refinedev/antd";
 import { Form, Input, Select } from "antd";
+import { Collecte, PointDeCollecte } from "../../../types";
 
-type Props = Pick<UseModalFormReturnType<ICollecte>, "formProps">;
+type Props = Pick<UseModalFormReturnType<Collecte>, "formProps">;
 
 export const CollecteForm: React.FC<Props> = ({ formProps }) => {
-  const { selectProps } = useSelect<IPointDeCollecte>({
+  const { selectProps } = useSelect<PointDeCollecte>({
     resource: "point_de_collecte",
     optionLabel: "nom",
     optionValue: "id",

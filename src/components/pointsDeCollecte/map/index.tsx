@@ -1,5 +1,5 @@
 import { useList } from "@refinedev/core";
-import { IPointDeCollecte, PointDeCollecteTypeEnum } from "../../../interfaces";
+import { PointDeCollecte, PointDeCollecteTypeEnum } from "../../../types";
 import { Flex } from "antd";
 import { useEffect, useMemo, useRef } from "react";
 import { Map, Marker, Popup } from "mapbox-gl";
@@ -19,7 +19,7 @@ function getMarkerColor(type: PointDeCollecteTypeEnum) {
 }
 
 export const PointsDeCollecteMap: React.FC = () => {
-  const { data: pointsDeCollecteData } = useList<IPointDeCollecte>({
+  const { data: pointsDeCollecteData } = useList<PointDeCollecte>({
     resource: "point_de_collecte",
     pagination: {
       mode: "off",

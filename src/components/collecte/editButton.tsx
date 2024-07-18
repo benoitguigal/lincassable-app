@@ -1,18 +1,18 @@
 import { Button, Modal } from "antd";
-import { ICollecteWithPointDeCollecte } from "../../pages/tournee/list";
+import { CollecteWithPointDeCollecte } from "../../pages/tournee/list";
 import { EditOutlined } from "@ant-design/icons";
 import { DeleteButton, useModalForm } from "@refinedev/antd";
-import { ICollecte } from "../../interfaces";
+import { Collecte } from "../../types";
 import { CollecteForm } from "./form";
 
 type CollecteEditButtonProps = {
-  collecte: ICollecteWithPointDeCollecte;
+  collecte: CollecteWithPointDeCollecte;
 };
 
 export const CollecteEditButton: React.FC<CollecteEditButtonProps> = ({
   collecte,
 }) => {
-  const { modalProps, formProps, show, close } = useModalForm<ICollecte>({
+  const { modalProps, formProps, show, close } = useModalForm<Collecte>({
     resource: "collecte",
     action: "edit",
     warnWhenUnsavedChanges: true,

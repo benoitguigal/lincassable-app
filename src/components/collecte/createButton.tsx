@@ -1,7 +1,7 @@
 import { Button, Modal } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { useModalForm } from "@refinedev/antd";
-import { ICollecte } from "../../interfaces";
+import { Collecte } from "../../types";
 import { CollecteForm } from "./form";
 
 type CollecteCreateButtonProps = {
@@ -11,7 +11,7 @@ type CollecteCreateButtonProps = {
 export const CollecteCreateButton: React.FC<CollecteCreateButtonProps> = ({
   tournee_id,
 }) => {
-  const { modalProps, formProps, show } = useModalForm<ICollecte>({
+  const { modalProps, formProps, show } = useModalForm<Collecte>({
     resource: "collecte",
     action: "create",
     warnWhenUnsavedChanges: true,

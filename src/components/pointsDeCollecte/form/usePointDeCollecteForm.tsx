@@ -1,5 +1,5 @@
 import { UseFormProps, useForm } from "@refinedev/antd";
-import { IPointDeCollecte } from "../../../interfaces";
+import { PointDeCollecte } from "../../../types";
 import { useEffect, useState } from "react";
 import { Feature, LatLng, autocomplete } from "../../../utility/geocoding";
 
@@ -8,7 +8,7 @@ type Props = {
 };
 
 export const usePointDeCollecteForm = ({ action }: Props) => {
-  const form = useForm<IPointDeCollecte>({ action });
+  const form = useForm<PointDeCollecte>({ action });
 
   const setFieldValue = form.formProps.form?.setFieldValue;
 
