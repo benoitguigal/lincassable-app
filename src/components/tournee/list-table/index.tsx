@@ -13,17 +13,21 @@ import {
   ShowButton,
   DeleteButton,
 } from "@refinedev/antd";
-import { useMemo } from "react";
+import { CSSProperties, useMemo, useState } from "react";
 import { BaseRecord, useList } from "@refinedev/core";
-import { Space, Table } from "antd";
+import { Flex, Space, Table, Tag, theme } from "antd";
 import { CollecteEditButton } from "../../collecte/editButton";
 import { CollecteCreateButton } from "../../collecte/createButton";
 import { Chargement } from "../chargement";
+import dayjs from "dayjs";
 
 type TourneeListTableProps = {
   user: Identity;
   transporteur: number | null;
 };
+
+type TagEnum = "Tous" | "Past" | "Future";
+
 export type TourneeWithCollectes = Tournee & {
   collectes: CollecteWithPointDeCollecte[];
 };
@@ -32,30 +36,46 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({
   user,
   transporteur,
 }) => {
+  const { token } = theme.useToken();
+
   const isTransporteur = user.appRole === "transporteur";
   const isStaff = user.appRole === "staff";
 
-  const { tableProps, tableQueryResult } = useTable<Tournee>({
-    syncWithLocation: true,
-    sorters: { permanent: [{ field: "date", order: "desc" }] },
-    ...(isTransporteur
-      ? {
-          filters: {
-            permanent: [
-              {
-                field: "transporteur_id",
-                operator: "eq",
-                value: transporteur,
-              },
-            ],
-          },
-        }
-      : {}),
-    queryOptions: {
-      enabled:
-        Boolean(user) && (isStaff || (isTransporteur && Boolean(transporteur))),
-    },
-  });
+  const [currentTag, setCurrentTag] = useState<TagEnum>("Tous");
+
+  const { tableProps, tableQueryResult, filters, setFilters } =
+    useTable<Tournee>({
+      syncWithLocation: true,
+      sorters: { permanent: [{ field: "date", order: "desc" }] },
+      filters: {
+        mode: "server",
+        ...(isTransporteur
+          ? {
+              permanent: [
+                {
+                  field: "transporteur_id",
+                  operator: "eq",
+                  value: transporteur,
+                },
+              ],
+            }
+          : {}),
+      },
+      queryOptions: {
+        enabled:
+          Boolean(user) &&
+          (isStaff || (isTransporteur && Boolean(transporteur))),
+      },
+    });
+
+  const dateFilter = useMemo(() => {
+    return filters.find((filter) => {
+      if ("field" in filter) {
+        return filter.field === "date";
+      }
+      return false;
+    });
+  }, [filters]);
 
   const tourneeList = useMemo(
     () => tableQueryResult?.data?.data ?? [],
@@ -174,77 +194,151 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({
   const loading = useMemo(
     () =>
       tableProps.loading ||
-      collecteIsLoading ||
-      transporteurIsLoading ||
-      pointDeCollecteIsLoading,
+      (tourneeList &&
+        tourneeList.length > 0 &&
+        (collecteIsLoading ||
+          transporteurIsLoading ||
+          pointDeCollecteIsLoading)),
     [
       tableProps.loading,
+      tourneeList,
       collecteIsLoading,
       transporteurIsLoading,
       pointDeCollecteIsLoading,
     ]
   );
 
+  const activeTageStyle: CSSProperties = {
+    color: "#EAEDEC",
+    backgroundColor: token.colorPrimary,
+  };
+
+  function handleTagClick(tag: TagEnum) {
+    setCurrentTag(tag);
+    if (tag === "Tous") {
+      setFilters(
+        filters.filter((f) => !("field" in f && f.field === "date")),
+        "replace"
+      );
+    } else {
+      const today = dayjs().format("YYYY-MM-DD");
+      const operator = tag === "Future" ? "gte" : "lt";
+      let newFilters = filters;
+      if (dateFilter) {
+        if (dateFilter.operator !== operator) {
+          newFilters = filters.map((f) => {
+            if ("field" in f && f.field === "date") {
+              return { ...f, operator, value: today };
+            }
+            return f;
+          });
+        }
+      } else {
+        newFilters = [
+          ...filters,
+          {
+            field: "date",
+            operator: operator,
+            value: today,
+          },
+        ];
+      }
+      setFilters(newFilters, "replace");
+    }
+  }
+
   return (
-    <Table {...tableProps} loading={loading} rowKey="id">
-      <Table.Column
-        dataIndex={["date"]}
-        title="Date"
-        render={(value: any) => (
-          <DateField value={value} format="ddd DD MMM YY" locales="fr" />
-        )}
-      />
-      <Table.Column dataIndex="zone" title="Zone" />
-      <Table.Column
-        dataIndex="transporteur_id"
-        title="Transporteur"
-        render={(id: number) => {
-          if (transporteurById && id) {
-            return transporteurById[id]?.nom;
-          }
-          return null;
-        }}
-      />
-      <Table.Column
-        dataIndex="points_de_collecte"
-        title="Collectes"
-        width={400}
-        render={(_, record: BaseRecord) => {
-          if (record.id) {
-            const collectes = tourneeById[record.id].collectes.map(
-              (collecte) => <CollecteEditButton collecte={collecte} />
-            );
-            const addCollecte = (
-              <CollecteCreateButton tournee_id={record.id as number} />
-            );
-            return <Space wrap>{[...collectes, addCollecte]}</Space>;
-          }
-          return null;
-        }}
-      />
-      <Table.Column
-        dataIndex="chargement"
-        title="Chargement total"
-        render={(_, record: BaseRecord) => {
-          if (record.id) {
-            const collectes = tourneeById[record.id].collectes;
-            return <Chargement collectes={collectes} />;
-          }
-          return null;
-        }}
-      />
-      <Table.Column
-        title="Actions"
-        dataIndex="actions"
-        render={(_, record: BaseRecord) => (
-          <Space>
-            <EditButton hideText size="small" recordItemId={record.id} />
-            <ShowButton hideText size="small" recordItemId={record.id} />
-            <DeleteButton hideText size="small" recordItemId={record.id} />
-          </Space>
-        )}
-      />
-    </Table>
+    <>
+      <Flex style={{ marginBottom: "2em", marginTop: "1em" }}>
+        <Tag
+          style={{
+            cursor: "pointer",
+            ...(currentTag === "Tous" ? activeTageStyle : {}),
+          }}
+          onClick={() => handleTagClick("Tous")}
+        >
+          Tous
+        </Tag>
+        <Tag
+          style={{
+            cursor: "pointer",
+            ...(currentTag === "Future" ? activeTageStyle : {}),
+          }}
+          onClick={() => handleTagClick("Future")}
+        >
+          À venir
+        </Tag>
+        <Tag
+          style={{
+            cursor: "pointer",
+            ...(currentTag === "Past" ? activeTageStyle : {}),
+          }}
+          onClick={() => handleTagClick("Past")}
+        >
+          Passées
+        </Tag>
+      </Flex>
+
+      <Table {...tableProps} loading={loading} rowKey="id">
+        <Table.Column
+          dataIndex={["date"]}
+          title="Date"
+          render={(value: any) => (
+            <DateField value={value} format="ddd DD MMM YY" locales="fr" />
+          )}
+        />
+        <Table.Column dataIndex="zone" title="Zone" />
+        <Table.Column
+          dataIndex="transporteur_id"
+          title="Transporteur"
+          render={(id: number) => {
+            if (transporteurById && id) {
+              return transporteurById[id]?.nom;
+            }
+            return null;
+          }}
+        />
+        <Table.Column
+          dataIndex="points_de_collecte"
+          title="Collectes"
+          width={400}
+          render={(_, record: BaseRecord) => {
+            if (record.id) {
+              const collectes = tourneeById[record.id].collectes.map(
+                (collecte) => <CollecteEditButton collecte={collecte} />
+              );
+              const addCollecte = (
+                <CollecteCreateButton tournee_id={record.id as number} />
+              );
+              return <Space wrap>{[...collectes, addCollecte]}</Space>;
+            }
+            return null;
+          }}
+        />
+        <Table.Column
+          dataIndex="chargement"
+          title="Chargement total"
+          render={(_, record: BaseRecord) => {
+            if (record.id) {
+              const collectes = tourneeById[record.id].collectes;
+              return <Chargement collectes={collectes} />;
+            }
+            return null;
+          }}
+        />
+        <Table.Column
+          title="Actions"
+          dataIndex="actions"
+          render={(_, record: BaseRecord) => (
+            <Space>
+              <EditButton hideText size="small" recordItemId={record.id} />
+              <ShowButton hideText size="small" recordItemId={record.id} />
+              <DeleteButton hideText size="small" recordItemId={record.id} />
+            </Space>
+          )}
+        />
+      </Table>
+    </>
   );
 };
 
