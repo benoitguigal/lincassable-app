@@ -58,7 +58,9 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
     [pointsDeCollecteList]
   );
 
-  const loading = tableProps.loading || pointDeCollecteIsLoading;
+  const loading =
+    tableProps.loading ||
+    (collecteList && collecteList.length > 0 && pointDeCollecteIsLoading);
 
   return (
     <Table

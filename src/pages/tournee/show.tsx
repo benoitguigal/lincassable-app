@@ -1,11 +1,18 @@
 import { useShow, useOne } from "@refinedev/core";
 import { Show, DateField, TextField } from "@refinedev/antd";
-import { Segmented, Typography } from "antd";
+import { Button, Segmented, Spin, Typography } from "antd";
 import CollecteListTable from "../../components/collecte/listTable";
 import { Tournee, Transporteur } from "../../types";
-import { EnvironmentOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import {
+  EnvironmentOutlined,
+  UnorderedListOutlined,
+  PrinterOutlined,
+} from "@ant-design/icons";
 import { useState } from "react";
 import TourneeMap from "../../components/tournee/map";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import BonDeTourneePdf from "../../components/pdf/BonDeTourneePdf";
+import BonDeTourneeDownloadLink from "../../components/pdf/BonDeTourneeDownloadLink";
 
 const { Title } = Typography;
 
@@ -62,6 +69,7 @@ export const TourneeShow = () => {
           ]}
           onChange={handleViewChange}
         />,
+        <BonDeTourneeDownloadLink tournee={record} />,
         props.defaultButtons,
       ]}
     >
@@ -69,8 +77,6 @@ export const TourneeShow = () => {
         <>
           <Title level={5}>Date</Title>
           <DateField value={record?.date} />
-          <Title level={5}>Statut</Title>
-          <TextField value={record?.statut} />
           <Title level={5}>Zone</Title>
           <TextField value={record?.zone} />
           <Title level={5}>Transporteur</Title>
