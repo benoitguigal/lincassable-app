@@ -7,17 +7,18 @@ import { EnvironmentOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { PointsDeCollecteMap } from "../../components/pointsDeCollecte/map";
 
 type View = "table" | "map";
+const viewName = "point-de-collecte-view";
 
 export const PointDeCollecteList: React.FC<IResourceComponentsProps> = () => {
   const { isLoading, triggerExport } = useExport();
 
   const [view, setView] = useState<View>(
-    (localStorage.getItem("store-view") as View) || "table"
+    (localStorage.getItem(viewName) as View) || "table"
   );
 
   const handleViewChange = (value: View) => {
     setView(value);
-    localStorage.setItem("store-view", value);
+    localStorage.setItem(viewName, value);
   };
 
   return (

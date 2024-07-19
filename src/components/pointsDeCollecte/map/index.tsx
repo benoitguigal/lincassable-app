@@ -18,12 +18,23 @@ function getMarkerColor(type: PointDeCollecteTypeEnum) {
   }
 }
 
-export const PointsDeCollecteMap: React.FC = () => {
+type PointsDeCollecteMapProps = {
+  pointDeCollecteIds?: number[];
+};
+
+export const PointsDeCollecteMap: React.FC<PointsDeCollecteMapProps> = ({
+  pointDeCollecteIds,
+}) => {
   const { data: pointsDeCollecteData } = useList<PointDeCollecte>({
     resource: "point_de_collecte",
     pagination: {
       mode: "off",
     },
+    ...(pointDeCollecteIds
+      ? {
+          filters: [{ field: "id", operator: "in", value: pointDeCollecteIds }],
+        }
+      : {}),
   });
 
   const pointsDeCollecte = useMemo(
@@ -43,6 +54,11 @@ export const PointsDeCollecteMap: React.FC = () => {
         zoom: 8,
       });
 
+    let maxLng = -180;
+    let minLng = 180;
+    let maxLat = -90;
+    let minLat = 90;
+
     for (const pointDeCollecte of pointsDeCollecte) {
       if (pointDeCollecte.latitude && pointDeCollecte.longitude) {
         const popupContent =
@@ -57,7 +73,21 @@ export const PointsDeCollecteMap: React.FC = () => {
         if (map.current) {
           marker.addTo(map.current);
         }
+        maxLng = Math.max(maxLng, pointDeCollecte.longitude);
+        minLng = Math.min(minLng, pointDeCollecte.longitude);
+        maxLat = Math.max(maxLat, pointDeCollecte.latitude);
+        minLat = Math.min(minLat, pointDeCollecte.latitude);
       }
+    }
+
+    if (map.current) {
+      map.current.fitBounds(
+        [
+          [maxLng, minLat], // [lng, lat] - southwestern corner of the bounds
+          [minLng, maxLat], // [lng, lat] - northeastern corner of the bounds
+        ],
+        { padding: { top: 50, bottom: 50, left: 50, right: 50 } }
+      );
     }
   }, [pointsDeCollecte]);
 

@@ -5,6 +5,8 @@
   "type": "module",
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
+    "@david.kucsai/react-pdf-table": "^0.4.1",
+    "@react-pdf/renderer": "^3.4.4",
     "@refinedev/antd": "^5.42.0",
     "@refinedev/cli": "^2.16.36",
     "@refinedev/core": "^4.53.0",
@@ -44,7 +46,7 @@
     "build": "tsc && refine build",
     "preview": "refine start",
     "refine": "refine",
-    "typegen": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID --schema public > src/types/supabase.ts"
+    "typegen": "supabase gen types --lang=typescript --project-id $SUPABASE_PROJECT_ID --schema public > src/types/supabase.ts"
   },
   "browserslist": {
     "production": [

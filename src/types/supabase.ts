@@ -129,7 +129,6 @@ export type Database = {
           date: string
           id: number
           point_de_massification_id: number
-          statut: string | null
           transporteur_id: number
           zone: string | null
         }
@@ -138,7 +137,6 @@ export type Database = {
           date: string
           id?: number
           point_de_massification_id: number
-          statut?: string | null
           transporteur_id: number
           zone?: string | null
         }
@@ -147,7 +145,6 @@ export type Database = {
           date?: string
           id?: number
           point_de_massification_id?: number
-          statut?: string | null
           transporteur_id?: number
           zone?: string | null
         }

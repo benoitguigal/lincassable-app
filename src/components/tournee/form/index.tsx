@@ -1,19 +1,16 @@
 import { PointDeCollecte, Tournee, Transporteur } from "../../../types";
 import dayjs from "dayjs";
 import { DatePicker, Form, Select } from "antd";
-import { UseFormReturnType, useSelect } from "@refinedev/antd";
+import { UseFormProps, UseFormReturnType, useSelect } from "@refinedev/antd";
 import { zoneDeCollecteOptions } from "../../../utility/options";
-import { FormListItem } from "../../form";
+import CollecteListTable from "../../collecte/listTable";
 
-type Props = Pick<UseFormReturnType<Tournee>, "formProps">;
+type Props = {
+  form: UseFormReturnType<Tournee>;
+  action: UseFormProps["action"];
+};
 
-export const TourneeForm: React.FC<Props> = ({ formProps }) => {
-  const { selectProps: pointDeCollecteSelectProps } =
-    useSelect<PointDeCollecte>({
-      resource: "point_de_collecte",
-      optionLabel: "nom",
-    });
-
+export const TourneeForm: React.FC<Props> = ({ form, action }) => {
   const { selectProps: pointDeMassificationSelectProps } =
     useSelect<PointDeCollecte>({
       resource: "point_de_collecte",
@@ -27,7 +24,7 @@ export const TourneeForm: React.FC<Props> = ({ formProps }) => {
   });
 
   return (
-    <Form {...formProps} layout="vertical">
+    <Form {...form.formProps} layout="vertical">
       <Form.Item
         label="Date"
         name={["date"]}
@@ -89,17 +86,9 @@ export const TourneeForm: React.FC<Props> = ({ formProps }) => {
         />
       </Form.Item>
 
-      <FormListItem
-        label="Point de collecte"
-        labelSingular="point de collecte"
-        name="points_de_collecte"
-      >
-        <Select
-          placeholder="Choisir un point de collecte"
-          style={{ width: 300 }}
-          {...pointDeCollecteSelectProps}
-        />
-      </FormListItem>
+      {action === "edit" && (
+        <CollecteListTable tournee_id={form.id as number} canEdit={true} />
+      )}
     </Form>
   );
 };

@@ -1,5 +1,5 @@
 import { TourneeFormWrapper } from "../../components/tournee/form/wrapper";
 
-export const EditCreate = () => {
+export const TourneeEdit = () => {
   return <TourneeFormWrapper action="edit" />;
 };
