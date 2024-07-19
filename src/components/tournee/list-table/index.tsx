@@ -37,6 +37,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({
 
   const { tableProps, tableQueryResult } = useTable<Tournee>({
     syncWithLocation: true,
+    sorters: { permanent: [{ field: "date", order: "desc" }] },
     ...(isTransporteur
       ? {
           filters: {

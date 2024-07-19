@@ -68,7 +68,7 @@ const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({
           return (
             <div>
               <div>{tournee.zone}</div>
-              <div>{transporteurById[tournee.transporteur_id].nom}</div>
+              <div>{transporteurById[tournee.transporteur_id]?.nom}</div>
             </div>
           );
         }
