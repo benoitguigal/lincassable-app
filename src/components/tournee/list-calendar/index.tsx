@@ -9,13 +9,9 @@ dayjs.locale("fr"); // use locale globally
 
 type TourneeListCalendarProps = {
   user: Identity;
-  transporteur: number | null;
 };
 
-const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({
-  user,
-  transporteur,
-}) => {
+const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({ user }) => {
   const isTransporteur = user.appRole === "transporteur";
 
   const { data: tourneeData } = useList<Tournee>({
@@ -23,10 +19,14 @@ const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({
     pagination: {
       mode: "off",
     },
-    ...(isTransporteur && transporteur
+    ...(isTransporteur
       ? {
           filters: [
-            { field: "transporteur_id", operator: "eq", value: transporteur },
+            {
+              field: "transporteur_id",
+              operator: "eq",
+              value: user.transporteurId,
+            },
           ],
         }
       : {}),

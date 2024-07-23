@@ -17,7 +17,12 @@ export type Transporteur = Database["public"]["Tables"]["transporteur"]["Row"];
 export type TransporteurUser =
   Database["public"]["Tables"]["transporteur_users"]["Row"];
 
-export type Identity = { id: string; email: string; appRole: UserRole };
+export type Identity = {
+  id: string;
+  email: string;
+  appRole: UserRole;
+  transporteurId: number;
+};
 export type CollecteWithPointDeCollecte = Collecte & {
   point_de_collecte?: PointDeCollecte | null;
 };

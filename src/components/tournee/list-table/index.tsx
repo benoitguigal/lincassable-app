@@ -23,7 +23,6 @@ import dayjs from "dayjs";
 
 type TourneeListTableProps = {
   user: Identity;
-  transporteur: number | null;
 };
 
 type TagEnum = "Tous" | "Past" | "Future";
@@ -32,14 +31,10 @@ export type TourneeWithCollectes = Tournee & {
   collectes: CollecteWithPointDeCollecte[];
 };
 
-const TourneeListTable: React.FC<TourneeListTableProps> = ({
-  user,
-  transporteur,
-}) => {
+const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
   const { token } = theme.useToken();
 
   const isTransporteur = user.appRole === "transporteur";
-  const isStaff = user.appRole === "staff";
 
   const [currentTag, setCurrentTag] = useState<TagEnum>("Tous");
 
@@ -55,16 +50,11 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({
                 {
                   field: "transporteur_id",
                   operator: "eq",
-                  value: transporteur,
+                  value: user.transporteurId,
                 },
               ],
             }
           : {}),
-      },
-      queryOptions: {
-        enabled:
-          Boolean(user) &&
-          (isStaff || (isTransporteur && Boolean(transporteur))),
       },
     });
 

@@ -1,13 +1,12 @@
 import {
   IResourceComponentsProps,
   useGetIdentity,
-  useList,
   useNavigation,
 } from "@refinedev/core";
 import { CreateButton, List } from "@refinedev/antd";
 import dayjs from "dayjs";
 import "dayjs/locale/fr";
-import { Identity, TransporteurUser } from "../../types";
+import { Identity } from "../../types";
 import { useMemo, useState } from "react";
 import TourneeListTable from "../../components/tournee/list-table";
 import { Segmented } from "antd";
@@ -35,25 +34,6 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
   const identityResponse = useGetIdentity<Identity>();
 
   const user = useMemo(() => identityResponse.data, [identityResponse]);
-
-  const isTransporteur = user?.appRole === "transporteur";
-
-  const { data: transporteurUsersData, status: transporteurUsersStatus } =
-    useList<TransporteurUser>({
-      resource: "transporteur_users",
-      queryOptions: { enabled: isTransporteur },
-    });
-
-  const transporteur = useMemo(() => {
-    if (transporteurUsersStatus === "success") {
-      const transporteurIds =
-        transporteurUsersData?.data.map((tu) => tu.transporteur_id) ?? [];
-      if (transporteurIds.length) {
-        return transporteurIds[0];
-      }
-    }
-    return null;
-  }, [transporteurUsersData, transporteurUsersStatus]);
 
   // const loading = useMemo(
   //   () => isTransporteur && transporteurUsersIsLoading,
@@ -97,12 +77,8 @@ export const TourneeList: React.FC<IResourceComponentsProps> = () => {
         </CreateButton>,
       ]}
     >
-      {view === "table" && user && (
-        <TourneeListTable user={user} transporteur={transporteur} />
-      )}
-      {view === "calendar" && user && (
-        <TourneeListCalendar user={user} transporteur={transporteur} />
-      )}
+      {view === "table" && user && <TourneeListTable user={user} />}
+      {view === "calendar" && user && <TourneeListCalendar user={user} />}
     </List>
   );
 };
