@@ -3,7 +3,7 @@ import { supabaseClient } from "./utility";
 import { jwtDecode } from "jwt-decode";
 import { UserRole } from "./types";
 
-type PermissionResponse = { role: UserRole };
+type PermissionResponse = { role: UserRole; transporteurId?: number | null };
 
 type AuthProvider = Omit<RefineAuthProvider, "getPermissions"> & {
   getPermissions: () => Promise<PermissionResponse | null>;
@@ -15,9 +15,12 @@ const getPermissions = async () => {
   if (session) {
     const jwt = jwtDecode<{
       user_role: UserRole;
+      transporteur_id: number;
     }>(session.access_token);
     const role = jwt.user_role;
-    return { role };
+    const transporteur_id =
+      role === "transporteur" ? jwt.transporteur_id : null;
+    return { role, transporteurId: transporteur_id };
   }
   return null;
 };
@@ -246,6 +249,7 @@ const authProvider: AuthProvider = {
         ...data.user,
         name: data.user.email,
         appRole: permisssions?.role,
+        transporteurId: permisssions?.transporteurId,
       };
     }
 
