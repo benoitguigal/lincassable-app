@@ -1,17 +1,24 @@
 import { useShow } from "@refinedev/core";
-import { Show, TextField, EmailField } from "@refinedev/antd";
+import { Show, TextField, EmailField, UrlField } from "@refinedev/antd";
 import { Typography } from "antd";
 import { PointDeCollecte } from "../../types";
 import { PointDeCollecteMap } from "../../components/pointsDeCollecte/form/map";
 import { PointDeCollecteType } from "../../components/pointsDeCollecte";
+import LienFormulairePointDeCollecteDownloadLink from "../../components/pdf/LienFormulairePointDeCollecteDownloadLink";
 
 const { Title } = Typography;
+
+const VITE_HOST = import.meta.env.VITE_HOST;
 
 export const PointDeCollecteShow = () => {
   const { queryResult } = useShow<PointDeCollecte>();
   const { data, isLoading } = queryResult;
 
   const pointDeCollecte = data?.data;
+
+  const pointDeCollecteFormulaireUrl = pointDeCollecte
+    ? `${VITE_HOST}/point-de-collecte/taux-de-remplissage/${pointDeCollecte.id}?nom=${pointDeCollecte.nom}`
+    : null;
 
   return (
     <Show isLoading={isLoading} breadcrumb={false}>
@@ -55,6 +62,18 @@ export const PointDeCollecteShow = () => {
           <TextField value={item} key={item} />
         </div>
       ))}
+      <Title level={5}>Formulaire Taux de remplissage</Title>
+      {pointDeCollecte && pointDeCollecteFormulaireUrl && (
+        <>
+          <div>
+            <UrlField value={pointDeCollecteFormulaireUrl} />
+          </div>
+          <LienFormulairePointDeCollecteDownloadLink
+            pointDeCollecte={pointDeCollecte}
+            url={pointDeCollecteFormulaireUrl}
+          />
+        </>
+      )}
     </Show>
   );
 };

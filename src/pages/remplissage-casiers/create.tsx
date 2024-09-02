@@ -1,46 +1,27 @@
 import React from "react";
-import { IResourceComponentsProps, useCreate, useOne } from "@refinedev/core";
-import { Form, Input, Button, Flex } from "antd";
-import { useParams } from "react-router-dom";
+import { IResourceComponentsProps, useCreate } from "@refinedev/core";
+import { Form, Input, Button } from "antd";
+import { useParams, useSearchParams } from "react-router-dom";
 import PictogrammeMagasin from "../../static/images/picto_magasin.png";
 import PictogrammeBouteilleCaisse from "../../static/images/picto_bouteilles_caisses.png";
 import LincassableLogo from "../../static/images/lincassable_logo.png";
 
-export const CreateTauxDeRemplissage: React.FC<
-  IResourceComponentsProps
-> = () => {
-  // const { formProps, saveButtonProps, queryResult } = useForm({
-  //   action: "create",
-  //   resource: "taux_de_remplissage",
-  //   redirect: false,
-  //   successNotification: (data, values, resource) => {
-  //     return {
-  //       description: "Nombre de casiers plein enregistré",
-  //       message: "Le nombre de casiers pleins a bien été pris en compte",
-  //       type: "success",
-  //     };
-  //   },
-  // });
-
-  const { id: parmamId } = useParams();
-
-  const id = parmamId ?? "1";
-
-  const { data: pointDeCollecteData, error: pointDeCollecteError } = useOne({
-    resource: "point_de_collecte",
-    id,
-  });
+const CreateRemplissageCasiers: React.FC<IResourceComponentsProps> = () => {
+  const { id: pointDeCollecteId } = useParams();
 
   const { mutate } = useCreate();
 
+  const [searchParams] = useSearchParams();
+
   type FormValues = {
-    nombre_contenant_plein: number;
-    point_de_collecte: string;
+    nb_casiers_plein: number;
+    nb_casiers_total: number;
+    point_de_collecte_id: number;
   };
 
   function onSubmit(values: FormValues) {
     return mutate({
-      resource: "taux_de_remplissage",
+      resource: "remplissage_casiers",
       values,
       successNotification: () => ({
         description: "Nombre de casiers pleins enregistré",
@@ -51,9 +32,7 @@ export const CreateTauxDeRemplissage: React.FC<
     });
   }
 
-  if (pointDeCollecteData) {
-    const { nom, id: pointDeCollecteId } = pointDeCollecteData.data;
-
+  if (pointDeCollecteId) {
     return (
       <div
         style={{
@@ -76,22 +55,31 @@ export const CreateTauxDeRemplissage: React.FC<
           </div>
 
           <h2 style={{ paddingTop: 20 }}>Formulaire point de vente</h2>
-          <h3>{nom}</h3>
+          <h3>{searchParams.get("nom") ?? ""}</h3>
           <Form
             layout="vertical"
             style={{ maxWidth: 200 }}
             onFinish={(values) =>
-              onSubmit({ ...values, point_de_collecte: pointDeCollecteId })
+              onSubmit({
+                ...values,
+                point_de_collecte_id: parseInt(pointDeCollecteId),
+              })
             }
           >
             <Form.Item
               label="Nombre de casiers pleins"
-              name={"nombre_contenant_plein"}
+              name={"nb_casiers_plein"}
               rules={[
                 {
                   required: true,
                 },
               ]}
+            >
+              <Input type="number" />
+            </Form.Item>
+            <Form.Item
+              label="Stock total de casiers (vide et plein)"
+              name={"nb_casiers_total"}
             >
               <Input type="number" />
             </Form.Item>
@@ -104,3 +92,5 @@ export const CreateTauxDeRemplissage: React.FC<
 
   return null;
 };
+
+export default CreateRemplissageCasiers;
