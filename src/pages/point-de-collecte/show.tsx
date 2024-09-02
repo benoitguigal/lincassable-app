@@ -5,6 +5,7 @@ import { PointDeCollecte } from "../../types";
 import { PointDeCollecteMap } from "../../components/pointsDeCollecte/form/map";
 import { PointDeCollecteType } from "../../components/pointsDeCollecte";
 import LienFormulairePointDeCollecteDownloadLink from "../../components/pdf/LienFormulairePointDeCollecteDownloadLink";
+import { ContenantDeCollecteType } from "../../components/pointsDeCollecte/contenantDeCollecteType";
 
 const { Title } = Typography;
 
@@ -17,7 +18,7 @@ export const PointDeCollecteShow = () => {
   const pointDeCollecte = data?.data;
 
   const pointDeCollecteFormulaireUrl = pointDeCollecte
-    ? `${VITE_HOST}/point-de-collecte/taux-de-remplissage/${pointDeCollecte.id}?nom=${pointDeCollecte.nom}`
+    ? `${VITE_HOST}/point-de-collecte/taux-de-remplissage/${pointDeCollecte.id}?nom=${pointDeCollecte.nom}&contenant_collecte=${pointDeCollecte.contenant_collecte_type}`
     : null;
 
   return (
@@ -62,6 +63,14 @@ export const PointDeCollecteShow = () => {
           <TextField value={item} key={item} />
         </div>
       ))}
+      <Title level={5}>Type de contenant de collecte</Title>
+      {pointDeCollecte && pointDeCollecte.contenant_collecte_type && (
+        <div>
+          <ContenantDeCollecteType
+            value={pointDeCollecte.contenant_collecte_type}
+          />
+        </div>
+      )}
       <Title level={5}>Formulaire Taux de remplissage</Title>
       {pointDeCollecte && pointDeCollecteFormulaireUrl && (
         <>

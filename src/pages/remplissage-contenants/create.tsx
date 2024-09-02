@@ -21,12 +21,12 @@ const CreateRemplissageCasiers: React.FC<IResourceComponentsProps> = () => {
 
   function onSubmit(values: FormValues) {
     return mutate({
-      resource: "remplissage_casiers",
+      resource: "remplissage_contenants",
       values,
       successNotification: () => ({
-        description: "Nombre de casiers pleins enregistré",
+        description: "Taux de remplissage enregistré",
         message:
-          "Merci d'avoir renseigné le nombre de casiers pleins, nous reviendrons vers vous rapidement",
+          "Merci d'avoir renseigné le taux de remplissage de vos contenants de collecte",
         type: "success",
       }),
     });
@@ -58,7 +58,7 @@ const CreateRemplissageCasiers: React.FC<IResourceComponentsProps> = () => {
           <h3>{searchParams.get("nom") ?? ""}</h3>
           <Form
             layout="vertical"
-            style={{ maxWidth: 200 }}
+            style={{ maxWidth: 300 }}
             onFinish={(values) =>
               onSubmit({
                 ...values,
@@ -66,23 +66,42 @@ const CreateRemplissageCasiers: React.FC<IResourceComponentsProps> = () => {
               })
             }
           >
-            <Form.Item
-              label="Nombre de casiers pleins"
-              name={"nb_casiers_plein"}
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input type="number" />
-            </Form.Item>
-            <Form.Item
-              label="Stock total de casiers (vide et plein)"
-              name={"nb_casiers_total"}
-            >
-              <Input type="number" />
-            </Form.Item>
+            {searchParams.get("contenant_collecte") === "palox" ? (
+              <>
+                <Form.Item
+                  label="Taux de remplissage palox (en %)"
+                  name={"remplissage_palox"}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input type="number" min={0} max={100} />
+                </Form.Item>
+              </>
+            ) : (
+              <>
+                <Form.Item
+                  label="Nombre de casiers pleins"
+                  name={"nb_casiers_plein"}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input type="number" min={0} />
+                </Form.Item>
+                <Form.Item
+                  label="Stock total de casiers (vide et plein)"
+                  name={"nb_casiers_total"}
+                >
+                  <Input type="number" min={0} />
+                </Form.Item>
+              </>
+            )}
+
             <Button htmlType="submit">Enregistrer</Button>
           </Form>
         </div>

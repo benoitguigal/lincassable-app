@@ -61,6 +61,9 @@ export type Database = {
         Row: {
           adresse: string
           contacts: string[]
+          contenant_collecte_type:
+            | Database["public"]["Enums"]["contenant_collecte_type"]
+            | null
           created_at: string
           emails: string[]
           horaires: string | null
@@ -70,12 +73,16 @@ export type Database = {
           longitude: number | null
           nom: string
           setup_date: string | null
+          stock_contenants: number | null
           telephones: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
         }
         Insert: {
           adresse: string
           contacts?: string[]
+          contenant_collecte_type?:
+            | Database["public"]["Enums"]["contenant_collecte_type"]
+            | null
           created_at?: string
           emails?: string[]
           horaires?: string | null
@@ -85,12 +92,16 @@ export type Database = {
           longitude?: number | null
           nom: string
           setup_date?: string | null
+          stock_contenants?: number | null
           telephones?: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
         }
         Update: {
           adresse?: string
           contacts?: string[]
+          contenant_collecte_type?:
+            | Database["public"]["Enums"]["contenant_collecte_type"]
+            | null
           created_at?: string
           emails?: string[]
           horaires?: string | null
@@ -100,10 +111,46 @@ export type Database = {
           longitude?: number | null
           nom?: string
           setup_date?: string | null
+          stock_contenants?: number | null
           telephones?: string[]
           type?: Database["public"]["Enums"]["point_de_collecte_type"]
         }
         Relationships: []
+      }
+      remplissage_contenants: {
+        Row: {
+          date: string
+          id: number
+          nb_casiers_plein: number | null
+          nb_casiers_total: number | null
+          point_de_collecte_id: number
+          remplissage_palox: number | null
+        }
+        Insert: {
+          date?: string
+          id?: number
+          nb_casiers_plein?: number | null
+          nb_casiers_total?: number | null
+          point_de_collecte_id: number
+          remplissage_palox?: number | null
+        }
+        Update: {
+          date?: string
+          id?: number
+          nb_casiers_plein?: number | null
+          nb_casiers_total?: number | null
+          point_de_collecte_id?: number
+          remplissage_palox?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "remplissage_casiers_point_de_collecte_id_fkey"
+            columns: ["point_de_collecte_id"]
+            isOneToOne: false
+            referencedRelation: "point_de_collecte"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       role_permissions: {
         Row: {
@@ -267,6 +314,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      authorize_transporteur: {
+        Args: {
+          transporteur: number
+        }
+        Returns: boolean
+      }
       set_role: {
         Args: {
           event: Json
@@ -297,6 +350,7 @@ export type Database = {
         | "transporteur_users.insert"
         | "transporteur_users.delete"
       app_role: "staff" | "transporteur"
+      contenant_collecte_type: "casier_x12" | "palox"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
     }
     CompositeTypes: {

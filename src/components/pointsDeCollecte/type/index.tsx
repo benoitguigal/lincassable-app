@@ -1,8 +1,9 @@
 import { Tag } from "antd";
 import React from "react";
+import { PointDeCollecteTypeEnum } from "../../../types";
 
 type PointDeCollecteTypeProps = {
-  value: "Magasin" | "Producteur" | "Massification";
+  value: PointDeCollecteTypeEnum;
 };
 
 export const PointDeCollecteType: React.FC<PointDeCollecteTypeProps> = ({

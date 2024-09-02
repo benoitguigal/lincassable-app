@@ -3,10 +3,16 @@ import { Database } from "./supabase";
 export type PointDeCollecteTypeEnum =
   Database["public"]["Enums"]["point_de_collecte_type"];
 
+export type ContenantDeCollecteTypeEnum =
+  Database["public"]["Enums"]["contenant_collecte_type"];
+
 export type UserRole = Database["public"]["Enums"]["app_role"];
 
 export type PointDeCollecte =
   Database["public"]["Tables"]["point_de_collecte"]["Row"];
+
+export type RemplissageContenants =
+  Database["public"]["Tables"]["remplissage_contenants"]["Row"];
 
 export type Tournee = Database["public"]["Tables"]["tournee"]["Row"];
 

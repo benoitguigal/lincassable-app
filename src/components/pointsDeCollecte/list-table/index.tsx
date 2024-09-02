@@ -1,19 +1,20 @@
 import React from "react";
-import { BaseRecord, getDefaultFilter } from "@refinedev/core";
+import { BaseRecord, getDefaultFilter, useList } from "@refinedev/core";
 import {
   useTable,
   EditButton,
   ShowButton,
   DeleteButton,
-  EmailField,
   FilterDropdown,
   TextField,
+  EmailField,
 } from "@refinedev/antd";
 import { Input, Select, Space, Table } from "antd";
 import { EnvironmentOutlined, SearchOutlined } from "@ant-design/icons";
 import { PointDeCollecteType } from "../type";
 import { pointDeCollecteTypeOptions } from "../../../utility/options";
 import { PointDeCollecte } from "../../../types";
+import { ContenantDeCollecteType } from "../contenantDeCollecteType";
 
 export const PointDeCollecteListTable: React.FC = () => {
   const { tableProps, filters } = useTable<PointDeCollecte>({
@@ -76,6 +77,12 @@ export const PointDeCollecteListTable: React.FC = () => {
         )}
       />
       <Table.Column
+        dataIndex="contenant_collecte_type"
+        title="Type de contenants"
+        render={(type) => <ContenantDeCollecteType value={type} />}
+      />
+      <Table.Column dataIndex="stock_contenants" title="Stock contenants" />
+      <Table.Column
         dataIndex="contacts"
         title="Contact"
         render={(contacts: string[]) => (
@@ -114,7 +121,6 @@ export const PointDeCollecteListTable: React.FC = () => {
           </div>
         )}
       />
-
       <Table.Column
         title="Actions"
         dataIndex="actions"

@@ -4,6 +4,11 @@ export const pointDeCollecteTypeOptions = [
   { value: "Massification", label: "Massification" },
 ];
 
+export const contenantDeCollecteTypeOptions = [
+  { value: "casier_x12", label: "Casier 12x75cl" },
+  { value: "palox", label: "Palox" },
+];
+
 export const transporteurOptions = [
   { value: "Main Forte", label: "Main Forte" },
   { value: "AgilEnVille", label: "AgilEnVille" },
