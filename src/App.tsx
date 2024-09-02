@@ -28,7 +28,6 @@ import {
   PointDeCollecteList,
   PointDeCollecteShow,
 } from "./pages/point-de-collecte";
-import { CreateTauxDeRemplissage } from "./pages/point-de-collecte/createTauxDeRemplissage";
 import { BouteilleIconSvg } from "./components/icons";
 import { DashboardPage } from "./pages/dashboard";
 import { DashboardOutlined } from "@ant-design/icons";
@@ -39,6 +38,7 @@ import { TourneeCreate } from "./pages/tournee/create";
 import { TourneeEdit } from "./pages/tournee/edit";
 import accessControlProvider from "./accessControlProvider";
 import { TourneeShow } from "./pages/tournee/show";
+import CreateRemplissageCasiers from "./pages/remplissage-casiers/create";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -119,6 +119,7 @@ function App() {
                   { name: "collecte" },
                   { name: "transporteur" },
                   { name: "transporteur_users" },
+                  { name: "remplissage_casiers" },
                 ]}
                 options={{
                   syncWithLocation: true,
@@ -178,7 +179,7 @@ function App() {
                   {/* Formulaire point de vente */}
                   <Route
                     path="/point-de-collecte/taux-de-remplissage/:id"
-                    element={<CreateTauxDeRemplissage />}
+                    element={<CreateRemplissageCasiers />}
                   />
                   <Route
                     element={
