@@ -38,7 +38,8 @@ import { TourneeCreate } from "./pages/tournee/create";
 import { TourneeEdit } from "./pages/tournee/edit";
 import accessControlProvider from "./accessControlProvider";
 import { TourneeShow } from "./pages/tournee/show";
-import CreateRemplissageCasiers from "./pages/remplissage-casiers/create";
+import CreateRemplissageCasiers from "./pages/remplissage-contenants/create";
+import { RemplissageContenantsList } from "./pages/remplissage-contenants/list";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -105,6 +106,14 @@ function App() {
                     },
                   },
                   {
+                    name: "remplissage_contenants",
+                    list: "remplissage-contenants",
+                    meta: {
+                      parent: "collecte_menu",
+                      label: "Taux de remplissage",
+                    },
+                  },
+                  {
                     name: "tournee",
                     list: "/tournee",
                     create: "/tournee/create",
@@ -119,7 +128,6 @@ function App() {
                   { name: "collecte" },
                   { name: "transporteur" },
                   { name: "transporteur_users" },
-                  { name: "remplissage_casiers" },
                 ]}
                 options={{
                   syncWithLocation: true,
@@ -167,6 +175,9 @@ function App() {
                         path="show/:id"
                         element={<PointDeCollecteShow />}
                       />
+                    </Route>
+                    <Route path="/remplissage-contenants">
+                      <Route index element={<RemplissageContenantsList />} />
                     </Route>
                     <Route path="/tournee">
                       <Route index element={<TourneeList />} />

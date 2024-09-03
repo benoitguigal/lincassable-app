@@ -1,5 +1,8 @@
 import { AutoComplete, Form, Input, Select } from "antd";
-import { pointDeCollecteTypeOptions } from "../../../utility/options";
+import {
+  contenantDeCollecteTypeOptions,
+  pointDeCollecteTypeOptions,
+} from "../../../utility/options";
 import { LatLng } from "../../../utility/geocoding";
 import debounce from "../../../utility/debounce";
 import { FormListItem } from "../../form";
@@ -101,6 +104,20 @@ export const PointDeCollecteForm: React.FC<Props> = ({
       >
         <Input placeholder="Téléphone du contact" style={{ width: "60%" }} />
       </FormListItem>
+      <Form.Item
+        label="Type de contenants de collecte"
+        name="contenant_collecte_type"
+      >
+        <Select
+          options={contenantDeCollecteTypeOptions}
+          style={{ width: "200px" }}
+          allowClear
+          placeholder="Type de contenant"
+        />
+      </Form.Item>
+      <Form.Item label="Stock contenant de collecte" name="stock_contenants">
+        <Input type="number" style={{ width: "200px" }} min={0} />
+      </Form.Item>
     </Form>
   );
 };
