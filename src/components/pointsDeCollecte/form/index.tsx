@@ -6,8 +6,8 @@ import {
 import { LatLng } from "../../../utility/geocoding";
 import debounce from "../../../utility/debounce";
 import { FormListItem } from "../../form";
-import { UseFormReturnType } from "@refinedev/antd";
-import { PointDeCollecte } from "../../../types";
+import { UseFormReturnType, useSelect } from "@refinedev/antd";
+import { PointDeCollecte, ZoneDeCollecte } from "../../../types";
 import { PointDeCollecteMap } from "./map";
 
 type Props = UseFormReturnType<PointDeCollecte> & {
@@ -30,6 +30,12 @@ export const PointDeCollecteForm: React.FC<Props> = ({
   handleLongitudeChange,
   formProps,
 }) => {
+  const { selectProps: zoneDeCollecteSelectProps } = useSelect<ZoneDeCollecte>({
+    resource: "zone_de_collecte",
+    optionLabel: "nom",
+    optionValue: "id",
+  });
+
   return (
     <Form {...formProps} layout="vertical">
       <Form.Item
@@ -87,6 +93,13 @@ export const PointDeCollecteForm: React.FC<Props> = ({
           handleDragEnd={handleDragEnd}
         />
       )}
+      <Form.Item label="Zone de collecte" name={["zone_de_collecte_id"]}>
+        <Select
+          placeholder="Sélectionner une zone"
+          style={{ width: 300 }}
+          {...zoneDeCollecteSelectProps}
+        />
+      </Form.Item>
 
       <Form.Item label="Horaires" name={["horaires"]}>
         <Input />

@@ -2,7 +2,7 @@ import { useShow, useOne } from "@refinedev/core";
 import { Show, DateField, TextField } from "@refinedev/antd";
 import { Button, Segmented, Spin, Typography } from "antd";
 import CollecteListTable from "../../components/collecte/listTable";
-import { Tournee, Transporteur } from "../../types";
+import { Tournee, Transporteur, ZoneDeCollecte } from "../../types";
 import {
   EnvironmentOutlined,
   UnorderedListOutlined,
@@ -23,6 +23,12 @@ export const TourneeShow = () => {
   const { data, isLoading } = queryResult;
 
   const record = data?.data;
+
+  const { data: zoneDeCollecteData } = useOne<ZoneDeCollecte>({
+    resource: "zone_de_collecte",
+    id: record?.zone_de_collecte_id ?? "",
+    queryOptions: { enabled: !!record?.zone_de_collecte_id },
+  });
 
   const viewName = `tournee-show-${record?.id}`;
 
@@ -77,8 +83,8 @@ export const TourneeShow = () => {
         <>
           <Title level={5}>Date</Title>
           <DateField value={record?.date} />
-          <Title level={5}>Zone</Title>
-          <TextField value={record?.zone} />
+          <Title level={5}>Zone de collecte</Title>
+          <TextField value={zoneDeCollecteData?.data?.nom} />
           <Title level={5}>Transporteur</Title>
           <TextField value={transporteurData?.data?.nom} />
           <Title level={5}>Collectes</Title>

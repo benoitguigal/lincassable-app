@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { BaseRecord, getDefaultFilter, useList } from "@refinedev/core";
 import {
   useTable,
@@ -13,11 +13,11 @@ import { Input, Select, Space, Table } from "antd";
 import { EnvironmentOutlined, SearchOutlined } from "@ant-design/icons";
 import { PointDeCollecteType } from "../type";
 import { pointDeCollecteTypeOptions } from "../../../utility/options";
-import { PointDeCollecte } from "../../../types";
+import { PointDeCollecte, ZoneDeCollecte } from "../../../types";
 import { ContenantDeCollecteType } from "../contenantDeCollecteType";
 
 export const PointDeCollecteListTable: React.FC = () => {
-  const { tableProps, filters } = useTable<PointDeCollecte>({
+  const { tableProps, filters, tableQueryResult } = useTable<PointDeCollecte>({
     syncWithLocation: true,
     pagination: { mode: "off" },
     filters: {
@@ -32,6 +32,35 @@ export const PointDeCollecteListTable: React.FC = () => {
       initial: [{ field: "nom", order: "asc" }],
     },
   });
+
+  const pointsDeCollecte = useMemo(
+    () => tableQueryResult?.data?.data ?? [],
+    [tableQueryResult]
+  );
+
+  const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
+    resource: "zone_de_collecte",
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: pointsDeCollecte
+          .map((pc) => pc.zone_de_collecte_id)
+          .filter(Boolean),
+      },
+    ],
+    queryOptions: { enabled: pointsDeCollecte.length > 0 },
+  });
+
+  const zoneDeCollecteById = useMemo(
+    () =>
+      (zoneDeCollecteData?.data ?? []).reduce<{
+        [key: number]: ZoneDeCollecte;
+      }>((acc, zone) => {
+        return { ...acc, [zone.id]: zone };
+      }, {}),
+    [zoneDeCollecteData]
+  );
 
   return (
     <Table {...tableProps} size="small" rowKey="id">
@@ -60,6 +89,11 @@ export const PointDeCollecteListTable: React.FC = () => {
         )}
       />
       <Table.Column
+        dataIndex="zone_de_collecte_id"
+        title="Zone de collecte"
+        render={(value: number) => zoneDeCollecteById[value]?.nom ?? ""}
+      />
+      <Table.Column
         dataIndex="type"
         title="Type"
         sorter
@@ -82,7 +116,7 @@ export const PointDeCollecteListTable: React.FC = () => {
         render={(type) => <ContenantDeCollecteType value={type} />}
       />
       <Table.Column dataIndex="stock_contenants" title="Stock contenants" />
-      <Table.Column
+      {/* <Table.Column
         dataIndex="contacts"
         title="Contact"
         render={(contacts: string[]) => (
@@ -120,7 +154,7 @@ export const PointDeCollecteListTable: React.FC = () => {
             ))}
           </div>
         )}
-      />
+      /> */}
       <Table.Column
         title="Actions"
         dataIndex="actions"

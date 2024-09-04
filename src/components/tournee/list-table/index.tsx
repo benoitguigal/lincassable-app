@@ -5,6 +5,7 @@ import {
   PointDeCollecte,
   Tournee,
   Transporteur,
+  ZoneDeCollecte,
 } from "../../../types";
 import {
   useTable,
@@ -152,6 +153,30 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
     [pointsDeCollecteList]
   );
 
+  const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
+    resource: "zone_de_collecte",
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: tourneeList
+          .map((tournee) => tournee.zone_de_collecte_id)
+          .filter(Boolean),
+      },
+    ],
+    queryOptions: { enabled: tourneeList.length > 0 },
+  });
+
+  const zoneDeCollecteById = useMemo(
+    () =>
+      (zoneDeCollecteData?.data ?? []).reduce<{
+        [key: number]: ZoneDeCollecte;
+      }>((acc, zone) => {
+        return { ...acc, [zone.id]: zone };
+      }, {}),
+    [zoneDeCollecteData]
+  );
+
   const collecteListWithPointDeCollecte: CollecteWithPointDeCollecte[] =
     useMemo(
       () =>
@@ -277,7 +302,11 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
             <DateField value={value} format="ddd DD MMM YY" locales="fr" />
           )}
         />
-        <Table.Column dataIndex="zone" title="Zone" />
+        <Table.Column
+          dataIndex="zone_de_collecte_id"
+          title="Zone de collecte"
+          render={(value: number) => zoneDeCollecteById[value]?.nom ?? ""}
+        />
         <Table.Column
           dataIndex="transporteur_id"
           title="Transporteur"

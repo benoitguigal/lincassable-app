@@ -1,5 +1,10 @@
 import { Calendar } from "antd";
-import { Identity, Tournee, Transporteur } from "../../../types";
+import {
+  Identity,
+  Tournee,
+  Transporteur,
+  ZoneDeCollecte,
+} from "../../../types";
 import { useList } from "@refinedev/core";
 import { useMemo } from "react";
 import dayjs from "dayjs";
@@ -58,6 +63,30 @@ const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({ user }) => {
     [transporteursData]
   );
 
+  const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
+    resource: "zone_de_collecte",
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: tourneeList
+          .map((tournee) => tournee.zone_de_collecte_id)
+          .filter(Boolean),
+      },
+    ],
+    queryOptions: { enabled: tourneeList.length > 0 },
+  });
+
+  const zoneDeCollecteById = useMemo(
+    () =>
+      (zoneDeCollecteData?.data ?? []).reduce<{
+        [key: number]: ZoneDeCollecte;
+      }>((acc, zone) => {
+        return { ...acc, [zone.id]: zone };
+      }, {}),
+    [zoneDeCollecteData]
+  );
+
   return (
     <Calendar
       cellRender={(current) => {
@@ -67,7 +96,7 @@ const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({ user }) => {
         if (tournee) {
           return (
             <div>
-              <div>{tournee.zone}</div>
+              <div>{zoneDeCollecteById[tournee.zone_de_collecte_id]?.nom}</div>
               <div>{transporteurById[tournee.transporteur_id]?.nom}</div>
             </div>
           );
