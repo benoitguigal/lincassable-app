@@ -65,6 +65,7 @@ function App() {
               // Alias Token
               colorBgContainer: "#eaedeb",
             },
+            components: { Carousel: { arrowOffset: 0, dotOffset: 0 } },
           }}
         >
           <AntdApp>

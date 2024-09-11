@@ -6,6 +6,7 @@ import { PointDeCollecteMap } from "../../components/pointsDeCollecte/form/map";
 import { PointDeCollecteType } from "../../components/pointsDeCollecte";
 import LienFormulairePointDeCollecteDownloadLink from "../../components/pdf/LienFormulairePointDeCollecteDownloadLink";
 import { ContenantDeCollecteType } from "../../components/pointsDeCollecte/contenantDeCollecteType";
+import { getPointDeCollecteFormulaireUrl } from "../../utility/urls";
 
 const { Title } = Typography;
 
@@ -25,7 +26,7 @@ export const PointDeCollecteShow = () => {
   });
 
   const pointDeCollecteFormulaireUrl = pointDeCollecte
-    ? `${VITE_HOST}/point-de-collecte/taux-de-remplissage/${pointDeCollecte.id}?nom=${pointDeCollecte.nom}&contenant_collecte=${pointDeCollecte.contenant_collecte_type}`
+    ? getPointDeCollecteFormulaireUrl(pointDeCollecte)
     : null;
 
   return (

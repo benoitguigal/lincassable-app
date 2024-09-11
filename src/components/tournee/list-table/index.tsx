@@ -16,11 +16,13 @@ import {
 } from "@refinedev/antd";
 import { CSSProperties, useMemo, useState } from "react";
 import { BaseRecord, useList } from "@refinedev/core";
-import { Flex, Space, Table, Tag, theme } from "antd";
+import { Button, Flex, Space, Table, Tag, theme } from "antd";
 import { CollecteEditButton } from "../../collecte/editButton";
 import { CollecteCreateButton } from "../../collecte/createButton";
 import { Chargement } from "../chargement";
 import dayjs from "dayjs";
+import { MailOutlined } from "@ant-design/icons";
+import TourneeMailButton from "../mail-button";
 
 type TourneeListTableProps = {
   user: Identity;
@@ -345,14 +347,18 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
             return null;
           }}
         />
-        <Table.Column
+        <Table.Column<Tournee>
           title="Actions"
           dataIndex="actions"
-          render={(_, record: BaseRecord) => (
+          render={(_, record) => (
             <Space>
               <EditButton hideText size="small" recordItemId={record.id} />
               <ShowButton hideText size="small" recordItemId={record.id} />
               <DeleteButton hideText size="small" recordItemId={record.id} />
+              <TourneeMailButton
+                tournee={record}
+                zoneDeCollecte={zoneDeCollecteById[record.zone_de_collecte_id]}
+              />
             </Space>
           )}
         />
