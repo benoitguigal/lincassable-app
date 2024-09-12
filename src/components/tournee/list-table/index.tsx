@@ -5,6 +5,7 @@ import {
   PointDeCollecte,
   Tournee,
   Transporteur,
+  ZoneDeCollecte,
 } from "../../../types";
 import {
   useTable,
@@ -15,11 +16,13 @@ import {
 } from "@refinedev/antd";
 import { CSSProperties, useMemo, useState } from "react";
 import { BaseRecord, useList } from "@refinedev/core";
-import { Flex, Space, Table, Tag, theme } from "antd";
+import { Button, Flex, Space, Table, Tag, theme } from "antd";
 import { CollecteEditButton } from "../../collecte/editButton";
 import { CollecteCreateButton } from "../../collecte/createButton";
 import { Chargement } from "../chargement";
 import dayjs from "dayjs";
+import { MailOutlined } from "@ant-design/icons";
+import TourneeMailButton from "../mail-button";
 
 type TourneeListTableProps = {
   user: Identity;
@@ -152,6 +155,30 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
     [pointsDeCollecteList]
   );
 
+  const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
+    resource: "zone_de_collecte",
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: tourneeList
+          .map((tournee) => tournee.zone_de_collecte_id)
+          .filter(Boolean),
+      },
+    ],
+    queryOptions: { enabled: tourneeList.length > 0 },
+  });
+
+  const zoneDeCollecteById = useMemo(
+    () =>
+      (zoneDeCollecteData?.data ?? []).reduce<{
+        [key: number]: ZoneDeCollecte;
+      }>((acc, zone) => {
+        return { ...acc, [zone.id]: zone };
+      }, {}),
+    [zoneDeCollecteData]
+  );
+
   const collecteListWithPointDeCollecte: CollecteWithPointDeCollecte[] =
     useMemo(
       () =>
@@ -277,7 +304,11 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
             <DateField value={value} format="ddd DD MMM YY" locales="fr" />
           )}
         />
-        <Table.Column dataIndex="zone" title="Zone" />
+        <Table.Column
+          dataIndex="zone_de_collecte_id"
+          title="Zone de collecte"
+          render={(value: number) => zoneDeCollecteById[value]?.nom ?? ""}
+        />
         <Table.Column
           dataIndex="transporteur_id"
           title="Transporteur"
@@ -316,14 +347,18 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
             return null;
           }}
         />
-        <Table.Column
+        <Table.Column<Tournee>
           title="Actions"
           dataIndex="actions"
-          render={(_, record: BaseRecord) => (
+          render={(_, record) => (
             <Space>
               <EditButton hideText size="small" recordItemId={record.id} />
               <ShowButton hideText size="small" recordItemId={record.id} />
               <DeleteButton hideText size="small" recordItemId={record.id} />
+              <TourneeMailButton
+                tournee={record}
+                zoneDeCollecte={zoneDeCollecteById[record.zone_de_collecte_id]}
+              />
             </Space>
           )}
         />

@@ -1,11 +1,12 @@
-import { useShow } from "@refinedev/core";
+import { useOne, useShow } from "@refinedev/core";
 import { Show, TextField, EmailField, UrlField } from "@refinedev/antd";
 import { Typography } from "antd";
-import { PointDeCollecte } from "../../types";
+import { PointDeCollecte, ZoneDeCollecte } from "../../types";
 import { PointDeCollecteMap } from "../../components/pointsDeCollecte/form/map";
 import { PointDeCollecteType } from "../../components/pointsDeCollecte";
 import LienFormulairePointDeCollecteDownloadLink from "../../components/pdf/LienFormulairePointDeCollecteDownloadLink";
 import { ContenantDeCollecteType } from "../../components/pointsDeCollecte/contenantDeCollecteType";
+import { getPointDeCollecteFormulaireUrl } from "../../utility/urls";
 
 const { Title } = Typography;
 
@@ -13,12 +14,19 @@ const VITE_HOST = import.meta.env.VITE_HOST;
 
 export const PointDeCollecteShow = () => {
   const { queryResult } = useShow<PointDeCollecte>();
+
   const { data, isLoading } = queryResult;
 
   const pointDeCollecte = data?.data;
 
+  const { data: zoneDeCollecteData } = useOne<ZoneDeCollecte>({
+    resource: "zone_de_collecte",
+    id: pointDeCollecte?.zone_de_collecte_id ?? "",
+    queryOptions: { enabled: !!pointDeCollecte?.zone_de_collecte_id },
+  });
+
   const pointDeCollecteFormulaireUrl = pointDeCollecte
-    ? `${VITE_HOST}/point-de-collecte/taux-de-remplissage/${pointDeCollecte.id}?nom=${pointDeCollecte.nom}&contenant_collecte=${pointDeCollecte.contenant_collecte_type}`
+    ? getPointDeCollecteFormulaireUrl(pointDeCollecte)
     : null;
 
   return (
@@ -35,7 +43,8 @@ export const PointDeCollecteShow = () => {
           }}
         />
       )}
-
+      <Title level={5}>Zone de collecte</Title>
+      <TextField value={zoneDeCollecteData?.data?.nom} />
       <Title level={5}>Type</Title>
       {pointDeCollecte?.type && (
         <PointDeCollecteType value={pointDeCollecte.type} />

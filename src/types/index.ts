@@ -23,6 +23,9 @@ export type Transporteur = Database["public"]["Tables"]["transporteur"]["Row"];
 export type TransporteurUser =
   Database["public"]["Tables"]["transporteur_users"]["Row"];
 
+export type ZoneDeCollecte =
+  Database["public"]["Tables"]["zone_de_collecte"]["Row"];
+
 export type Identity = {
   id: string;
   email: string;

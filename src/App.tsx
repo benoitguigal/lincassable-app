@@ -65,6 +65,7 @@ function App() {
               // Alias Token
               colorBgContainer: "#eaedeb",
             },
+            components: { Carousel: { arrowOffset: 0, dotOffset: 0 } },
           }}
         >
           <AntdApp>
@@ -128,6 +129,7 @@ function App() {
                   { name: "collecte" },
                   { name: "transporteur" },
                   { name: "transporteur_users" },
+                  { name: "zone_de_collecte" },
                 ]}
                 options={{
                   syncWithLocation: true,

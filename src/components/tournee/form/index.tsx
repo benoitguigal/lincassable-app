@@ -1,8 +1,12 @@
-import { PointDeCollecte, Tournee, Transporteur } from "../../../types";
+import {
+  PointDeCollecte,
+  Tournee,
+  Transporteur,
+  ZoneDeCollecte,
+} from "../../../types";
 import dayjs from "dayjs";
 import { DatePicker, Form, Select } from "antd";
 import { UseFormProps, UseFormReturnType, useSelect } from "@refinedev/antd";
-import { zoneDeCollecteOptions } from "../../../utility/options";
 import CollecteListTable from "../../collecte/listTable";
 
 type Props = {
@@ -23,6 +27,12 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
     optionLabel: "nom",
   });
 
+  const { selectProps: zoneDeCollecteSelectProps } = useSelect<ZoneDeCollecte>({
+    resource: "zone_de_collecte",
+    optionLabel: "nom",
+    optionValue: "id",
+  });
+
   return (
     <Form {...form.formProps} layout="vertical">
       <Form.Item
@@ -39,20 +49,11 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
       >
         <DatePicker placeholder="Sélectionner une date" size="large" />
       </Form.Item>
-      <Form.Item
-        label="Zone"
-        name={["zone"]}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
+      <Form.Item label="Zone de collecte" name={["zone_de_collecte_id"]}>
         <Select
-          options={zoneDeCollecteOptions}
-          style={{ width: "200px" }}
-          allowClear
-          placeholder="Zone"
+          placeholder="Sélectionner une zone"
+          style={{ width: 300 }}
+          {...zoneDeCollecteSelectProps}
         />
       </Form.Item>
       <Form.Item

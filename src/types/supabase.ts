@@ -76,6 +76,7 @@ export type Database = {
           stock_contenants: number | null
           telephones: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
+          zone_de_collecte_id: number | null
         }
         Insert: {
           adresse: string
@@ -95,6 +96,7 @@ export type Database = {
           stock_contenants?: number | null
           telephones?: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
+          zone_de_collecte_id?: number | null
         }
         Update: {
           adresse?: string
@@ -114,8 +116,17 @@ export type Database = {
           stock_contenants?: number | null
           telephones?: string[]
           type?: Database["public"]["Enums"]["point_de_collecte_type"]
+          zone_de_collecte_id?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "point_de_collecte_zone_de_collecte_id_fkey"
+            columns: ["zone_de_collecte_id"]
+            isOneToOne: false
+            referencedRelation: "zone_de_collecte"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       remplissage_contenants: {
         Row: {
@@ -178,6 +189,7 @@ export type Database = {
           point_de_massification_id: number
           transporteur_id: number
           zone: string | null
+          zone_de_collecte_id: number
         }
         Insert: {
           created_at?: string
@@ -186,6 +198,7 @@ export type Database = {
           point_de_massification_id: number
           transporteur_id: number
           zone?: string | null
+          zone_de_collecte_id: number
         }
         Update: {
           created_at?: string
@@ -194,6 +207,7 @@ export type Database = {
           point_de_massification_id?: number
           transporteur_id?: number
           zone?: string | null
+          zone_de_collecte_id?: number
         }
         Relationships: [
           {
@@ -208,6 +222,13 @@ export type Database = {
             columns: ["transporteur_id"]
             isOneToOne: false
             referencedRelation: "transporteur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournee_zone_de_collecte_id_fkey"
+            columns: ["zone_de_collecte_id"]
+            isOneToOne: false
+            referencedRelation: "zone_de_collecte"
             referencedColumns: ["id"]
           },
         ]
@@ -303,6 +324,21 @@ export type Database = {
           },
         ]
       }
+      zone_de_collecte: {
+        Row: {
+          id: number
+          nom: string
+        }
+        Insert: {
+          id?: number
+          nom: string
+        }
+        Update: {
+          id?: number
+          nom?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -349,6 +385,10 @@ export type Database = {
         | "transporteur_users.update"
         | "transporteur_users.insert"
         | "transporteur_users.delete"
+        | "zone_de_collecte.select"
+        | "zone_de_collecte.update"
+        | "zone_de_collecte.insert"
+        | "zone_de_collecte.delete"
       app_role: "staff" | "transporteur"
       contenant_collecte_type: "casier_x12" | "palox"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
