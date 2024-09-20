@@ -1,26 +1,16 @@
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
-import { Collecte, PointDeCollecte, Tournee, Transporteur } from "../../types";
-import { useOne } from "@refinedev/core";
-import { Table, TableCell, TableHeader } from "@david.kucsai/react-pdf-table";
-
-// Create styles
-// const styles = StyleSheet.create({
-//   page: {
-//     flexDirection: "row",
-//     backgroundColor: "#E4E4E4",
-//   },
-//   section: {
-//     margin: 10,
-//     padding: 10,
-//     flexGrow: 1,
-//   },
-// });
+import {
+  Collecte,
+  PointDeCollecte,
+  Tournee,
+  ZoneDeCollecte,
+} from "../../types";
+import { formatDate } from "../../utility/dateFormat";
 
 const styles = StyleSheet.create({
   page: {
-    flexDirection: "column",
-    backgroundColor: "#FFFFFF",
-    padding: 10,
+    paddingTop: 20,
+    paddingLeft: 20,
   },
   table: {
     display: "table" as any,
@@ -65,12 +55,14 @@ type BonDeTourneeProps = {
   tournee: Tournee;
   collectes: Collecte[];
   pointsDeCollecte: PointDeCollecte[];
+  zoneDeCollecte?: ZoneDeCollecte;
 };
 
 const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
   tournee,
   collectes,
   pointsDeCollecte,
+  zoneDeCollecte,
 }) => {
   if (!tournee) {
     return null;
@@ -109,8 +101,8 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
       col6: "",
     },
     {
-      col1: "Nom",
-      col2: "Adresse",
+      col1: "Nom / Horaires / Contact",
+      col2: "Adresse / Infos",
       col3: "À collecter",
       col4: "À livrer",
       col5: "À collecter",
@@ -126,6 +118,18 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
         nom = `${nom} \n\n${
           pointDeCollecteById[c.point_de_collecte_id]?.horaires
         }`;
+      }
+
+      if (c.contact || c.telephone) {
+        let fullContact = "";
+        if (c.contact && c.telephone) {
+          fullContact = `${c.contact} ${c.telephone}`;
+        } else if (c.contact) {
+          fullContact = c.contact;
+        } else if (c.telephone) {
+          fullContact = c.telephone;
+        }
+        nom = `${nom} \n\n${fullContact}`;
       }
 
       let adresse = pointDeCollecteById[c.point_de_collecte_id]?.adresse;
@@ -163,13 +167,11 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
 
   return (
     <Document>
-      <Page
-        size="A4"
-        // style={styles.page}
-        orientation="landscape"
-      >
+      <Page size="A4" style={styles.page} orientation="landscape">
         <View>
-          <Text>{tournee.date}</Text>
+          <Text style={{ paddingLeft: 20 }}>
+            {formatDate(tournee.date)} - {zoneDeCollecte?.nom}
+          </Text>
         </View>
         <View style={styles.table}>
           {/* En-tête du tableau */}
@@ -256,12 +258,6 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
             </View>
           ))}
         </View>
-        {/* <View style={styles.section}>
-          <Text>{tournee.zone}</Text>
-        </View>
-        <View style={styles.section}>
-          <Text>Section #2</Text>
-        </View> */}
       </Page>
     </Document>
   );

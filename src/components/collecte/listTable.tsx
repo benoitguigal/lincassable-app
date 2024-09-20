@@ -5,6 +5,13 @@ import { DeleteButton, useTable } from "@refinedev/antd";
 import { Space, Table } from "antd";
 import { CollecteEditButton } from "./editButton";
 import { CollecteCreateButton } from "./createButton";
+import {
+  chargementCollecte,
+  POID_CASIER_PLEIN_KG,
+  POID_PALETTE_BOUTEILLE_KG,
+  POID_PALOX_PLEIN_KG,
+} from "../../utility/weights";
+import Decimal from "decimal.js";
 
 type CollecteListTableProps = {
   tournee_id: number;
@@ -102,6 +109,17 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
       },
     },
     {
+      title: "Contact",
+      render: (_, record: Collecte) => {
+        return (
+          <>
+            <div>{record.contact}</div>
+            <div>{record.telephone}</div>
+          </>
+        );
+      },
+    },
+    {
       title: "Casiers 12x75cl",
       children: [
         {
@@ -140,6 +158,10 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
         },
       ],
     },
+    {
+      title: "Chargement retour (hors palette)",
+      render: (_, record: Collecte) => chargementCollecte(record) + " kg",
+    },
     ...(canEdit
       ? [
           {
@@ -168,7 +190,7 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
   }
 
   return (
-    <Table
+    <Table<Collecte>
       {...tableProps}
       columns={columns}
       bordered
@@ -181,6 +203,7 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
         let totalCollectePalox = 0;
         let totalLivraisonPalette = 0;
         let totalCollectePalette = 0;
+        let totalChargement = 0;
 
         pageData.forEach(
           ({
@@ -197,6 +220,11 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
             totalCollectePalox += collecte_nb_palox_plein;
             totalLivraisonPalette += livraison_nb_palette_bouteille;
             totalCollectePalette += collecte_nb_palette_bouteille;
+            totalChargement += chargementCollecte({
+              collecte_nb_casier_75_plein,
+              collecte_nb_palox_plein,
+              collecte_nb_palette_bouteille,
+            });
           }
         );
 
@@ -224,8 +252,14 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
             <Table.Summary.Cell index={7}>
               <b>{totalCollectePalette}</b>
             </Table.Summary.Cell>
+            <Table.Summary.Cell index={8}>
+              <b>
+                {totalChargement}
+                {" kg"}
+              </b>
+            </Table.Summary.Cell>
             {canEdit && (
-              <Table.Summary.Cell index={8}>
+              <Table.Summary.Cell index={9}>
                 <CollecteCreateButton tournee_id={tournee_id} />
               </Table.Summary.Cell>
             )}

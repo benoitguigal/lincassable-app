@@ -14,36 +14,42 @@ export type Database = {
           collecte_nb_casier_75_plein: number
           collecte_nb_palette_bouteille: number
           collecte_nb_palox_plein: number
+          contact: string | null
           created_at: string
           id: number
           livraison_nb_casier_75_vide: number
           livraison_nb_palette_bouteille: number
           livraison_nb_palox_vide: number
           point_de_collecte_id: number
+          telephone: string | null
           tournee_id: number | null
         }
         Insert: {
           collecte_nb_casier_75_plein?: number
           collecte_nb_palette_bouteille?: number
           collecte_nb_palox_plein?: number
+          contact?: string | null
           created_at?: string
           id?: number
           livraison_nb_casier_75_vide?: number
           livraison_nb_palette_bouteille?: number
           livraison_nb_palox_vide?: number
           point_de_collecte_id: number
+          telephone?: string | null
           tournee_id?: number | null
         }
         Update: {
           collecte_nb_casier_75_plein?: number
           collecte_nb_palette_bouteille?: number
           collecte_nb_palox_plein?: number
+          contact?: string | null
           created_at?: string
           id?: number
           livraison_nb_casier_75_vide?: number
           livraison_nb_palette_bouteille?: number
           livraison_nb_palox_vide?: number
           point_de_collecte_id?: number
+          telephone?: string | null
           tournee_id?: number | null
         }
         Relationships: [

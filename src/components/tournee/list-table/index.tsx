@@ -338,7 +338,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
         />
         <Table.Column
           dataIndex="chargement"
-          title="Chargement total"
+          title="Chargement retour (hors palettes)"
           render={(_, record: BaseRecord) => {
             if (record.id) {
               const collectes = tourneeById[record.id].collectes;

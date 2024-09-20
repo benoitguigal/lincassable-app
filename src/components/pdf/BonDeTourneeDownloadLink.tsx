@@ -3,7 +3,7 @@ import BonDeTourneePdf from "./BonDeTourneePdf";
 import { Collecte, PointDeCollecte, Tournee } from "../../types";
 import { Button, Spin } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
-import { useList } from "@refinedev/core";
+import { useList, useOne } from "@refinedev/core";
 import { useMemo } from "react";
 
 type BonDeTourneeDownloadLinkProps = {
@@ -41,6 +41,17 @@ const BonDeTourneeDownloadLink: React.FC<BonDeTourneeDownloadLinkProps> = ({
     [pointsDeCollecteData]
   );
 
+  const { data: zoneDeCollecteData } = useOne({
+    id: tournee?.zone_de_collecte_id,
+    resource: "zone_de_collecte",
+    queryOptions: { enabled: !!tournee && !!tournee.zone_de_collecte_id },
+  });
+
+  const zoneDeCollecte = useMemo(
+    () => zoneDeCollecteData?.data,
+    [zoneDeCollecteData]
+  );
+
   if (!!tournee && collectes?.length && pointsDeCollecte?.length) {
     return (
       <PDFDownloadLink
@@ -49,6 +60,7 @@ const BonDeTourneeDownloadLink: React.FC<BonDeTourneeDownloadLinkProps> = ({
             tournee={tournee}
             collectes={collectes}
             pointsDeCollecte={pointsDeCollecte}
+            zoneDeCollecte={zoneDeCollecte}
           />
         }
         fileName="tournee.pdf"

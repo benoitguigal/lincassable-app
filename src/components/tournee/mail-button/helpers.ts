@@ -1,19 +1,14 @@
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import mail from "./mail.html?raw";
 import nunjucks from "nunjucks";
 import { PointDeCollecte } from "../../../types";
 import { getPointDeCollecteFormulaireUrl } from "../../../utility/urls";
+import { formatDate } from "../../../utility/dateFormat";
 
 type RenderMailProps = {
   dateLimit: string;
   dateTournee: string;
   pointDeCollecte: PointDeCollecte;
 };
-
-function formatDate(dateStr: string) {
-  return format(new Date(dateStr), "EEEE dd MMMM", { locale: fr });
-}
 
 export function renderMail({
   dateLimit,
