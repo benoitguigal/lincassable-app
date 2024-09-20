@@ -222,6 +222,10 @@ function App() {
                       path="/forgot-password"
                       element={<AuthPage type="forgotPassword" />}
                     />
+                    <Route
+                      path="/update-password"
+                      element={<AuthPage type="updatePassword" />}
+                    />
                   </Route>
                 </Routes>
 
