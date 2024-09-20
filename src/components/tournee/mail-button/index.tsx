@@ -43,27 +43,31 @@ const TourneeMailButton: React.FC<TourneeMailButtonProps> = ({
         if (data && data.length > 0) {
           const pointDeCollecte = data[0];
 
-          const html = renderMail({
-            dateLimit,
-            dateTournee: tournee.date,
-            pointDeCollecte,
-          });
+          const emails = pointDeCollecte.emails;
 
-          return supabaseClient.functions
-            .invoke("envoi_mail_avant_tournee", {
-              body: {
-                html,
-                subject: "Collecte L'INCASSABLE",
-                to: "benoit.guigal@gmail.com",
-              },
-            })
-            .then(() => {
-              setConfirmLoading(false);
-              setIsModalOpen(false);
-            })
-            .catch(() => {
-              setConfirmLoading(false);
+          if (emails?.length) {
+            const html = renderMail({
+              dateLimit,
+              dateTournee: tournee.date,
+              pointDeCollecte,
             });
+
+            return supabaseClient.functions
+              .invoke("envoi_mail_avant_tournee", {
+                body: {
+                  html,
+                  subject: "Collecte L'INCASSABLE",
+                  to: emails[0],
+                },
+              })
+              .then(() => {
+                setConfirmLoading(false);
+                setIsModalOpen(false);
+              })
+              .catch(() => {
+                setConfirmLoading(false);
+              });
+          }
         }
       })
     );
