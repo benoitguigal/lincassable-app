@@ -27,14 +27,10 @@ export const PointDeCollecteListTable: React.FC<
 > = ({ columns }) => {
   const { tableProps, filters, tableQueryResult } = useTable<PointDeCollecte>({
     syncWithLocation: true,
-    //pagination: { mode: "off" },
     pagination: { pageSize: 15, mode: "server" },
     filters: {
       mode: "server",
-      initial: [
-        { field: "nom", operator: "contains", value: "" },
-        // { field: "type", operator: "eq", value: "" },
-      ],
+      initial: [{ field: "nom", operator: "contains", value: "" }],
     },
     sorters: {
       mode: "server",

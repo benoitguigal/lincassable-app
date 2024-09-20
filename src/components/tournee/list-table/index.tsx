@@ -14,10 +14,12 @@ import {
   ShowButton,
   DeleteButton,
   useTable,
+  FilterDropdown,
+  useSelect,
 } from "@refinedev/antd";
 import { CSSProperties, useMemo, useState } from "react";
 import { BaseRecord, CanAccess, useList } from "@refinedev/core";
-import { Flex, Space, Table, Tag, theme } from "antd";
+import { Flex, Select, Space, Table, Tag, theme } from "antd";
 import { CollecteEditButton } from "../../collecte/editButton";
 import { CollecteCreateButton } from "../../collecte/createButton";
 import { Chargement } from "../chargement";
@@ -45,6 +47,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
   const { tableProps, tableQueryResult, filters, setFilters } =
     useTable<Tournee>({
       syncWithLocation: true,
+      pagination: { mode: "server" },
       sorters: { permanent: [{ field: "date", order: "desc" }] },
       filters: {
         mode: "server",
@@ -92,8 +95,6 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
       },
     });
 
-  console.log(collectesData);
-
   const collecteList = useMemo(
     () => collectesData?.data ?? [],
     [collectesData]
@@ -129,6 +130,19 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
       }, {}),
     [transporteursList]
   );
+
+  const { selectProps: transporteurSelectProps } = useSelect<Transporteur>({
+    resource: "transporteur",
+    optionLabel: "nom",
+    optionValue: "id",
+    ...(user.transporteurId
+      ? {
+          filters: [
+            { field: "id", operator: "eq", value: user.transporteurId },
+          ],
+        }
+      : {}),
+  });
 
   const { data: pointsDeCollecteData, isLoading: pointDeCollecteIsLoading } =
     useList<PointDeCollecte>({
@@ -331,6 +345,17 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
             }
             return null;
           }}
+          filterDropdown={(props) => (
+            <FilterDropdown {...props}>
+              <Select
+                {...transporteurSelectProps}
+                style={{ width: "200px" }}
+                allowClear
+                mode="multiple"
+                placeholder="Transporteur"
+              />
+            </FilterDropdown>
+          )}
         />
         <Table.Column
           dataIndex="points_de_collecte"
