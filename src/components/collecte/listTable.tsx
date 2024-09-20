@@ -5,13 +5,7 @@ import { DeleteButton, useTable } from "@refinedev/antd";
 import { Space, Table } from "antd";
 import { CollecteEditButton } from "./editButton";
 import { CollecteCreateButton } from "./createButton";
-import {
-  chargementCollecte,
-  POID_CASIER_PLEIN_KG,
-  POID_PALETTE_BOUTEILLE_KG,
-  POID_PALOX_PLEIN_KG,
-} from "../../utility/weights";
-import Decimal from "decimal.js";
+import { chargementCollecte } from "../../utility/weights";
 
 type CollecteListTableProps = {
   tournee_id: number;
@@ -164,14 +158,14 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
     },
     {
       title: "Chargement retour (hors palette)",
-      render: (_, record: Collecte) => chargementCollecte(record) + " kg",
+      render: (_: any, record: Collecte) => chargementCollecte(record) + " kg",
     },
     ...(canEdit
       ? [
           {
             title: "Actions",
             dataIndex: "actions",
-            render: (_, record: Collecte) => {
+            render: (_: any, record: Collecte) => {
               return (
                 <Space>
                   <CollecteEditButton collecte={record} />
