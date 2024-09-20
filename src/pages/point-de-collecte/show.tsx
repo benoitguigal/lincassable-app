@@ -1,5 +1,11 @@
 import { useOne, useShow } from "@refinedev/core";
-import { Show, TextField, EmailField, UrlField } from "@refinedev/antd";
+import {
+  Show,
+  TextField,
+  EmailField,
+  UrlField,
+  DateField,
+} from "@refinedev/antd";
 import { Typography } from "antd";
 import { PointDeCollecte, ZoneDeCollecte } from "../../types";
 import { PointDeCollecteMap } from "../../components/pointsDeCollecte/form/map";
@@ -33,6 +39,8 @@ export const PointDeCollecteShow = () => {
     <Show isLoading={isLoading} breadcrumb={false}>
       <Title level={5}>Nom</Title>
       <TextField value={pointDeCollecte?.nom} />
+      <Title level={5}>Date setup</Title>
+      <DateField value={pointDeCollecte?.setup_date} />
       <Title level={5}>Adresse</Title>
       <TextField value={pointDeCollecte?.adresse} />
       {pointDeCollecte?.latitude && pointDeCollecte?.longitude && (
@@ -43,6 +51,8 @@ export const PointDeCollecteShow = () => {
           }}
         />
       )}
+      <Title level={5}>Horaires</Title>
+      <TextField value={pointDeCollecte?.horaires} />
       <Title level={5}>Zone de collecte</Title>
       <TextField value={zoneDeCollecteData?.data?.nom} />
       <Title level={5}>Type</Title>
@@ -80,6 +90,8 @@ export const PointDeCollecteShow = () => {
           />
         </div>
       )}
+      <Title level={5}>Informations compl.</Title>
+      <TextField value={pointDeCollecte?.info} />
       <Title level={5}>Formulaire Taux de remplissage</Title>
       {pointDeCollecte && pointDeCollecteFormulaireUrl && (
         <>

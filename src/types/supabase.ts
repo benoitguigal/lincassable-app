@@ -12,30 +12,36 @@ export type Database = {
       collecte: {
         Row: {
           collecte_nb_casier_75_plein: number
+          collecte_nb_palette_bouteille: number
           collecte_nb_palox_plein: number
           created_at: string
           id: number
           livraison_nb_casier_75_vide: number
+          livraison_nb_palette_bouteille: number
           livraison_nb_palox_vide: number
           point_de_collecte_id: number
           tournee_id: number | null
         }
         Insert: {
           collecte_nb_casier_75_plein?: number
+          collecte_nb_palette_bouteille?: number
           collecte_nb_palox_plein?: number
           created_at?: string
           id?: number
           livraison_nb_casier_75_vide?: number
+          livraison_nb_palette_bouteille?: number
           livraison_nb_palox_vide?: number
           point_de_collecte_id: number
           tournee_id?: number | null
         }
         Update: {
           collecte_nb_casier_75_plein?: number
+          collecte_nb_palette_bouteille?: number
           collecte_nb_palox_plein?: number
           created_at?: string
           id?: number
           livraison_nb_casier_75_vide?: number
+          livraison_nb_palette_bouteille?: number
           livraison_nb_palox_vide?: number
           point_de_collecte_id?: number
           tournee_id?: number | null
@@ -188,7 +194,6 @@ export type Database = {
           id: number
           point_de_massification_id: number
           transporteur_id: number
-          zone: string | null
           zone_de_collecte_id: number
         }
         Insert: {
@@ -197,7 +202,6 @@ export type Database = {
           id?: number
           point_de_massification_id: number
           transporteur_id: number
-          zone?: string | null
           zone_de_collecte_id: number
         }
         Update: {
@@ -206,7 +210,6 @@ export type Database = {
           id?: number
           point_de_massification_id?: number
           transporteur_id?: number
-          zone?: string | null
           zone_de_collecte_id?: number
         }
         Relationships: [
