@@ -23,6 +23,7 @@ export const RemplissageContenantsList: React.FC<
 
   const { data: pointDeCollecteData } = useList<PointDeCollecte>({
     resource: "point_de_collecte",
+    pagination: { mode: "off" },
     filters: [
       {
         field: "id",

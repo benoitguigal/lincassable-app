@@ -13,6 +13,7 @@ const TourneeMap: React.FC<TourneeMapProps> = ({
   const { data: collecteseData, isLoading: collectesIsLoading } =
     useList<Collecte>({
       resource: "collecte",
+      pagination: { mode: "off" },
       filters: [
         {
           field: "tournee_id",
@@ -33,6 +34,7 @@ const TourneeMap: React.FC<TourneeMapProps> = ({
   const { data: pointsDeCollecteData, isLoading: pointsDeCollecteIsLoading } =
     useList<Collecte>({
       resource: "point_de_collecte",
+      pagination: { mode: "off" },
       filters: [
         {
           field: "id",

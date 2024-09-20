@@ -9,12 +9,11 @@ import {
   ZoneDeCollecte,
 } from "../../../types";
 import {
-  useTable,
   DateField,
   EditButton,
   ShowButton,
   DeleteButton,
-  useEditableTable,
+  useTable,
 } from "@refinedev/antd";
 import { CSSProperties, useMemo, useState } from "react";
 import { BaseRecord, CanAccess, useList } from "@refinedev/core";
@@ -44,7 +43,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
   const [currentTag, setCurrentTag] = useState<TagEnum>("Tous");
 
   const { tableProps, tableQueryResult, filters, setFilters } =
-    useEditableTable<Tournee>({
+    useTable<Tournee>({
       syncWithLocation: true,
       sorters: { permanent: [{ field: "date", order: "desc" }] },
       filters: {
@@ -80,6 +79,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
   const { data: collectesData, isLoading: collecteIsLoading } =
     useList<Collecte>({
       resource: "collecte",
+      pagination: { mode: "off" },
       filters: [
         {
           field: "tournee_id",
@@ -92,6 +92,8 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
       },
     });
 
+  console.log(collectesData);
+
   const collecteList = useMemo(
     () => collectesData?.data ?? [],
     [collectesData]
@@ -100,6 +102,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
   const { data: transporteursData, isLoading: transporteurIsLoading } =
     useList<Transporteur>({
       resource: "transporteur",
+      pagination: { mode: "off" },
       filters: [
         {
           field: "id",
@@ -130,6 +133,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
   const { data: pointsDeCollecteData, isLoading: pointDeCollecteIsLoading } =
     useList<PointDeCollecte>({
       resource: "point_de_collecte",
+      pagination: { mode: "off" },
       filters: [
         {
           field: "id",

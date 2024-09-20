@@ -32,6 +32,7 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
   const { data: pointsDeCollecteData, isLoading: pointDeCollecteIsLoading } =
     useList<PointDeCollecte>({
       resource: "point_de_collecte",
+      pagination: { mode: "off" },
       filters: [
         {
           field: "id",

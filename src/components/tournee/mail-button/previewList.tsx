@@ -18,6 +18,7 @@ const TourneeMailPreviewList: React.FC<TourneeMailPreviewListProps> = ({
 }) => {
   const { data: pointDeCollecteData } = useList<PointDeCollecte>({
     resource: "point_de_collecte",
+    pagination: { mode: "off" },
     filters: [{ field: "id", operator: "in", value: pointDeCollecteIds }],
     queryOptions: { enabled: pointDeCollecteIds.length > 0 },
   });

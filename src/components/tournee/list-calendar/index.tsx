@@ -43,6 +43,7 @@ const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({ user }) => {
 
   const { data: transporteursData } = useList<Transporteur>({
     resource: "transporteur",
+    pagination: { mode: "off" },
     filters: [
       {
         field: "id",
@@ -65,6 +66,7 @@ const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({ user }) => {
 
   const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
     resource: "zone_de_collecte",
+    pagination: { mode: "off" },
     filters: [
       {
         field: "id",

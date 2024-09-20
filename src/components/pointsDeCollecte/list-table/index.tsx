@@ -55,6 +55,7 @@ export const PointDeCollecteListTable: React.FC<
 
   const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
     resource: "zone_de_collecte",
+    pagination: { mode: "off" },
     filters: [
       {
         field: "id",
