@@ -8,6 +8,8 @@ export type ContenantDeCollecteTypeEnum =
 
 export type UserRole = Database["public"]["Enums"]["app_role"];
 
+export type StatutTourneeEnum = Database["public"]["Enums"]["statut_tournee"];
+
 export type PointDeCollecte =
   Database["public"]["Tables"]["point_de_collecte"]["Row"];
 

@@ -120,16 +120,15 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
         }`;
       }
 
-      if (c.contact || c.telephone) {
-        let fullContact = "";
-        if (c.contact && c.telephone) {
-          fullContact = `${c.contact} ${c.telephone}`;
-        } else if (c.contact) {
-          fullContact = c.contact;
-        } else if (c.telephone) {
-          fullContact = c.telephone;
-        }
-        nom = `${nom} \n\n${fullContact}`;
+      const contact = [
+        pointDeCollecteById[c.point_de_collecte_id]?.contacts?.[0],
+        pointDeCollecteById[c.point_de_collecte_id]?.telephones?.[0],
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      if (contact) {
+        nom = `${nom} \n\n${contact}`;
       }
 
       let adresse = pointDeCollecteById[c.point_de_collecte_id]?.adresse;

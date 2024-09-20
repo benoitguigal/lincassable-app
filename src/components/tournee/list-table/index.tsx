@@ -3,6 +3,7 @@ import {
   CollecteWithPointDeCollecte,
   Identity,
   PointDeCollecte,
+  StatutTourneeEnum,
   Tournee,
   Transporteur,
   ZoneDeCollecte,
@@ -23,6 +24,7 @@ import { Chargement } from "../chargement";
 import dayjs from "dayjs";
 import { MailOutlined } from "@ant-design/icons";
 import TourneeMailButton from "../mail-button";
+import { StatutTourneeTag } from "../statut-tournee";
 
 type TourneeListTableProps = {
   user: Identity;
@@ -310,6 +312,13 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
           render={(value: number) => zoneDeCollecteById[value]?.nom ?? ""}
         />
         <Table.Column
+          dataIndex="statut"
+          title="Statut"
+          render={(value: StatutTourneeEnum) => (
+            <StatutTourneeTag value={value} />
+          )}
+        />
+        <Table.Column
           dataIndex="transporteur_id"
           title="Transporteur"
           render={(id: number) => {
@@ -345,6 +354,13 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
               return <Chargement collectes={collectes} />;
             }
             return null;
+          }}
+        />
+        <Table.Column
+          dataIndex="prix"
+          title="Prix"
+          render={(prix: number) => {
+            return prix ? `${prix} €` : "";
           }}
         />
         <Table.Column<Tournee>

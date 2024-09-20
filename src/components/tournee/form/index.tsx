@@ -5,9 +5,10 @@ import {
   ZoneDeCollecte,
 } from "../../../types";
 import dayjs from "dayjs";
-import { DatePicker, Form, Select } from "antd";
+import { DatePicker, Form, Input, Select } from "antd";
 import { UseFormProps, UseFormReturnType, useSelect } from "@refinedev/antd";
 import CollecteListTable from "../../collecte/listTable";
+import { statutTourneeOptions } from "../../../utility/options";
 
 type Props = {
   form: UseFormReturnType<Tournee>;
@@ -56,6 +57,9 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
           {...zoneDeCollecteSelectProps}
         />
       </Form.Item>
+      <Form.Item label="Statut" name={["statut"]}>
+        <Select style={{ width: 300 }} options={statutTourneeOptions} />
+      </Form.Item>
       <Form.Item
         label="Transporteur"
         name={["transporteur_id"]}
@@ -85,6 +89,9 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
           style={{ width: 300 }}
           {...pointDeMassificationSelectProps}
         />
+      </Form.Item>
+      <Form.Item label="Prix" name={["prix"]}>
+        <Input style={{ width: 300 }} type="number" />
       </Form.Item>
 
       {action === "edit" && (

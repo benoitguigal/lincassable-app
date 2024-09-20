@@ -109,14 +109,18 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
       },
     },
     {
+      dataIndex: "point_de_collecte_id",
       title: "Contact",
-      render: (_, record: Collecte) => {
-        return (
-          <>
-            <div>{record.contact}</div>
-            <div>{record.telephone}</div>
-          </>
-        );
+      render: (id: number) => {
+        if (pointDeCollecteById && id) {
+          return (
+            <>
+              <div>{pointDeCollecteById[id]?.contacts[0]}</div>
+              <div>{pointDeCollecteById[id]?.telephones[0]}</div>
+            </>
+          );
+        }
+        return null;
       },
     },
     {
