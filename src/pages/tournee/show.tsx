@@ -1,18 +1,13 @@
 import { useShow, useOne } from "@refinedev/core";
-import { Show, DateField, TextField } from "@refinedev/antd";
-import { Button, Segmented, Spin, Typography } from "antd";
+import { Show, DateField, TextField, NumberField } from "@refinedev/antd";
+import { Segmented, Typography } from "antd";
 import CollecteListTable from "../../components/collecte/listTable";
 import { Tournee, Transporteur, ZoneDeCollecte } from "../../types";
-import {
-  EnvironmentOutlined,
-  UnorderedListOutlined,
-  PrinterOutlined,
-} from "@ant-design/icons";
+import { EnvironmentOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import TourneeMap from "../../components/tournee/map";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import BonDeTourneePdf from "../../components/pdf/BonDeTourneePdf";
 import BonDeTourneeDownloadLink from "../../components/pdf/BonDeTourneeDownloadLink";
+import { StatutTourneeTag } from "../../components/tournee/statut-tournee";
 
 const { Title } = Typography;
 
@@ -85,8 +80,12 @@ export const TourneeShow = () => {
           <DateField value={record?.date} />
           <Title level={5}>Zone de collecte</Title>
           <TextField value={zoneDeCollecteData?.data?.nom} />
+          <Title level={5}>Statut</Title>
+          {record && <StatutTourneeTag value={record.statut} />}
           <Title level={5}>Transporteur</Title>
           <TextField value={transporteurData?.data?.nom} />
+          <Title level={5}>Prix</Title>
+          {record?.prix && <NumberField value={record.prix} />}
           <Title level={5}>Collectes</Title>
           {!!record && (
             <CollecteListTable tournee_id={record.id} canEdit={false} />

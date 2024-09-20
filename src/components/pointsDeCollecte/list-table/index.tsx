@@ -8,6 +8,7 @@ import {
   FilterDropdown,
   TextField,
   EmailField,
+  useSelect,
 } from "@refinedev/antd";
 import { Input, Select, Space, Table } from "antd";
 import { EnvironmentOutlined, SearchOutlined } from "@ant-design/icons";
@@ -16,10 +17,18 @@ import { pointDeCollecteTypeOptions } from "../../../utility/options";
 import { PointDeCollecte, ZoneDeCollecte } from "../../../types";
 import { ContenantDeCollecteType } from "../contenantDeCollecteType";
 
-export const PointDeCollecteListTable: React.FC = () => {
+type PointDeCollecteListTableProps = {
+  // colonnes sélectionnées
+  columns: string[];
+};
+
+export const PointDeCollecteListTable: React.FC<
+  PointDeCollecteListTableProps
+> = ({ columns }) => {
   const { tableProps, filters, tableQueryResult } = useTable<PointDeCollecte>({
     syncWithLocation: true,
-    pagination: { mode: "off" },
+    //pagination: { mode: "off" },
+    pagination: { pageSize: 15, mode: "server" },
     filters: {
       mode: "server",
       initial: [
@@ -37,6 +46,12 @@ export const PointDeCollecteListTable: React.FC = () => {
     () => tableQueryResult?.data?.data ?? [],
     [tableQueryResult]
   );
+
+  const { selectProps: zoneDeCollecteSelectProps } = useSelect<ZoneDeCollecte>({
+    resource: "zone_de_collecte",
+    optionLabel: "nom",
+    optionValue: "id",
+  });
 
   const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
     resource: "zone_de_collecte",
@@ -66,6 +81,7 @@ export const PointDeCollecteListTable: React.FC = () => {
     <Table {...tableProps} size="small" rowKey="id">
       <Table.Column
         dataIndex="nom"
+        hidden={!columns.includes("nom")}
         title="Nom"
         sorter
         filterIcon={<SearchOutlined />}
@@ -76,25 +92,14 @@ export const PointDeCollecteListTable: React.FC = () => {
           </FilterDropdown>
         )}
       />
-      <Table.Column<PointDeCollecte>
-        dataIndex="adresse"
-        title="Adresse"
-        render={(value, record) => (
-          <div>
-            {record.latitude && record.longitude && (
-              <EnvironmentOutlined style={{ marginRight: "3px" }} />
-            )}
-            <span>{value}</span>
-          </div>
-        )}
-      />
       <Table.Column
-        dataIndex="zone_de_collecte_id"
-        title="Zone de collecte"
-        render={(value: number) => zoneDeCollecteById[value]?.nom ?? ""}
+        dataIndex="setup_date"
+        hidden={!columns.includes("setup_date")}
+        title="Date setup"
       />
       <Table.Column
         dataIndex="type"
+        hidden={!columns.includes("type")}
         title="Type"
         sorter
         render={(type) => <PointDeCollecteType value={type} />}
@@ -110,15 +115,54 @@ export const PointDeCollecteListTable: React.FC = () => {
           </FilterDropdown>
         )}
       />
+      <Table.Column<PointDeCollecte>
+        dataIndex="adresse"
+        hidden={!columns.includes("adresse")}
+        title="Adresse"
+        width={350}
+        render={(value, record) => (
+          <div>
+            {record.latitude && record.longitude && (
+              <EnvironmentOutlined style={{ marginRight: "3px" }} />
+            )}
+            <span>{value}</span>
+          </div>
+        )}
+      />
+      <Table.Column
+        dataIndex="zone_de_collecte_id"
+        hidden={!columns.includes("zone_de_collecte_id")}
+        title="Zone de collecte"
+        render={(value: number) => zoneDeCollecteById[value]?.nom ?? ""}
+        sorter
+        filterDropdown={(props) => (
+          <FilterDropdown {...props}>
+            <Select
+              {...zoneDeCollecteSelectProps}
+              style={{ width: "200px" }}
+              allowClear
+              mode="multiple"
+              placeholder="Zone de collecte"
+            />
+          </FilterDropdown>
+        )}
+      />
+
       <Table.Column
         dataIndex="contenant_collecte_type"
+        hidden={!columns.includes("contenant_collecte_type")}
         title="Type de contenants"
         render={(type) => <ContenantDeCollecteType value={type} />}
       />
-      <Table.Column dataIndex="stock_contenants" title="Stock contenants" />
-      {/* <Table.Column
+      <Table.Column
+        dataIndex="stock_contenants"
+        hidden={!columns.includes("stock_contenants")}
+        title="Stock contenants"
+      />
+      <Table.Column
         dataIndex="contacts"
-        title="Contact"
+        hidden={!columns.includes("contacts")}
+        title="Contacts"
         render={(contacts: string[]) => (
           <div>
             {contacts.map((Contacts) => (
@@ -131,7 +175,8 @@ export const PointDeCollecteListTable: React.FC = () => {
       />
       <Table.Column
         dataIndex="emails"
-        title="E-mail"
+        hidden={!columns.includes("emails")}
+        title="E-mails"
         render={(emails: string[]) => (
           <div>
             {emails.map((email) => (
@@ -144,6 +189,7 @@ export const PointDeCollecteListTable: React.FC = () => {
       />
       <Table.Column
         dataIndex="telephones"
+        hidden={!columns.includes("telephones")}
         title="N° de téléphone"
         render={(telephones: string[]) => (
           <div>
@@ -154,7 +200,17 @@ export const PointDeCollecteListTable: React.FC = () => {
             ))}
           </div>
         )}
-      /> */}
+      />
+      <Table.Column
+        dataIndex="horaires"
+        hidden={!columns.includes("horaires")}
+        title="Horaires"
+      />
+      <Table.Column
+        dataIndex="info"
+        hidden={!columns.includes("info")}
+        title="Informations compl."
+      />
       <Table.Column
         title="Actions"
         dataIndex="actions"

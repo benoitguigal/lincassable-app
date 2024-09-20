@@ -49,10 +49,12 @@ export const PointDeCollecteForm: React.FC<Props> = ({
       >
         <Input />
       </Form.Item>
+      <Form.Item label="Date setup" name={["setup_date"]}>
+        <Input type="date" />
+      </Form.Item>
       <Form.Item label="Type de point de collecte" name="type">
         <Select
           options={pointDeCollecteTypeOptions}
-          style={{ width: "200px" }}
           allowClear
           placeholder="Type de point de collecte"
         />
@@ -96,7 +98,6 @@ export const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item label="Zone de collecte" name={["zone_de_collecte_id"]}>
         <Select
           placeholder="Sélectionner une zone"
-          style={{ width: 300 }}
           {...zoneDeCollecteSelectProps}
         />
       </Form.Item>
@@ -123,13 +124,15 @@ export const PointDeCollecteForm: React.FC<Props> = ({
       >
         <Select
           options={contenantDeCollecteTypeOptions}
-          style={{ width: "200px" }}
           allowClear
           placeholder="Type de contenant"
         />
       </Form.Item>
       <Form.Item label="Stock contenant de collecte" name="stock_contenants">
-        <Input type="number" style={{ width: "200px" }} min={0} />
+        <Input type="number" min={0} />
+      </Form.Item>
+      <Form.Item label="Informations complémentaires" name="info">
+        <Input />
       </Form.Item>
     </Form>
   );

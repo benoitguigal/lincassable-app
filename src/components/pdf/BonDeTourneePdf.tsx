@@ -1,26 +1,16 @@
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
-import { Collecte, PointDeCollecte, Tournee, Transporteur } from "../../types";
-import { useOne } from "@refinedev/core";
-import { Table, TableCell, TableHeader } from "@david.kucsai/react-pdf-table";
-
-// Create styles
-// const styles = StyleSheet.create({
-//   page: {
-//     flexDirection: "row",
-//     backgroundColor: "#E4E4E4",
-//   },
-//   section: {
-//     margin: 10,
-//     padding: 10,
-//     flexGrow: 1,
-//   },
-// });
+import {
+  Collecte,
+  PointDeCollecte,
+  Tournee,
+  ZoneDeCollecte,
+} from "../../types";
+import { formatDate } from "../../utility/dateFormat";
 
 const styles = StyleSheet.create({
   page: {
-    flexDirection: "column",
-    backgroundColor: "#FFFFFF",
-    padding: 10,
+    paddingTop: 20,
+    paddingLeft: 20,
   },
   table: {
     display: "table" as any,
@@ -65,12 +55,14 @@ type BonDeTourneeProps = {
   tournee: Tournee;
   collectes: Collecte[];
   pointsDeCollecte: PointDeCollecte[];
+  zoneDeCollecte?: ZoneDeCollecte;
 };
 
 const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
   tournee,
   collectes,
   pointsDeCollecte,
+  zoneDeCollecte,
 }) => {
   if (!tournee) {
     return null;
@@ -86,12 +78,16 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
   let livraisonNbCasierTotal = 0;
   let collecteNbPaloxTotal = 0;
   let livraisonNbPaloxTotal = 0;
+  let collecteNbPaletteTotal = 0;
+  let livraisonNbPaletteTotal = 0;
 
   collectes.forEach((collecte) => {
     collecteNbCasierTotal += collecte.collecte_nb_casier_75_plein;
     livraisonNbCasierTotal += collecte.livraison_nb_casier_75_vide;
     collecteNbPaloxTotal += collecte.collecte_nb_palox_plein;
     livraisonNbPaloxTotal += collecte.livraison_nb_palox_vide;
+    collecteNbPaletteTotal += collecte.collecte_nb_palette_bouteille;
+    livraisonNbPaletteTotal += collecte.livraison_nb_palette_bouteille;
   });
 
   // Définir les données du tableau
@@ -105,8 +101,8 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
       col6: "",
     },
     {
-      col1: "Nom",
-      col2: "Adresse",
+      col1: "Nom / Horaires / Contact",
+      col2: "Adresse / Infos",
       col3: "À collecter",
       col4: "À livrer",
       col5: "À collecter",
@@ -115,17 +111,46 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
       col8: "À livrer",
       col9: "Signature / tampon",
     },
-    ...collectes.map((c) => ({
-      col1: pointDeCollecteById[c.point_de_collecte_id]?.nom,
-      col2: pointDeCollecteById[c.point_de_collecte_id]?.adresse,
-      col3: c.collecte_nb_casier_75_plein,
-      col4: c.livraison_nb_casier_75_vide,
-      col5: c.collecte_nb_palox_plein,
-      col6: c.livraison_nb_palox_vide,
-      col7: "",
-      col8: "",
-      col9: "",
-    })),
+    ...collectes.map((c) => {
+      let nom = pointDeCollecteById[c.point_de_collecte_id]?.nom;
+
+      if (pointDeCollecteById[c.point_de_collecte_id]?.horaires) {
+        nom = `${nom} \n\n${
+          pointDeCollecteById[c.point_de_collecte_id]?.horaires
+        }`;
+      }
+
+      const contact = [
+        pointDeCollecteById[c.point_de_collecte_id]?.contacts?.[0],
+        pointDeCollecteById[c.point_de_collecte_id]?.telephones?.[0],
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      if (contact) {
+        nom = `${nom} \n\n${contact}`;
+      }
+
+      let adresse = pointDeCollecteById[c.point_de_collecte_id]?.adresse;
+
+      if (pointDeCollecteById[c.point_de_collecte_id]?.info) {
+        adresse = `${adresse} \n\n${
+          pointDeCollecteById[c.point_de_collecte_id]?.info
+        }`;
+      }
+
+      return {
+        col1: nom,
+        col2: adresse,
+        col3: c.collecte_nb_casier_75_plein,
+        col4: c.livraison_nb_casier_75_vide,
+        col5: c.collecte_nb_palox_plein,
+        col6: c.livraison_nb_palox_vide,
+        col7: c.collecte_nb_palette_bouteille,
+        col8: c.livraison_nb_palette_bouteille,
+        col9: "",
+      };
+    }),
     {
       col1: "",
       col2: "TOTAL",
@@ -133,21 +158,19 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
       col4: livraisonNbCasierTotal,
       col5: collecteNbPaloxTotal,
       col6: livraisonNbPaloxTotal,
-      col7: "",
-      col8: "",
+      col7: collecteNbPaletteTotal,
+      col8: livraisonNbPaletteTotal,
       col9: "",
     },
   ];
 
   return (
     <Document>
-      <Page
-        size="A4"
-        // style={styles.page}
-        orientation="landscape"
-      >
+      <Page size="A4" style={styles.page} orientation="landscape">
         <View>
-          <Text>{tournee.date}</Text>
+          <Text style={{ paddingLeft: 20 }}>
+            {formatDate(tournee.date)} - {zoneDeCollecte?.nom}
+          </Text>
         </View>
         <View style={styles.table}>
           {/* En-tête du tableau */}
@@ -234,12 +257,6 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
             </View>
           ))}
         </View>
-        {/* <View style={styles.section}>
-          <Text>{tournee.zone}</Text>
-        </View>
-        <View style={styles.section}>
-          <Text>Section #2</Text>
-        </View> */}
       </Page>
     </Document>
   );

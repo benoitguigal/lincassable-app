@@ -12,30 +12,36 @@ export type Database = {
       collecte: {
         Row: {
           collecte_nb_casier_75_plein: number
+          collecte_nb_palette_bouteille: number
           collecte_nb_palox_plein: number
           created_at: string
           id: number
           livraison_nb_casier_75_vide: number
+          livraison_nb_palette_bouteille: number
           livraison_nb_palox_vide: number
           point_de_collecte_id: number
           tournee_id: number | null
         }
         Insert: {
           collecte_nb_casier_75_plein?: number
+          collecte_nb_palette_bouteille?: number
           collecte_nb_palox_plein?: number
           created_at?: string
           id?: number
           livraison_nb_casier_75_vide?: number
+          livraison_nb_palette_bouteille?: number
           livraison_nb_palox_vide?: number
           point_de_collecte_id: number
           tournee_id?: number | null
         }
         Update: {
           collecte_nb_casier_75_plein?: number
+          collecte_nb_palette_bouteille?: number
           collecte_nb_palox_plein?: number
           created_at?: string
           id?: number
           livraison_nb_casier_75_vide?: number
+          livraison_nb_palette_bouteille?: number
           livraison_nb_palox_vide?: number
           point_de_collecte_id?: number
           tournee_id?: number | null
@@ -187,8 +193,9 @@ export type Database = {
           date: string
           id: number
           point_de_massification_id: number
+          prix: number | null
+          statut: Database["public"]["Enums"]["statut_tournee"]
           transporteur_id: number
-          zone: string | null
           zone_de_collecte_id: number
         }
         Insert: {
@@ -196,8 +203,9 @@ export type Database = {
           date: string
           id?: number
           point_de_massification_id: number
+          prix?: number | null
+          statut?: Database["public"]["Enums"]["statut_tournee"]
           transporteur_id: number
-          zone?: string | null
           zone_de_collecte_id: number
         }
         Update: {
@@ -205,8 +213,9 @@ export type Database = {
           date?: string
           id?: number
           point_de_massification_id?: number
+          prix?: number | null
+          statut?: Database["public"]["Enums"]["statut_tournee"]
           transporteur_id?: number
-          zone?: string | null
           zone_de_collecte_id?: number
         }
         Relationships: [
@@ -392,6 +401,7 @@ export type Database = {
       app_role: "staff" | "transporteur"
       contenant_collecte_type: "casier_x12" | "palox"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
+      statut_tournee: "En attente de validation" | "Validé"
     }
     CompositeTypes: {
       [_ in never]: never

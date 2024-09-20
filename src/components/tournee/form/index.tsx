@@ -5,9 +5,12 @@ import {
   ZoneDeCollecte,
 } from "../../../types";
 import dayjs from "dayjs";
-import { DatePicker, Form, Select } from "antd";
+import { DatePicker, Form, Input, Select } from "antd";
 import { UseFormProps, UseFormReturnType, useSelect } from "@refinedev/antd";
 import CollecteListTable from "../../collecte/listTable";
+import { statutTourneeOptions } from "../../../utility/options";
+import { useGetIdentity, usePermissions } from "@refinedev/core";
+import { PermissionResponse } from "../../../authProvider";
 
 type Props = {
   form: UseFormReturnType<Tournee>;
@@ -33,6 +36,9 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
     optionValue: "id",
   });
 
+  const { data: permissions } = usePermissions<PermissionResponse>();
+  const isStaff = permissions?.role === "staff";
+
   return (
     <Form {...form.formProps} layout="vertical">
       <Form.Item
@@ -47,14 +53,22 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
           value: value ? dayjs(value) : undefined,
         })}
       >
-        <DatePicker placeholder="Sélectionner une date" size="large" />
+        <DatePicker
+          placeholder="Sélectionner une date"
+          size="large"
+          disabled={!isStaff}
+        />
       </Form.Item>
       <Form.Item label="Zone de collecte" name={["zone_de_collecte_id"]}>
         <Select
           placeholder="Sélectionner une zone"
           style={{ width: 300 }}
           {...zoneDeCollecteSelectProps}
+          disabled={!isStaff}
         />
+      </Form.Item>
+      <Form.Item label="Statut" name={["statut"]}>
+        <Select style={{ width: 300 }} options={statutTourneeOptions} />
       </Form.Item>
       <Form.Item
         label="Transporteur"
@@ -69,6 +83,7 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
           style={{ width: 300 }}
           placeholder="Transporteur"
           {...transporteurSelectProps}
+          disabled={!isStaff}
         />
       </Form.Item>
       <Form.Item
@@ -84,10 +99,14 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
           placeholder="Choisir un point de massification"
           style={{ width: 300 }}
           {...pointDeMassificationSelectProps}
+          disabled={!isStaff}
         />
       </Form.Item>
+      <Form.Item label="Prix" name={["prix"]}>
+        <Input style={{ width: 300 }} type="number" />
+      </Form.Item>
 
-      {action === "edit" && (
+      {action === "edit" && isStaff && (
         <CollecteListTable tournee_id={form.id as number} canEdit={true} />
       )}
     </Form>

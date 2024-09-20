@@ -3,7 +3,10 @@ import { supabaseClient } from "./utility";
 import { jwtDecode } from "jwt-decode";
 import { UserRole } from "./types";
 
-type PermissionResponse = { role: UserRole; transporteurId?: number | null };
+export type PermissionResponse = {
+  role: UserRole;
+  transporteurId?: number | null;
+};
 
 type AuthProvider = Omit<RefineAuthProvider, "getPermissions"> & {
   getPermissions: () => Promise<PermissionResponse | null>;
