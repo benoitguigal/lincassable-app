@@ -8,6 +8,7 @@ import {
   FilterDropdown,
   TextField,
   EmailField,
+  useSelect,
 } from "@refinedev/antd";
 import { Input, Select, Space, Table } from "antd";
 import { EnvironmentOutlined, SearchOutlined } from "@ant-design/icons";
@@ -26,7 +27,8 @@ export const PointDeCollecteListTable: React.FC<
 > = ({ columns }) => {
   const { tableProps, filters, tableQueryResult } = useTable<PointDeCollecte>({
     syncWithLocation: true,
-    pagination: { mode: "off" },
+    //pagination: { mode: "off" },
+    pagination: { pageSize: 15, mode: "server" },
     filters: {
       mode: "server",
       initial: [
@@ -44,6 +46,12 @@ export const PointDeCollecteListTable: React.FC<
     () => tableQueryResult?.data?.data ?? [],
     [tableQueryResult]
   );
+
+  const { selectProps: zoneDeCollecteSelectProps } = useSelect<ZoneDeCollecte>({
+    resource: "zone_de_collecte",
+    optionLabel: "nom",
+    optionValue: "id",
+  });
 
   const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
     resource: "zone_de_collecte",
@@ -75,7 +83,6 @@ export const PointDeCollecteListTable: React.FC<
         dataIndex="nom"
         hidden={!columns.includes("nom")}
         title="Nom"
-        fixed="left"
         sorter
         filterIcon={<SearchOutlined />}
         defaultFilteredValue={getDefaultFilter("nom", filters, "contains")}
@@ -127,6 +134,18 @@ export const PointDeCollecteListTable: React.FC<
         hidden={!columns.includes("zone_de_collecte_id")}
         title="Zone de collecte"
         render={(value: number) => zoneDeCollecteById[value]?.nom ?? ""}
+        sorter
+        filterDropdown={(props) => (
+          <FilterDropdown {...props}>
+            <Select
+              {...zoneDeCollecteSelectProps}
+              style={{ width: "200px" }}
+              allowClear
+              mode="multiple"
+              placeholder="Zone de collecte"
+            />
+          </FilterDropdown>
+        )}
       />
 
       <Table.Column
@@ -194,7 +213,6 @@ export const PointDeCollecteListTable: React.FC<
       />
       <Table.Column
         title="Actions"
-        fixed="right"
         dataIndex="actions"
         render={(_, record: BaseRecord) => (
           <Space>

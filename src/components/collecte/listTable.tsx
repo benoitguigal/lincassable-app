@@ -235,35 +235,36 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
         return (
           <Table.Summary.Row>
             <Table.Summary.Cell index={0} />
-            <Table.Summary.Cell index={1}>
+            <Table.Summary.Cell index={1} />
+            <Table.Summary.Cell index={2}>
               <b>Total</b>
             </Table.Summary.Cell>
-            <Table.Summary.Cell index={2}>
+            <Table.Summary.Cell index={3}>
               <b>{totalLivraisonCasier}</b>
             </Table.Summary.Cell>
-            <Table.Summary.Cell index={3}>
+            <Table.Summary.Cell index={4}>
               <b>{totalCollecteCasier}</b>
             </Table.Summary.Cell>
-            <Table.Summary.Cell index={4}>
+            <Table.Summary.Cell index={5}>
               <b>{totalLivraisonPalox}</b>
             </Table.Summary.Cell>
-            <Table.Summary.Cell index={5}>
+            <Table.Summary.Cell index={6}>
               <b>{totalCollectePalox}</b>
             </Table.Summary.Cell>
-            <Table.Summary.Cell index={6}>
+            <Table.Summary.Cell index={7}>
               <b>{totalLivraisonPalette}</b>
             </Table.Summary.Cell>
-            <Table.Summary.Cell index={7}>
+            <Table.Summary.Cell index={8}>
               <b>{totalCollectePalette}</b>
             </Table.Summary.Cell>
-            <Table.Summary.Cell index={8}>
+            <Table.Summary.Cell index={9}>
               <b>
                 {totalChargement}
                 {" kg"}
               </b>
             </Table.Summary.Cell>
             {canEdit && (
-              <Table.Summary.Cell index={9}>
+              <Table.Summary.Cell index={10}>
                 <CollecteCreateButton tournee_id={tournee_id} />
               </Table.Summary.Cell>
             )}

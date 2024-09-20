@@ -14,15 +14,15 @@ import {
   EditButton,
   ShowButton,
   DeleteButton,
+  useEditableTable,
 } from "@refinedev/antd";
 import { CSSProperties, useMemo, useState } from "react";
-import { BaseRecord, useList } from "@refinedev/core";
-import { Button, Flex, Space, Table, Tag, theme } from "antd";
+import { BaseRecord, CanAccess, useList } from "@refinedev/core";
+import { Flex, Space, Table, Tag, theme } from "antd";
 import { CollecteEditButton } from "../../collecte/editButton";
 import { CollecteCreateButton } from "../../collecte/createButton";
 import { Chargement } from "../chargement";
 import dayjs from "dayjs";
-import { MailOutlined } from "@ant-design/icons";
 import TourneeMailButton from "../mail-button";
 import { StatutTourneeTag } from "../statut-tournee";
 
@@ -44,7 +44,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
   const [currentTag, setCurrentTag] = useState<TagEnum>("Tous");
 
   const { tableProps, tableQueryResult, filters, setFilters } =
-    useTable<Tournee>({
+    useEditableTable<Tournee>({
       syncWithLocation: true,
       sorters: { permanent: [{ field: "date", order: "desc" }] },
       filters: {
@@ -371,10 +371,14 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
               <EditButton hideText size="small" recordItemId={record.id} />
               <ShowButton hideText size="small" recordItemId={record.id} />
               <DeleteButton hideText size="small" recordItemId={record.id} />
-              <TourneeMailButton
-                tournee={record}
-                zoneDeCollecte={zoneDeCollecteById[record.zone_de_collecte_id]}
-              />
+              <CanAccess resource="tournee" action="send_mail">
+                <TourneeMailButton
+                  tournee={record}
+                  zoneDeCollecte={
+                    zoneDeCollecteById[record.zone_de_collecte_id]
+                  }
+                />
+              </CanAccess>
             </Space>
           )}
         />

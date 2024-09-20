@@ -22,7 +22,7 @@ const accessControlProvider: AccessControlProvider = {
         }
 
         if (resource === "tournee") {
-          if (action === "list" || action === "show") {
+          if (action === "list" || action === "show" || action === "edit") {
             return { can: true };
           }
         }
