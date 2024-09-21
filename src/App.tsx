@@ -32,7 +32,6 @@ import { BouteilleIconSvg } from "./components/icons";
 import { DashboardPage } from "./pages/dashboard";
 import { DashboardOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { AntdInferencer } from "@refinedev/inferencer/antd";
 import { TourneeList } from "./pages/tournee/list";
 import { TourneeCreate } from "./pages/tournee/create";
 import { TourneeEdit } from "./pages/tournee/edit";
@@ -40,6 +39,12 @@ import accessControlProvider from "./accessControlProvider";
 import { TourneeShow } from "./pages/tournee/show";
 import CreateRemplissageCasiers from "./pages/remplissage-contenants/create";
 import { RemplissageContenantsList } from "./pages/remplissage-contenants/list";
+import locale from "antd/locale/fr_FR";
+import dayjs from "dayjs";
+
+import "dayjs/locale/fr";
+
+dayjs.locale("fr");
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -55,6 +60,7 @@ function App() {
     <BrowserRouter>
       <RefineKbarProvider>
         <ConfigProvider
+          locale={locale}
           theme={{
             algorithm: theme.compactAlgorithm,
             token: {

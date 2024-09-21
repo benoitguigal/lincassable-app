@@ -9,7 +9,7 @@ import { DatePicker, Form, Input, Select } from "antd";
 import { UseFormProps, UseFormReturnType, useSelect } from "@refinedev/antd";
 import CollecteListTable from "../../collecte/listTable";
 import { statutTourneeOptions } from "../../../utility/options";
-import { useGetIdentity, usePermissions } from "@refinedev/core";
+import { usePermissions } from "@refinedev/core";
 import { PermissionResponse } from "../../../authProvider";
 
 type Props = {
