@@ -12,7 +12,7 @@ export const PointDeCollecteFormWrapper: React.FC<Props> = ({ action }) => {
 
   const onFinish = (values: any) => {
     const setup_date = dayjs.isDayjs(values.setup_date)
-      ? values.date.format("YYYY-MM-DD")
+      ? values.setup_date.format("YYYY-MM-DD")
       : values.setup_date;
 
     form.formProps.onFinish &&
