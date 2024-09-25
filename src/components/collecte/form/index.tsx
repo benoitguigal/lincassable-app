@@ -12,15 +12,14 @@ export const CollecteForm: React.FC<Props> = ({ formProps }) => {
   });
 
   const handleCollecteChange = () => {
-    const nbCasiers = formProps.form?.getFieldValue(
-      "collecte_nb_casier_75_plein"
-    ) as number;
-    const nbPaloxs = formProps.form?.getFieldValue(
-      "collecte_nb_palox_plein"
-    ) as number;
-    const nbPalettes = formProps.form?.getFieldValue(
-      "collecte_nb_palette_bouteille"
-    ) as number;
+    const nbCasiers =
+      formProps.form?.getFieldValue("collecte_nb_casier_75_plein") ?? 0;
+    const nbPaloxs =
+      formProps.form?.getFieldValue("collecte_nb_palox_plein") ?? 0;
+    const nbPalettes =
+      formProps.form?.getFieldValue("collecte_nb_palette_bouteille") ?? 0;
+
+    console.log("handleChange");
 
     const nbBouteilles = nbCasiers * 12 + nbPaloxs * 550 + nbPalettes * 1200;
     formProps.form?.setFieldValue("collecte_nb_bouteilles", nbBouteilles);
