@@ -11,6 +11,21 @@ export const CollecteForm: React.FC<Props> = ({ formProps }) => {
     optionValue: "id",
   });
 
+  const handleCollecteChange = () => {
+    const nbCasiers = formProps.form?.getFieldValue(
+      "collecte_nb_casier_75_plein"
+    ) as number;
+    const nbPaloxs = formProps.form?.getFieldValue(
+      "collecte_nb_palox_plein"
+    ) as number;
+    const nbPalettes = formProps.form?.getFieldValue(
+      "collecte_nb_palette_bouteille"
+    ) as number;
+
+    const nbBouteilles = nbCasiers * 12 + nbPaloxs * 550 + nbPalettes * 1200;
+    formProps.form?.setFieldValue("collecte_nb_bouteilles", nbBouteilles);
+  };
+
   return (
     <Form {...formProps} layout="vertical">
       <Form.Item
@@ -57,17 +72,40 @@ export const CollecteForm: React.FC<Props> = ({ formProps }) => {
         name="collecte_nb_casier_75_plein"
         label="Collecte - Nombre de casiers 12x75cl pleins"
       >
-        <Input type="number" defaultValue={0} style={{ width: 300 }} />
+        <Input
+          type="number"
+          defaultValue={0}
+          style={{ width: 300 }}
+          onChange={handleCollecteChange}
+        />
       </Form.Item>
       <Form.Item
         name="collecte_nb_palox_plein"
         label="Collecte - Nombre de paloxs pleins"
       >
-        <Input type="number" defaultValue={0} style={{ width: 300 }} />
+        <Input
+          type="number"
+          defaultValue={0}
+          style={{ width: 300 }}
+          onChange={handleCollecteChange}
+        />
       </Form.Item>
       <Form.Item
         name="collecte_nb_palette_bouteille"
         label="Collecte - Nombre de palettes de bouteilles"
+      >
+        <Input
+          type="number"
+          defaultValue={0}
+          style={{ width: 300 }}
+          onChange={handleCollecteChange}
+        />
+      </Form.Item>
+      <Form.Item
+        name="collecte_nb_bouteilles"
+        label="Collecte - Nombre  de bouteilles"
+        help="Calculé automatiquement mais peut-être ajusté manuellement"
+        style={{ width: 300 }}
       >
         <Input type="number" defaultValue={0} style={{ width: 300 }} />
       </Form.Item>
