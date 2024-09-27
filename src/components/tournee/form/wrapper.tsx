@@ -8,7 +8,10 @@ type Props = {
 };
 
 export const TourneeFormWrapper: React.FC<Props> = ({ action }) => {
-  const form = useForm<Tournee>({ action });
+  const form = useForm<Tournee>({
+    action,
+    redirect: action === "create" ? "edit" : "list",
+  });
 
   const CreateOrEdit = action === "create" ? Create : Edit;
 
