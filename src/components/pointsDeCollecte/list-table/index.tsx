@@ -106,7 +106,6 @@ export const PointDeCollecteListTable: React.FC<
               options={pointDeCollecteTypeOptions}
               style={{ width: "200px" }}
               allowClear
-              mode="multiple"
               placeholder="Type de points de collecte"
             />
           </FilterDropdown>
@@ -138,7 +137,6 @@ export const PointDeCollecteListTable: React.FC<
               {...zoneDeCollecteSelectProps}
               style={{ width: "200px" }}
               allowClear
-              mode="multiple"
               placeholder="Zone de collecte"
             />
           </FilterDropdown>

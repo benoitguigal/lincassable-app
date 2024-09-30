@@ -18,14 +18,21 @@ import {
   useSelect,
 } from "@refinedev/antd";
 import { CSSProperties, useMemo, useState } from "react";
-import { BaseRecord, CanAccess, useList } from "@refinedev/core";
-import { Flex, Select, Space, Table, Tag, theme } from "antd";
+import {
+  BaseRecord,
+  CanAccess,
+  getDefaultFilter,
+  useList,
+} from "@refinedev/core";
+import { Flex, Select, Space, Table, Tag, DatePicker, theme } from "antd";
 import { CollecteEditButton } from "../../collecte/editButton";
 import { CollecteCreateButton } from "../../collecte/createButton";
 import { Chargement } from "../chargement";
 import dayjs from "dayjs";
 import TourneeMailButton from "../mail-button";
 import { StatutTourneeTag } from "../statut-tournee";
+
+const { RangePicker } = DatePicker;
 
 type TourneeListTableProps = {
   user: Identity;
@@ -51,6 +58,13 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
       sorters: { permanent: [{ field: "date", order: "desc" }] },
       filters: {
         mode: "server",
+        initial: [
+          {
+            field: "date",
+            value: ["2024-01-01", dayjs().format("YYYY-MM-DD")],
+            operator: "between",
+          },
+        ],
         ...(isTransporteur
           ? {
               permanent: [
@@ -323,6 +337,39 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
           render={(value: any) => (
             <DateField value={value} format="ddd DD MMM YY" locales="fr" />
           )}
+          defaultFilteredValue={getDefaultFilter("date", filters, "between")}
+          filterDropdown={(props) => (
+            <FilterDropdown
+              {...props}
+              mapValue={(selectedKeys, event) => {
+                if (!selectedKeys) {
+                  return selectedKeys;
+                }
+
+                if (event === "value") {
+                  return selectedKeys.map((key) => {
+                    if (typeof key === "string") {
+                      return dayjs(key);
+                    }
+
+                    return key;
+                  });
+                }
+
+                if (event === "onChange") {
+                  if (selectedKeys.every(dayjs.isDayjs)) {
+                    return selectedKeys.map((date: any) =>
+                      date.format("YYYY-MM-DD")
+                    );
+                  }
+                }
+
+                return selectedKeys;
+              }}
+            >
+              <RangePicker />
+            </FilterDropdown>
+          )}
         />
         <Table.Column
           dataIndex="zone_de_collecte_id"
@@ -351,7 +398,6 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
                 {...transporteurSelectProps}
                 style={{ width: "200px" }}
                 allowClear
-                mode="multiple"
                 placeholder="Transporteur"
               />
             </FilterDropdown>
