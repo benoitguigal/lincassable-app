@@ -53,11 +53,7 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
           value: value ? dayjs(value) : undefined,
         })}
       >
-        <DatePicker
-          placeholder="Sélectionner une date"
-          size="large"
-          disabled={!isStaff}
-        />
+        <DatePicker placeholder="Sélectionner une date" size="large" />
       </Form.Item>
       <Form.Item label="Zone de collecte" name={["zone_de_collecte_id"]}>
         <Select
