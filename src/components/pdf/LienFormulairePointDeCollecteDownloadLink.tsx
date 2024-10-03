@@ -18,9 +18,7 @@ const LienFormulairePointDeCollecteDownloadLink: React.FC<
 
   useEffect(() => {
     async function getQrCode(url: string) {
-      console.log(url);
       const generated = await QRCode.toDataURL(url);
-      console.log(generated);
       setQrCode(generated);
     }
     if (!qrCode && url) {

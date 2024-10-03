@@ -19,8 +19,6 @@ export const CollecteForm: React.FC<Props> = ({ formProps }) => {
     const nbPalettes =
       formProps.form?.getFieldValue("collecte_nb_palette_bouteille") ?? 0;
 
-    console.log("handleChange");
-
     const nbBouteilles = nbCasiers * 12 + nbPaloxs * 550 + nbPalettes * 1200;
     formProps.form?.setFieldValue("collecte_nb_bouteilles", nbBouteilles);
   };

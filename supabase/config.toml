@@ -130,6 +130,12 @@ redirect_uri = ""
 # or any other third-party OIDC providers.
 url = ""
 
+
+[auth.hook.custom_access_token]
+enabled = true
+uri = "pg-functions://postgres/public/set_role"
+
+
 [analytics]
 enabled = false
 port = 54327
