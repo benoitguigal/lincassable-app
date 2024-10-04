@@ -1,9 +1,14 @@
 import * as fs from "fs";
 import csvParser from "csv-parser";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import { createClient } from "@refinedev/supabase";
 
+dayjs.extend(customParseFormat);
+
 interface CsvRecord {
+  "Identifiant livraison Cyke": string;
+  "Livrer à partir de": string;
   Statut: "delivered" | "cancelled" | "failed";
   "Prix facturé": string;
   Direction: "outbound" | "inbound";
@@ -63,7 +68,7 @@ async function readCsv(path: string) {
 
   await new Promise((resolve, reject) => {
     fs.createReadStream(path)
-      .pipe(csvParser({ separator: ";" })) // Définir le séparateur comme point-virgule
+      .pipe(csvParser({ separator: "," })) // Définir le séparateur comme point-virgule
       .on("data", (data: CsvRecord) => results.push(data))
       .on("end", () => {
         resolve(results);
@@ -87,10 +92,7 @@ async function readCsv(path: string) {
 
   const collecteByDate: { [date: string]: CsvRecord[] } = data.reduce(
     (acc, record) => {
-      const dateCollecte = dayjs(record["Ramasse - Effectuée le"]).format(
-        "YYYY-MM-DD"
-      );
-      if (record.Statut === "cancelled" || record.Statut === "failed") {
+      if (record.Statut !== "delivered") {
         return acc;
       }
       if (record.Contenant.includes("Palette")) {
@@ -98,6 +100,12 @@ async function readCsv(path: string) {
         // livraison / collecte de palettes de casiers
         return acc;
       }
+
+      const dateCollecte = dayjs(
+        record["Livrer à partir de"].slice(0, 10),
+        "DD/MM/YYYY"
+      ).format("YYYY-MM-DD");
+
       if (acc[dateCollecte]) {
         return { ...acc, [dateCollecte]: [...acc[dateCollecte], record] };
       }
@@ -108,6 +116,7 @@ async function readCsv(path: string) {
 
   for (const date of Object.keys(collecteByDate)) {
     const collectes = collecteByDate[date];
+
     const prix = collectes.reduce(
       (acc, curr) => acc + parseFloat(curr["Prix facturé"]),
       0
@@ -121,84 +130,107 @@ async function readCsv(path: string) {
       prix,
     };
 
-    // const { data, error } = await supabase
-    //   .from("tournée")
-    //   .insert([tournee])
-    //   .select();
+    const { data, error } = await supabase
+      .from("tournee")
+      .insert([tournee])
+      .select();
 
-    // const tournee_id = data![0].id as number;
+    if (error) {
+      console.log(error);
+    }
 
-    const tournee_id = 1;
+    const tournee_id = data?.[0].id as number;
 
-    const collectesByPoint: { [key: number]: Collecte } = collectes.reduce(
-      (acc, c) => {
-        if (c.Direction === "outbound") {
-          // Trajet du dépôt vers le point de collecte
-          // Le point de collecte correspond au champ "Dépose - Entreprise"
-          const pointDeCollecte = c["Dépose – Entreprise"];
-          const point_de_collecte_id = pointDeCollectesIds[pointDeCollecte];
-          const colisage = {
-            livraison_nb_casier_75_vide: parseInt(c["Nombre de colis"]),
-          };
-          if (!point_de_collecte_id) {
+    if (tournee_id) {
+      const collectesByPoint: { [key: number]: Collecte } = collectes.reduce(
+        (acc, c) => {
+          if (c["Ramasse – Entreprise"] === "Hub vivaux") {
+            // Trajet du dépôt vers le point de collecte
+            // Le point de collecte correspond au champ "Dépose - Entreprise"
+            const pointDeCollecte = c["Dépose – Entreprise"];
+            const point_de_collecte_id = pointDeCollectesIds[pointDeCollecte];
+            const colisage = {
+              livraison_nb_casier_75_vide: parseInt(c["Nombre de colis"]),
+            };
+            if (!point_de_collecte_id) {
+              return acc;
+            }
+            if (acc[point_de_collecte_id]) {
+              return {
+                ...acc,
+                [point_de_collecte_id]: {
+                  ...acc[point_de_collecte_id],
+                  cyke_id: c["Identifiant livraison Cyke"],
+                  ...colisage,
+                },
+              };
+            } else {
+              return {
+                ...acc,
+                [point_de_collecte_id]: {
+                  point_de_collecte_id,
+                  cyke_id: c["Identifiant livraison Cyke"],
+                  tournee_id,
+                  ...colisage,
+                },
+              };
+            }
+          } else if (c["Dépose – Entreprise"] === "Hub vivaux") {
+            // inbound - Trajet du point de collecte vers le dépôt
+            // Le point de collecte correspond au champ "Ramasse - Entreprise"
+            const pointDeCollecte = c["Ramasse – Entreprise"];
+            const point_de_collecte_id = pointDeCollectesIds[pointDeCollecte];
+            const nbCasiers = parseInt(c["Nombre de colis"]);
+            const colisage = {
+              collecte_nb_casier_75_plein: nbCasiers,
+              collecte_nb_bouteilles: nbCasiers * 12,
+            };
+
+            if (!point_de_collecte_id) {
+              return acc;
+            }
+
+            if (acc[point_de_collecte_id]) {
+              return {
+                ...acc,
+                [point_de_collecte_id]: {
+                  ...acc[point_de_collecte_id],
+                  cyke_id: c["Identifiant livraison Cyke"],
+                  ...colisage,
+                },
+              };
+            } else {
+              return {
+                ...acc,
+                [point_de_collecte_id]: {
+                  point_de_collecte_id,
+                  tournee_id,
+                  cyke_id: c["Identifiant livraison Cyke"],
+                  ...colisage,
+                },
+              };
+            }
+          } else {
             return acc;
           }
-          if (acc[point_de_collecte_id]) {
-            return {
-              ...acc,
-              [point_de_collecte_id]: {
-                ...acc[point_de_collecte_id],
-                ...colisage,
-              },
-            };
-          } else {
-            return {
-              ...acc,
-              [point_de_collecte_id]: {
-                point_de_collecte_id,
-                tournee_id,
-                ...colisage,
-              },
-            };
-          }
-        } else {
-          // inbound - Trajet du point de collecte vers le dépôt
-          // Le point de collecte correspond au champ "Ramasse - Entreprise"
-          const pointDeCollecte = c["Ramasse – Entreprise"];
-          const point_de_collecte_id = pointDeCollectesIds[pointDeCollecte];
-          const nbCasiers = parseInt(c["Nombre de colis"]);
-          const colisage = {
-            collecte_nb_casier_75_plein: nbCasiers,
-            collecte_nb_bouteilles: nbCasiers * 12,
-          };
+        },
+        {}
+      );
 
-          if (!point_de_collecte_id) {
-            return acc;
-          }
+      const collecteData = Object.values(collectesByPoint).map((c) => ({
+        ...c,
+        collecte_nb_casier_75_plein: c.collecte_nb_casier_75_plein ?? 0,
+        collecte_nb_bouteilles: c.collecte_nb_bouteilles ?? 0,
+        livraison_nb_casier_75_vide: c.livraison_nb_casier_75_vide ?? 0,
+      }));
 
-          if (acc[point_de_collecte_id]) {
-            return {
-              ...acc,
-              [point_de_collecte_id]: {
-                ...acc[point_de_collecte_id],
-                ...colisage,
-              },
-            };
-          } else {
-            return {
-              ...acc,
-              [point_de_collecte_id]: {
-                point_de_collecte_id,
-                tournee_id,
-                ...colisage,
-              },
-            };
-          }
-        }
-      },
-      {}
-    );
+      const { error: errorCollecte } = await supabase
+        .from("collecte")
+        .insert(collecteData);
 
-    //await supabase.from("collecte").insert(Object.values(collectesByPoint));
+      if (errorCollecte) {
+        console.log(errorCollecte);
+      }
+    }
   }
 })().then(() => process.exit());

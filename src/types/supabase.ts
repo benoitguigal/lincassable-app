@@ -11,10 +11,12 @@ export type Database = {
     Tables: {
       collecte: {
         Row: {
+          collecte_nb_bouteilles: number
           collecte_nb_casier_75_plein: number
           collecte_nb_palette_bouteille: number
           collecte_nb_palox_plein: number
           created_at: string
+          cyke_id: string | null
           id: number
           livraison_nb_casier_75_vide: number
           livraison_nb_palette_bouteille: number
@@ -23,10 +25,12 @@ export type Database = {
           tournee_id: number | null
         }
         Insert: {
+          collecte_nb_bouteilles?: number
           collecte_nb_casier_75_plein?: number
           collecte_nb_palette_bouteille?: number
           collecte_nb_palox_plein?: number
           created_at?: string
+          cyke_id?: string | null
           id?: number
           livraison_nb_casier_75_vide?: number
           livraison_nb_palette_bouteille?: number
@@ -35,10 +39,12 @@ export type Database = {
           tournee_id?: number | null
         }
         Update: {
+          collecte_nb_bouteilles?: number
           collecte_nb_casier_75_plein?: number
           collecte_nb_palette_bouteille?: number
           collecte_nb_palox_plein?: number
           created_at?: string
+          cyke_id?: string | null
           id?: number
           livraison_nb_casier_75_vide?: number
           livraison_nb_palette_bouteille?: number
@@ -490,3 +496,4 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
+

@@ -53,7 +53,7 @@
     "build": "tsc && refine build",
     "preview": "refine start",
     "refine": "refine",
-    "typegen": "supabase gen types --lang=typescript --project-id $SUPABASE_PROJECT_ID --schema public > src/types/supabase.ts"
+    "typegen": "supabase gen types --lang=typescript --local --schema public > src/types/supabase.ts"
   },
   "browserslist": {
     "production": [
