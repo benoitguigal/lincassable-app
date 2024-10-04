@@ -1,11 +1,28 @@
 # lincassable-app
 
-<div align="center" style="margin: 30px;">
-    <a href="https://refine.dev">
-    <img alt="refine logo" src="https://refine.ams3.cdn.digitaloceanspaces.com/readme/refine-readme-banner.png">
-    </a>
-</div>
-<br/>
+
+## Supabase 
+
+### Démarrer Supabase
+
+`npx supabase start`
+
+### Mettre à jour le fichier de seed avec les données de la prod
+
+`npx supabase db dump --data-only -f supabase/seed.sql`
+
+### Générer une migration à partir des changements faits depuis le Studio
+
+`npx supabase db diff -f <nom_de_la_migration>`
+
+### Reset la base de données  
+
+Ré-applique les migrations et le seed.
+
+`npx supabase db reset`
+
+
+## Refine
 
 This [Refine](https://github.com/refinedev/refine) project was generated with [create refine-app](https://github.com/refinedev/refine/tree/master/packages/create-refine-app).
 
