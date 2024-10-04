@@ -28,3 +28,7 @@ node_modules
 dist
 
 supabase/seed.sql
+
+cyke/*.csv
+cyke/.env
+cyke/mapping.json
