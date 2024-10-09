@@ -5,6 +5,7 @@ import {
   EmailField,
   UrlField,
   DateField,
+  NumberField,
 } from "@refinedev/antd";
 import { Typography } from "antd";
 import { PointDeCollecte, ZoneDeCollecte } from "../../types";
@@ -90,6 +91,10 @@ export const PointDeCollecteShow = () => {
           />
         </div>
       )}
+      <Title level={5}>Stock casiers 75cl</Title>
+      <NumberField value={pointDeCollecte?.stock_casiers_75 ?? 0} />
+      <Title level={5}>Stock paloxs</Title>
+      <NumberField value={pointDeCollecte?.stock_paloxs ?? 0} />
       <Title level={5}>Informations compl.</Title>
       <TextField value={pointDeCollecte?.info} />
       <Title level={5}>Formulaire Taux de remplissage</Title>

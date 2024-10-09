@@ -128,7 +128,10 @@ export const PointDeCollecteForm: React.FC<Props> = ({
           placeholder="Type de contenant"
         />
       </Form.Item>
-      <Form.Item label="Stock contenant de collecte" name="stock_contenants">
+      <Form.Item label="Stock casiers 75cl" name="stock_casiers_75">
+        <Input type="number" min={0} />
+      </Form.Item>
+      <Form.Item label="Stock paloxs" name="stock_paloxs">
         <Input type="number" min={0} />
       </Form.Item>
       <Form.Item label="Informations complémentaires" name="info">
