@@ -150,9 +150,14 @@ export const PointDeCollecteListTable: React.FC<
         render={(type) => <ContenantDeCollecteType value={type} />}
       />
       <Table.Column
-        dataIndex="stock_contenants"
-        hidden={!columns.includes("stock_contenants")}
-        title="Stock contenants"
+        dataIndex="stock_paloxs"
+        hidden={!columns.includes("stock_paloxs")}
+        title="Stock paloxs"
+      />
+      <Table.Column
+        dataIndex="stock_casiers_75"
+        hidden={!columns.includes("stock_casiers_75")}
+        title="Stock casiers 75cl"
       />
       <Table.Column
         dataIndex="contacts"

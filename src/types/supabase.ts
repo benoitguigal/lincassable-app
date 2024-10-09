@@ -85,7 +85,9 @@ export type Database = {
           longitude: number | null
           nom: string
           setup_date: string | null
+          stock_casiers_75: number | null
           stock_contenants: number | null
+          stock_paloxs: number | null
           telephones: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
           zone_de_collecte_id: number | null
@@ -105,7 +107,9 @@ export type Database = {
           longitude?: number | null
           nom: string
           setup_date?: string | null
+          stock_casiers_75?: number | null
           stock_contenants?: number | null
+          stock_paloxs?: number | null
           telephones?: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
           zone_de_collecte_id?: number | null
@@ -125,7 +129,9 @@ export type Database = {
           longitude?: number | null
           nom?: string
           setup_date?: string | null
+          stock_casiers_75?: number | null
           stock_contenants?: number | null
+          stock_paloxs?: number | null
           telephones?: string[]
           type?: Database["public"]["Enums"]["point_de_collecte_type"]
           zone_de_collecte_id?: number | null
@@ -202,6 +208,9 @@ export type Database = {
           prix: number | null
           statut: Database["public"]["Enums"]["statut_tournee"]
           transporteur_id: number
+          type_de_vehicule:
+            | Database["public"]["Enums"]["type_de_vehicule"]
+            | null
           zone_de_collecte_id: number
         }
         Insert: {
@@ -212,6 +221,9 @@ export type Database = {
           prix?: number | null
           statut?: Database["public"]["Enums"]["statut_tournee"]
           transporteur_id: number
+          type_de_vehicule?:
+            | Database["public"]["Enums"]["type_de_vehicule"]
+            | null
           zone_de_collecte_id: number
         }
         Update: {
@@ -222,6 +234,9 @@ export type Database = {
           prix?: number | null
           statut?: Database["public"]["Enums"]["statut_tournee"]
           transporteur_id?: number
+          type_de_vehicule?:
+            | Database["public"]["Enums"]["type_de_vehicule"]
+            | null
           zone_de_collecte_id?: number
         }
         Relationships: [
@@ -408,6 +423,7 @@ export type Database = {
       contenant_collecte_type: "casier_x12" | "palox"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
       statut_tournee: "En attente de validation" | "Validé"
+      type_de_vehicule: "12 T" | "19 T" | "VL"
     }
     CompositeTypes: {
       [_ in never]: never
