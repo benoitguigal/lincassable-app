@@ -191,7 +191,7 @@ const authProvider: AuthProvider = {
     };
   },
   logout: async () => {
-    const { error } = await supabaseClient.auth.signOut();
+    const { error } = await supabaseClient.auth.signOut({ scope: "local" });
 
     if (error) {
       return {
