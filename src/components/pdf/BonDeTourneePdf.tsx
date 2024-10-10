@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
   },
   tableColHeader: {
     fontWeight: "bold",
-    width: "16.6%",
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#bfbfbf",
@@ -33,17 +32,10 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   tableCol: {
-    width: "16.6%",
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#bfbfbf",
     padding: 5,
-  },
-  colSpan1: {
-    width: "8.3%",
-  },
-  colSpan2: {
-    width: "16.6%",
   },
   tableCell: {
     margin: 5,
@@ -90,79 +82,118 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
     livraisonNbPaletteTotal += collecte.livraison_nb_palette_bouteille;
   });
 
-  // Définir les données du tableau
-  const tableData = [
-    {
-      col1: "",
-      col2: "",
-      col3: "Casiers",
-      col4: "Paloxs",
-      col5: "Palettes bouteilles",
-      col6: "",
-    },
-    {
-      col1: "Nom / Horaires / Contact",
-      col2: "Adresse / Infos",
-      col3: "À collecter",
-      col4: "À livrer",
-      col5: "À collecter",
-      col6: "À livrer",
-      col7: "À collecter",
-      col8: "À livrer",
-      col9: "Signature / tampon",
-    },
-    ...collectes.map((c) => {
-      let nom = pointDeCollecteById[c.point_de_collecte_id]?.nom;
+  const hasCasiers = collecteNbCasierTotal + livraisonNbCasierTotal > 0;
+  const hasPaloxs = collecteNbPaloxTotal + livraisonNbPaloxTotal > 0;
+  const hasPalettes = collecteNbPaletteTotal + livraisonNbPaletteTotal > 0;
 
-      if (pointDeCollecteById[c.point_de_collecte_id]?.horaires) {
-        nom = `${nom} \n\n${
-          pointDeCollecteById[c.point_de_collecte_id]?.horaires
-        }`;
-      }
-
-      const contact = [
-        pointDeCollecteById[c.point_de_collecte_id]?.contacts?.[0],
-        pointDeCollecteById[c.point_de_collecte_id]?.telephones?.[0],
-      ]
-        .filter(Boolean)
-        .join(" ");
-
-      if (contact) {
-        nom = `${nom} \n\n${contact}`;
-      }
-
-      let adresse = pointDeCollecteById[c.point_de_collecte_id]?.adresse;
-
-      if (pointDeCollecteById[c.point_de_collecte_id]?.info) {
-        adresse = `${adresse} \n\n${
-          pointDeCollecteById[c.point_de_collecte_id]?.info
-        }`;
-      }
-
-      return {
-        col1: nom,
-        col2: adresse,
-        col3: c.collecte_nb_casier_75_plein,
-        col4: c.livraison_nb_casier_75_vide,
-        col5: c.collecte_nb_palox_plein,
-        col6: c.livraison_nb_palox_vide,
-        col7: c.collecte_nb_palette_bouteille,
-        col8: c.livraison_nb_palette_bouteille,
-        col9: "",
-      };
-    }),
-    {
-      col1: "",
-      col2: "TOTAL",
-      col3: collecteNbCasierTotal,
-      col4: livraisonNbCasierTotal,
-      col5: collecteNbPaloxTotal,
-      col6: livraisonNbPaloxTotal,
-      col7: collecteNbPaletteTotal,
-      col8: livraisonNbPaletteTotal,
-      col9: "",
-    },
+  const headers = [
+    { cell: "", span: 3 },
+    { cell: "", span: 3 },
+    ...(hasCasiers ? [{ cell: "Casiers", span: 2 }] : []),
+    ...(hasPaloxs ? [{ cell: "Paloxs", span: 2 }] : []),
+    ...(hasPalettes ? [{ cell: "Palettes bouteilles", span: 2 }] : []),
+    { cell: "", span: 2 },
+    { cell: "", span: 2 },
   ];
+
+  const totalSpans = headers.map((h) => h.span).reduce((a, b) => a + b, 0);
+
+  const width = (span: number) => {
+    const fraction = ((100 / totalSpans) * span).toFixed(2);
+    return `${fraction}%`;
+  };
+
+  const contenantHeaders = [
+    { cell: "À collecter", span: 1 },
+    { cell: "À livrer", span: 1 },
+  ];
+
+  const subHeaders = [
+    { cell: "Nom / Horaires / Contact", span: 3 },
+    { cell: "Adresse / Infos", span: 3 },
+    ...(hasCasiers ? contenantHeaders : []),
+    ...(hasPaloxs ? contenantHeaders : []),
+    ...(hasPalettes ? contenantHeaders : []),
+    { cell: "Observations (numéro de paloxs, incidents, etc)", span: 2 },
+    { cell: "Signature / tampon", span: 2 },
+  ];
+
+  const footer = [
+    { cell: "", span: 3 },
+    { cell: "TOTAL", span: 3 },
+    ...(hasCasiers
+      ? [
+          { cell: collecteNbCasierTotal, span: 1 },
+          { cell: livraisonNbCasierTotal, span: 1 },
+        ]
+      : []),
+    ...(hasPaloxs
+      ? [
+          { cell: collecteNbPaloxTotal, span: 1 },
+          { cell: livraisonNbPaloxTotal, span: 1 },
+        ]
+      : []),
+    ...(hasPalettes
+      ? [
+          { cell: collecteNbPaletteTotal, span: 1 },
+          { cell: livraisonNbPaletteTotal, span: 1 },
+        ]
+      : []),
+    { cell: "", span: 2 },
+    { cell: "", span: 2 },
+  ];
+
+  const rows = collectes.map((c) => {
+    let nom = pointDeCollecteById[c.point_de_collecte_id]?.nom;
+
+    if (pointDeCollecteById[c.point_de_collecte_id]?.horaires) {
+      nom = `${nom} \n\n${
+        pointDeCollecteById[c.point_de_collecte_id]?.horaires
+      }`;
+    }
+
+    const contact = [
+      pointDeCollecteById[c.point_de_collecte_id]?.contacts?.[0],
+      pointDeCollecteById[c.point_de_collecte_id]?.telephones?.[0],
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    if (contact) {
+      nom = `${nom} \n\n${contact}`;
+    }
+
+    let adresse = pointDeCollecteById[c.point_de_collecte_id]?.adresse;
+
+    if (pointDeCollecteById[c.point_de_collecte_id]?.info) {
+      adresse = `${adresse} \n\n${
+        pointDeCollecteById[c.point_de_collecte_id]?.info
+      }`;
+    }
+
+    return [
+      { cell: nom, span: 3 },
+      { cell: adresse, span: 3 },
+      ...(hasCasiers
+        ? [c.collecte_nb_casier_75_plein, c.livraison_nb_casier_75_vide].map(
+            (cell) => ({ cell, span: 1 })
+          )
+        : []),
+      ...(hasPaloxs
+        ? [c.collecte_nb_palox_plein, c.livraison_nb_palox_vide].map(
+            (cell) => ({ cell, span: 1 })
+          )
+        : []),
+      ...(hasPalettes
+        ? [
+            c.collecte_nb_palette_bouteille,
+            c.livraison_nb_palette_bouteille,
+          ].map((cell) => ({ cell, span: 1 }))
+        : []),
+      { cell: "", span: 2 },
+      { cell: "", span: 2 },
+    ];
+  });
 
   return (
     <Document>
@@ -175,87 +206,55 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
         <View style={styles.table}>
           {/* En-tête du tableau */}
           <View style={styles.tableRow}>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-              <Text style={styles.tableCell}>{tableData[0].col1}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-              <Text style={styles.tableCell}>{tableData[0].col2}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-              <Text style={styles.tableCell}>{tableData[0].col3}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-              <Text style={styles.tableCell}>{tableData[0].col4}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-              <Text style={styles.tableCell}>{tableData[0].col5}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-              <Text style={styles.tableCell}>{tableData[0].col6}</Text>
-            </View>
+            {headers.map((header) => (
+              <View
+                style={{ ...styles.tableColHeader, width: width(header.span) }}
+              >
+                <Text style={styles.tableCell}>{header.cell}</Text>
+              </View>
+            ))}
           </View>
           {/* Sous en-tête */}
           <View style={styles.tableRow}>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-              <Text style={styles.tableCell}>{tableData[1].col1}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-              <Text style={styles.tableCell}>{tableData[1].col2}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-              <Text style={styles.tableCell}>{tableData[1].col3}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-              <Text style={styles.tableCell}>{tableData[1].col4}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-              <Text style={styles.tableCell}>{tableData[1].col5}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-              <Text style={styles.tableCell}>{tableData[1].col6}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-              <Text style={styles.tableCell}>{tableData[1].col7}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-              <Text style={styles.tableCell}>{tableData[1].col8}</Text>
-            </View>
-            <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-              <Text style={styles.tableCell}>{tableData[1].col9}</Text>
-            </View>
+            {subHeaders.map((subHeader) => (
+              <View
+                style={{
+                  ...styles.tableColHeader,
+                  width: width(subHeader.span),
+                }}
+              >
+                <Text style={styles.tableCell}>{subHeader.cell}</Text>
+              </View>
+            ))}
           </View>
           {/* Lignes du tableau */}
-          {tableData.slice(2).map((row, index) => (
+          {rows.map((row, index) => (
             <View style={styles.tableRow} key={index}>
-              <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-                <Text style={styles.tableCell}>{row.col1}</Text>
-              </View>
-              <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-                <Text style={styles.tableCell}>{row.col2}</Text>
-              </View>
-              <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-                <Text style={styles.tableCell}>{row.col3}</Text>
-              </View>
-              <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-                <Text style={styles.tableCell}>{row.col4}</Text>
-              </View>
-              <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-                <Text style={styles.tableCell}>{row.col5}</Text>
-              </View>
-              <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-                <Text style={styles.tableCell}>{row.col6}</Text>
-              </View>
-              <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-                <Text style={styles.tableCell}>{row.col7}</Text>
-              </View>
-              <View style={{ ...styles.tableColHeader, ...styles.colSpan1 }}>
-                <Text style={styles.tableCell}>{row.col8}</Text>
-              </View>
-              <View style={{ ...styles.tableColHeader, ...styles.colSpan2 }}>
-                <Text style={styles.tableCell}>{row.col9}</Text>
-              </View>
+              {row.map((column) => (
+                <View
+                  style={{
+                    ...styles.tableColHeader,
+                    width: width(column.span),
+                  }}
+                >
+                  <Text style={styles.tableCell}>{column.cell}</Text>
+                </View>
+              ))}
             </View>
           ))}
+          {/* footer */}
+          <View style={styles.tableRow}>
+            {footer.map((column) => (
+              <View
+                style={{
+                  ...styles.tableColHeader,
+                  width: width(column.span),
+                }}
+              >
+                <Text style={styles.tableCell}>{column.cell}</Text>
+              </View>
+            ))}
+          </View>
         </View>
       </Page>
     </Document>
