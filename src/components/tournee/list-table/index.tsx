@@ -22,10 +22,10 @@ import { BaseRecord, CanAccess, useList } from "@refinedev/core";
 import { Select, Space, Table, DatePicker } from "antd";
 import { CollecteEditButton } from "../../collecte/editButton";
 import { CollecteCreateButton } from "../../collecte/createButton";
-import { Chargement } from "../chargement";
 import dayjs from "dayjs";
 import TourneeMailButton from "../mail-button";
 import { StatutTourneeTag } from "../statut-tournee";
+import BonDeTourneeUpload from "../bon-de-tournee-upload";
 
 const { RangePicker } = DatePicker;
 
@@ -343,7 +343,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
           return null;
         }}
       />
-      <Table.Column
+      {/* <Table.Column
         dataIndex="chargement"
         title="Chargement retour (hors palettes)"
         render={(_, record: BaseRecord) => {
@@ -353,7 +353,19 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
           }
           return null;
         }}
-      />
+      /> */}
+      <Table.Column
+        dataIndex="bon_de_tournee"
+        title="Bon de tournée complété"
+        render={(_, record: Tournee) => {
+          return (
+            <BonDeTourneeUpload
+              tournee={record}
+              zoneDeCollecte={zoneDeCollecteById[record.zone_de_collecte_id]}
+            />
+          );
+        }}
+      ></Table.Column>
       <Table.Column
         dataIndex="prix"
         title="Prix"

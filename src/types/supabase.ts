@@ -201,6 +201,7 @@ export type Database = {
       }
       tournee: {
         Row: {
+          bon_de_tournee: string | null
           created_at: string
           date: string
           id: number
@@ -214,6 +215,7 @@ export type Database = {
           zone_de_collecte_id: number
         }
         Insert: {
+          bon_de_tournee?: string | null
           created_at?: string
           date: string
           id?: number
@@ -227,6 +229,7 @@ export type Database = {
           zone_de_collecte_id: number
         }
         Update: {
+          bon_de_tournee?: string | null
           created_at?: string
           date?: string
           id?: number

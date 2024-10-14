@@ -8,6 +8,7 @@ import { useState } from "react";
 import TourneeMap from "../../components/tournee/map";
 import BonDeTourneeDownloadLink from "../../components/pdf/BonDeTourneeDownloadLink";
 import { StatutTourneeTag } from "../../components/tournee/statut-tournee";
+import BonDeTourneeUpload from "../../components/tournee/bon-de-tournee-upload";
 
 const { Title } = Typography;
 
@@ -86,6 +87,16 @@ export const TourneeShow = () => {
           <TextField value={transporteurData?.data?.nom} />
           <Title level={5}>Prix</Title>
           {record?.prix && <NumberField value={record.prix} />}
+          {record && zoneDeCollecteData?.data && (
+            <div style={{ marginTop: 10, marginBottom: 10 }}>
+              <Title level={5}>Bon de tournée complété</Title>
+              <BonDeTourneeUpload
+                tournee={record}
+                zoneDeCollecte={zoneDeCollecteData?.data}
+              />
+            </div>
+          )}
+
           <Title level={5}>Collectes</Title>
           {!!record && (
             <CollecteListTable tournee_id={record.id} canEdit={false} />

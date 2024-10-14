@@ -75,7 +75,7 @@ const BonDeTourneeDownloadLink: React.FC<BonDeTourneeDownloadLinkProps> = ({
             icon={loading ? <Spin /> : <PrinterOutlined />}
             disabled={!tournee}
           >
-            Télécharger le bon de tournée
+            Bon de tournée vierge
           </Button>
         )}
       </PDFDownloadLink>
@@ -84,7 +84,7 @@ const BonDeTourneeDownloadLink: React.FC<BonDeTourneeDownloadLinkProps> = ({
 
   return (
     <Button icon={<PrinterOutlined />} disabled={true}>
-      Télécharger le bon de tournée
+      Bon de tournée vierge
     </Button>
   );
 };
