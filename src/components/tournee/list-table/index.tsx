@@ -19,7 +19,7 @@ import {
 } from "@refinedev/antd";
 import { useMemo } from "react";
 import { BaseRecord, CanAccess, useList } from "@refinedev/core";
-import { Select, Space, Table, DatePicker } from "antd";
+import { Select, Space, Table, DatePicker, Spin } from "antd";
 import { CollecteEditButton } from "../../collecte/editButton";
 import { CollecteCreateButton } from "../../collecte/createButton";
 import dayjs from "dayjs";
@@ -96,26 +96,26 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
     [collectesData]
   );
 
-  const { data: transporteursData, isLoading: transporteurIsLoading } =
-    useList<Transporteur>({
+  const { selectProps: transporteurSelectProps, query: transporteurQuery } =
+    useSelect<Transporteur>({
       resource: "transporteur",
-      pagination: { mode: "off" },
-      filters: [
-        {
-          field: "id",
-          operator: "in",
-          value: tourneeList.map((t) => t.transporteur_id),
-        },
-      ],
-      queryOptions: {
-        enabled: tourneeList && tourneeList.length > 0,
-      },
+      optionLabel: "nom",
+      optionValue: "id",
+      ...(user.transporteurId
+        ? {
+            filters: [
+              { field: "id", operator: "eq", value: user.transporteurId },
+            ],
+          }
+        : {}),
     });
 
   const transporteursList = useMemo(
-    () => transporteursData?.data ?? [],
-    [transporteursData]
+    () => transporteurQuery?.data?.data ?? [],
+    [transporteurQuery]
   );
+
+  const transporteurIsLoading = transporteurQuery?.isLoading;
 
   const transporteurById = useMemo(
     () =>
@@ -126,19 +126,6 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
       }, {}),
     [transporteursList]
   );
-
-  const { selectProps: transporteurSelectProps } = useSelect<Transporteur>({
-    resource: "transporteur",
-    optionLabel: "nom",
-    optionValue: "id",
-    ...(user.transporteurId
-      ? {
-          filters: [
-            { field: "id", operator: "eq", value: user.transporteurId },
-          ],
-        }
-      : {}),
-  });
 
   const { data: pointsDeCollecteData, isLoading: pointDeCollecteIsLoading } =
     useList<PointDeCollecte>({
@@ -171,19 +158,20 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
     [pointsDeCollecteList]
   );
 
-  const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
-    resource: "zone_de_collecte",
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: tourneeList
-          .map((tournee) => tournee.zone_de_collecte_id)
-          .filter(Boolean),
-      },
-    ],
-    queryOptions: { enabled: tourneeList.length > 0 },
-  });
+  const { data: zoneDeCollecteData, isLoading: zoneDeCollecteIsLoading } =
+    useList<ZoneDeCollecte>({
+      resource: "zone_de_collecte",
+      filters: [
+        {
+          field: "id",
+          operator: "in",
+          value: tourneeList
+            .map((tournee) => tournee.zone_de_collecte_id)
+            .filter(Boolean),
+        },
+      ],
+      queryOptions: { enabled: tourneeList.length > 0 },
+    });
 
   const zoneDeCollecteById = useMemo(
     () =>
@@ -224,25 +212,8 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
     [tourneeWithCollectes]
   );
 
-  const loading = useMemo(
-    () =>
-      tableProps.loading ||
-      (tourneeList &&
-        tourneeList.length > 0 &&
-        (collecteIsLoading ||
-          transporteurIsLoading ||
-          pointDeCollecteIsLoading)),
-    [
-      tableProps.loading,
-      tourneeList,
-      collecteIsLoading,
-      transporteurIsLoading,
-      pointDeCollecteIsLoading,
-    ]
-  );
-
   return (
-    <Table {...tableProps} loading={loading} rowKey="id">
+    <Table {...tableProps} rowKey="id">
       <Table.Column
         dataIndex={["date"]}
         title="Date"
@@ -297,7 +268,12 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
       <Table.Column
         dataIndex="zone_de_collecte_id"
         title="Zone de collecte"
-        render={(value: number) => zoneDeCollecteById[value]?.nom ?? ""}
+        render={(value: number) => {
+          if (zoneDeCollecteIsLoading) {
+            return <Spin size="small" spinning={true} />;
+          }
+          return zoneDeCollecteById[value]?.nom ?? "";
+        }}
       />
       <Table.Column
         dataIndex="statut"
@@ -310,6 +286,9 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
         dataIndex="transporteur_id"
         title="Transporteur"
         render={(id: number) => {
+          if (transporteurIsLoading) {
+            return <Spin size="small" spinning={true} />;
+          }
           if (transporteurById && id) {
             return transporteurById[id]?.nom;
           }
@@ -331,6 +310,9 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
         title="Collectes"
         width={400}
         render={(_, record: BaseRecord) => {
+          if (collecteIsLoading || pointDeCollecteIsLoading) {
+            return <Spin size="small" spinning={true} />;
+          }
           if (record.id) {
             const collectes = tourneeById[record.id].collectes.map(
               (collecte) => <CollecteEditButton collecte={collecte} />
