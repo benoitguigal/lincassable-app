@@ -5,12 +5,16 @@ import {
   ZoneDeCollecte,
 } from "../../../types";
 import dayjs from "dayjs";
-import { DatePicker, Form, Input, Select } from "antd";
+import { DatePicker, Form, Input, Select, Typography } from "antd";
 import { UseFormProps, UseFormReturnType, useSelect } from "@refinedev/antd";
 import CollecteListTable from "../../collecte/listTable";
 import { statutTourneeOptions } from "../../../utility/options";
 import { usePermissions } from "@refinedev/core";
 import { PermissionResponse } from "../../../authProvider";
+import BonDeTourneeUpload from "../bon-de-tournee-upload";
+import { useMemo } from "react";
+
+const { Title } = Typography;
 
 type Props = {
   form: UseFormReturnType<Tournee>;
@@ -30,14 +34,28 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
     optionLabel: "nom",
   });
 
-  const { selectProps: zoneDeCollecteSelectProps } = useSelect<ZoneDeCollecte>({
-    resource: "zone_de_collecte",
-    optionLabel: "nom",
-    optionValue: "id",
-  });
+  const { selectProps: zoneDeCollecteSelectProps, query: zoneDeCollecteQuery } =
+    useSelect<ZoneDeCollecte>({
+      resource: "zone_de_collecte",
+      optionLabel: "nom",
+      optionValue: "id",
+    });
 
   const { data: permissions } = usePermissions<PermissionResponse>();
   const isStaff = permissions?.role === "staff";
+
+  const tournee = useMemo(() => {
+    return form?.query?.data?.data;
+  }, [form]);
+
+  const zoneDeCollecte = useMemo(() => {
+    if (!tournee) {
+      return null;
+    }
+    return (zoneDeCollecteQuery.data?.data ?? []).find(
+      (z) => z.id === tournee.zone_de_collecte_id
+    );
+  }, [tournee, zoneDeCollecteQuery]);
 
   return (
     <Form {...form.formProps} layout="vertical">
@@ -66,6 +84,7 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
       <Form.Item label="Statut" name={["statut"]}>
         <Select style={{ width: 300 }} options={statutTourneeOptions} />
       </Form.Item>
+
       <Form.Item
         label="Transporteur"
         name={["transporteur_id"]}
@@ -101,7 +120,15 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
       <Form.Item label="Prix" name={["prix"]}>
         <Input style={{ width: 300 }} type="number" />
       </Form.Item>
-
+      {action === "edit" && tournee && zoneDeCollecte && (
+        <div style={{ marginBottom: 5, width: 300 }}>
+          <p>Bon de tournée complété</p>
+          <BonDeTourneeUpload
+            tournee={tournee}
+            zoneDeCollecte={zoneDeCollecte}
+          />
+        </div>
+      )}
       {action === "edit" && isStaff && (
         <CollecteListTable tournee_id={form.id as number} canEdit={true} />
       )}
