@@ -21,6 +21,10 @@ Ré-applique les migrations et le seed.
 
 `npx supabase db reset`
 
+## Edge function
+
+`npx supabase functions serve`
+
 
 ## Refine
 
