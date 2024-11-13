@@ -16,7 +16,7 @@ interface CsvRecord {
   "Ramasse - Effectuée le": string;
   "Ramasse – Entreprise": string;
   "Dépose – Entreprise": string;
-  Contenant: string;
+  Colis: string;
 }
 
 interface Tournee {
@@ -95,7 +95,7 @@ async function readCsv(path: string) {
       if (record.Statut !== "delivered") {
         return acc;
       }
-      if (record.Contenant.includes("Palette")) {
+      if (record.Colis.includes("Palette")) {
         // correspond à une ouverture du hub pour une
         // livraison / collecte de palettes de casiers
         return acc;

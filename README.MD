@@ -9,7 +9,7 @@
 
 ### Mettre à jour le fichier de seed avec les données de la prod
 
-`npx supabase db dump --data-only -f supabase/seed.sql`
+`npx supabase db dump --exclude storage.buckets,storage.objects  --data-only -f supabase/seed.sql`
 
 ### Générer une migration à partir des changements faits depuis le Studio
 
