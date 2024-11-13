@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
 
   const supabaseClient = createClient(
     supabaseUrl ?? "",
-    supabaseServiceRoleKey
+    supabaseServiceRoleKey ?? ""
   );
 
   const { data: tournees } = await supabaseClient
@@ -43,34 +43,39 @@ Deno.serve(async (req) => {
       const zoneDeCollecte = zoneDeCollectes[0];
       const transporteur = transporteurs[0];
 
-      let msg = `La tournée ${zoneDeCollecte.nom} du ${tournee.date} par le transporteur ${transporteur.nom} a été modifiée`;
+      const dateIsModified = record.date !== old_record.date;
+      const statutIsModified = record.statut !== old_record.statut;
+      const prixIsModified = record.prix !== old_record.prix;
 
-      if (record.date !== old_record.date) {
-        msg =
-          msg +
-          `\nAncienne date : ${old_record.date} - Nouvelle date : ${record.date}`;
+      if (dateIsModified || statutIsModified || prixIsModified) {
+        let msg = `La tournée ${zoneDeCollecte.nom} du ${tournee.date} par le transporteur ${transporteur.nom} a été modifiée`;
+        if (dateIsModified) {
+          msg =
+            msg +
+            `\nAncienne date : ${old_record.date} - Nouvelle date : ${record.date}`;
+        }
+
+        if (statutIsModified) {
+          msg =
+            msg +
+            `\nAncien statut : ${old_record.statut} - Nouveau statut : ${record.statut}`;
+        }
+
+        if (prixIsModified) {
+          msg =
+            msg +
+            `\nAncien prix : ${old_record.prix} - Nouveau prix : ${record.prix}`;
+        }
+
+        const webhookClient = new WebhookClient({
+          id: webhookId,
+          token: webhookToken,
+        });
+
+        await webhookClient.send({
+          content: msg,
+        });
       }
-
-      if (record.statut !== old_record.statut) {
-        msg =
-          msg +
-          `\nAncien statut : ${old_record.statut} - Nouveau statut : ${record.statut}`;
-      }
-
-      if (record.prix !== old_record.prix) {
-        msg =
-          msg +
-          `\nAncien prix : ${old_record.prix} - Nouveau prix : ${record.prix}`;
-      }
-
-      const webhookClient = new WebhookClient({
-        id: webhookId,
-        token: webhookToken,
-      });
-
-      await webhookClient.send({
-        content: msg,
-      });
 
       return new Response(
         JSON.stringify({
