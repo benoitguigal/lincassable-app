@@ -1,15 +1,27 @@
 import React from "react";
-import { IResourceComponentsProps, useCreate } from "@refinedev/core";
-import { Form, Input, Button } from "antd";
+import { IResourceComponentsProps, useCreate, useGo } from "@refinedev/core";
+import { Form, Input, Button, Radio, Space } from "antd";
 import { useParams, useSearchParams } from "react-router-dom";
-import PictogrammeMagasin from "../../static/images/picto_magasin.png";
-import PictogrammeBouteilleCaisse from "../../static/images/picto_bouteilles_caisses.png";
 import LincassableLogo from "../../static/images/lincassable_logo.png";
 
-const CreateRemplissageCasiers: React.FC<IResourceComponentsProps> = () => {
+const CreateRemplissageContenants: React.FC<IResourceComponentsProps> = () => {
   const { id: pointDeCollecteId } = useParams();
 
-  const { mutate } = useCreate();
+  const go = useGo();
+
+  const [form] = Form.useForm();
+
+  const demandeCollecte = Form.useWatch("demande_collecte", form);
+
+  const { mutate } = useCreate({
+    mutationOptions: {
+      onSuccess: () => {
+        go({
+          to: `/point-de-collecte/taux-de-remplissage/success?demande_collecte=${demandeCollecte}`,
+        });
+      },
+    },
+  });
 
   const [searchParams] = useSearchParams();
 
@@ -32,6 +44,20 @@ const CreateRemplissageCasiers: React.FC<IResourceComponentsProps> = () => {
     });
   }
 
+  const nbCasiersTotal = Form.useWatch("nb_casiers_total", form);
+  const nbCasiers = Form.useWatch("nb_casiers_plein", form);
+  let nbCasiersTotalHelp = "";
+
+  if (!!nbCasiersTotal && !!nbCasiers) {
+    if (parseInt(nbCasiersTotal) >= parseInt(nbCasiers)) {
+      nbCasiersTotalHelp = `Il vous reste ${
+        nbCasiersTotal - nbCasiers
+      } casiers vides`;
+    } else {
+      nbCasiersTotalHelp = `Le stock de casiers total devrait être supérieur au nombre de casiers pleins`;
+    }
+  }
+
   if (pointDeCollecteId) {
     return (
       <div
@@ -49,23 +75,32 @@ const CreateRemplissageCasiers: React.FC<IResourceComponentsProps> = () => {
             <img src={LincassableLogo} width={150}></img>
           </div>
 
-          <div>
-            <img src={PictogrammeMagasin} width={50}></img>
-            <img src={PictogrammeBouteilleCaisse} width={90}></img>
-          </div>
-
-          <h2 style={{ paddingTop: 20 }}>Formulaire point de vente</h2>
+          <h2 style={{ paddingTop: 20 }}>Formulaire magasin / producteur</h2>
           <h3>{searchParams.get("nom") ?? ""}</h3>
+
           <Form
+            form={form}
+            initialValues={{ demande_collecte: true }}
             layout="vertical"
-            style={{ maxWidth: 300 }}
-            onFinish={(values) =>
-              onSubmit({
-                ...values,
+            style={{ maxWidth: 500, marginTop: "2em" }}
+            onFinish={(values) => {
+              return onSubmit({
                 point_de_collecte_id: parseInt(pointDeCollecteId),
-              })
-            }
+                ...values,
+              });
+            }}
           >
+            <Form.Item label="Votre demande" name="demande_collecte">
+              <Radio.Group>
+                <Space direction="vertical">
+                  <Radio value={true}>Je souhaite être collecté.e</Radio>
+                  <Radio value={false}>
+                    Je souhaite simplement renseigner mon taux de remplissage
+                    pour vous aider à anticiper les tournées
+                  </Radio>
+                </Space>
+              </Radio.Group>
+            </Form.Item>
             {searchParams.get("contenant_collecte") === "palox" ? (
               <>
                 <Form.Item
@@ -94,7 +129,8 @@ const CreateRemplissageCasiers: React.FC<IResourceComponentsProps> = () => {
                   <Input type="number" min={0} />
                 </Form.Item>
                 <Form.Item
-                  label="Stock total de casiers (vide et plein)"
+                  label="Stock total de casiers (vides et pleins)"
+                  help={nbCasiersTotalHelp}
                   name={"nb_casiers_total"}
                 >
                   <Input type="number" min={0} />
@@ -102,7 +138,9 @@ const CreateRemplissageCasiers: React.FC<IResourceComponentsProps> = () => {
               </>
             )}
 
-            <Button htmlType="submit">Enregistrer</Button>
+            <Button style={{ marginTop: "1em" }} htmlType="submit">
+              Envoyer
+            </Button>
           </Form>
         </div>
       </div>
@@ -112,4 +150,4 @@ const CreateRemplissageCasiers: React.FC<IResourceComponentsProps> = () => {
   return null;
 };
 
-export default CreateRemplissageCasiers;
+export default CreateRemplissageContenants;
