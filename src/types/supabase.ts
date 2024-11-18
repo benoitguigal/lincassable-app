@@ -72,6 +72,7 @@ export type Database = {
       point_de_collecte: {
         Row: {
           adresse: string
+          collecte_par_id: number | null
           contacts: string[]
           contenant_collecte_type:
             | Database["public"]["Enums"]["contenant_collecte_type"]
@@ -85,6 +86,7 @@ export type Database = {
           longitude: number | null
           nom: string
           setup_date: string | null
+          statut: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_75: number | null
           stock_contenants: number | null
           stock_paloxs: number | null
@@ -94,6 +96,7 @@ export type Database = {
         }
         Insert: {
           adresse: string
+          collecte_par_id?: number | null
           contacts?: string[]
           contenant_collecte_type?:
             | Database["public"]["Enums"]["contenant_collecte_type"]
@@ -107,6 +110,7 @@ export type Database = {
           longitude?: number | null
           nom: string
           setup_date?: string | null
+          statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_75?: number | null
           stock_contenants?: number | null
           stock_paloxs?: number | null
@@ -116,6 +120,7 @@ export type Database = {
         }
         Update: {
           adresse?: string
+          collecte_par_id?: number | null
           contacts?: string[]
           contenant_collecte_type?:
             | Database["public"]["Enums"]["contenant_collecte_type"]
@@ -129,6 +134,7 @@ export type Database = {
           longitude?: number | null
           nom?: string
           setup_date?: string | null
+          statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_75?: number | null
           stock_contenants?: number | null
           stock_paloxs?: number | null
@@ -137,6 +143,13 @@ export type Database = {
           zone_de_collecte_id?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "point_de_collecte_collecte_par_id_fkey"
+            columns: ["collecte_par_id"]
+            isOneToOne: false
+            referencedRelation: "point_de_collecte"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "point_de_collecte_zone_de_collecte_id_fkey"
             columns: ["zone_de_collecte_id"]
@@ -427,6 +440,7 @@ export type Database = {
         | "zone_de_collecte.delete"
       app_role: "staff" | "transporteur"
       contenant_collecte_type: "casier_x12" | "palox"
+      point_de_collecte_statut: "archive" | "actif"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
       statut_tournee: "En attente de validation" | "Validé"
       type_de_vehicule: "12 T" | "19 T" | "VL"
