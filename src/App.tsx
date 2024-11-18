@@ -37,12 +37,13 @@ import { TourneeCreate } from "./pages/tournee/create";
 import { TourneeEdit } from "./pages/tournee/edit";
 import accessControlProvider from "./accessControlProvider";
 import { TourneeShow } from "./pages/tournee/show";
-import CreateRemplissageCasiers from "./pages/remplissage-contenants/create";
+import CreateRemplissageContenants from "./pages/remplissage-contenants/create";
 import { RemplissageContenantsList } from "./pages/remplissage-contenants/list";
 import locale from "antd/locale/fr_FR";
 import dayjs from "dayjs";
 
 import "dayjs/locale/fr";
+import CreateRemplissageContenantsSuccess from "./pages/remplissage-contenants/createSuccess";
 
 dayjs.locale("fr");
 
@@ -198,7 +199,11 @@ function App() {
                   {/* Formulaire point de vente */}
                   <Route
                     path="/point-de-collecte/taux-de-remplissage/:id"
-                    element={<CreateRemplissageCasiers />}
+                    element={<CreateRemplissageContenants />}
+                  />
+                  <Route
+                    path="/point-de-collecte/taux-de-remplissage/success"
+                    element={<CreateRemplissageContenantsSuccess />}
                   />
                   <Route
                     element={

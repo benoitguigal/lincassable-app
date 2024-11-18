@@ -149,6 +149,7 @@ export type Database = {
       remplissage_contenants: {
         Row: {
           date: string
+          demande_collecte: boolean
           id: number
           nb_casiers_plein: number | null
           nb_casiers_total: number | null
@@ -157,6 +158,7 @@ export type Database = {
         }
         Insert: {
           date?: string
+          demande_collecte?: boolean
           id?: number
           nb_casiers_plein?: number | null
           nb_casiers_total?: number | null
@@ -165,6 +167,7 @@ export type Database = {
         }
         Update: {
           date?: string
+          demande_collecte?: boolean
           id?: number
           nb_casiers_plein?: number | null
           nb_casiers_total?: number | null

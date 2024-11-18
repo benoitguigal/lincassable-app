@@ -75,6 +75,11 @@ export const RemplissageContenantsList: React.FC<
           title="Remplissage palox"
           render={(value) => (value ? `${value}%` : "")}
         />
+        <Table.Column
+          dataIndex="demande_collecte"
+          title="Demande de collecte"
+          render={(value) => (value === true ? "Oui" : "Non")}
+        />
       </Table>
     </List>
   );
