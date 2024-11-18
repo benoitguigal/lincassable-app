@@ -6,6 +6,7 @@ import {
   StatutTourneeEnum,
   Tournee,
   Transporteur,
+  TypeDeVehiculeEnum,
   ZoneDeCollecte,
 } from "../../../types";
 import {
@@ -26,6 +27,7 @@ import dayjs from "dayjs";
 import TourneeMailButton from "../mail-button";
 import { StatutTourneeTag } from "../statut-tournee";
 import BonDeTourneeUpload from "../bon-de-tournee-upload";
+import { typeDeVehiculeOptions } from "../../../utility/options";
 
 const { RangePicker } = DatePicker;
 
@@ -325,17 +327,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
           return null;
         }}
       />
-      {/* <Table.Column
-        dataIndex="chargement"
-        title="Chargement retour (hors palettes)"
-        render={(_, record: BaseRecord) => {
-          if (record.id) {
-            const collectes = tourneeById[record.id].collectes;
-            return <Chargement collectes={collectes} />;
-          }
-          return null;
-        }}
-      /> */}
+
       <Table.Column
         dataIndex="bon_de_tournee"
         title="Bon de tournée complété"
@@ -348,6 +340,16 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
           );
         }}
       ></Table.Column>
+      <Table.Column
+        dataIndex="type_de_vehicule"
+        title="Type de véhicule"
+        render={(type: TypeDeVehiculeEnum) => {
+          return (
+            typeDeVehiculeOptions.find((option) => option.value === type)
+              ?.label ?? ""
+          );
+        }}
+      />
       <Table.Column
         dataIndex="prix"
         title="Prix"

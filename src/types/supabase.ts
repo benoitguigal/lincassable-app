@@ -443,7 +443,7 @@ export type Database = {
       point_de_collecte_statut: "archive" | "actif"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
       statut_tournee: "En attente de validation" | "Validé"
-      type_de_vehicule: "12 T" | "19 T" | "VL"
+      type_de_vehicule: "12 T" | "19 T" | "VL" | "velo"
     }
     CompositeTypes: {
       [_ in never]: never
