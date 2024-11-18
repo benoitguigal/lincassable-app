@@ -1,4 +1,4 @@
-import { useList } from "@refinedev/core";
+import { CrudFilter, useList } from "@refinedev/core";
 import { PointDeCollecte, PointDeCollecteTypeEnum } from "../../../types";
 import { Flex } from "antd";
 import { useEffect, useMemo, useRef } from "react";
@@ -25,16 +25,20 @@ type PointsDeCollecteMapProps = {
 export const PointsDeCollecteMap: React.FC<PointsDeCollecteMapProps> = ({
   pointDeCollecteIds,
 }) => {
+  const filters: CrudFilter[] = [];
+
+  if (pointDeCollecteIds) {
+    filters.push({ field: "id", operator: "in", value: pointDeCollecteIds });
+  } else {
+    filters.push({ field: "statut", operator: "ne", value: "archive" });
+  }
+
   const { data: pointsDeCollecteData } = useList<PointDeCollecte>({
     resource: "point_de_collecte",
     pagination: {
       mode: "off",
     },
-    ...(pointDeCollecteIds
-      ? {
-          filters: [{ field: "id", operator: "in", value: pointDeCollecteIds }],
-        }
-      : {}),
+    filters,
   });
 
   const pointsDeCollecte = useMemo(
