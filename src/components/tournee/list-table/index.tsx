@@ -215,7 +215,7 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
   );
 
   return (
-    <Table {...tableProps} rowKey="id">
+    <Table {...tableProps} size="small" rowKey="id">
       <Table.Column
         dataIndex={["date"]}
         title="Date"
