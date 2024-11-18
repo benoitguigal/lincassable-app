@@ -14,6 +14,7 @@ import { PointDeCollecteType } from "../../components/pointsDeCollecte";
 import LienFormulairePointDeCollecteDownloadLink from "../../components/pdf/LienFormulairePointDeCollecteDownloadLink";
 import { ContenantDeCollecteType } from "../../components/pointsDeCollecte/contenantDeCollecteType";
 import { getPointDeCollecteFormulaireUrl } from "../../utility/urls";
+import PointDeCollecteName from "../../components/pointsDeCollecte/PointDeCollecteName";
 
 const { Title } = Typography;
 
@@ -39,7 +40,11 @@ export const PointDeCollecteShow = () => {
   return (
     <Show isLoading={isLoading} breadcrumb={false}>
       <Title level={5}>Nom</Title>
-      <TextField value={pointDeCollecte?.nom} />
+      {pointDeCollecte && (
+        <TextField
+          value={<PointDeCollecteName pointDeCollecte={pointDeCollecte} />}
+        />
+      )}
       <Title level={5}>Date setup</Title>
       <DateField value={pointDeCollecte?.setup_date} />
       <Title level={5}>Adresse</Title>
