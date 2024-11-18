@@ -333,10 +333,12 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
         title="Bon de tournée complété"
         render={(_, record: Tournee) => {
           return (
-            <BonDeTourneeUpload
-              tournee={record}
-              zoneDeCollecte={zoneDeCollecteById[record.zone_de_collecte_id]}
-            />
+            <div style={{ maxWidth: "150px" }}>
+              <BonDeTourneeUpload
+                tournee={record}
+                zoneDeCollecte={zoneDeCollecteById[record.zone_de_collecte_id]}
+              />
+            </div>
           );
         }}
       ></Table.Column>
