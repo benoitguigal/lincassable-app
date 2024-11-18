@@ -36,6 +36,16 @@ export const PointDeCollecteForm: React.FC<Props> = ({
     optionValue: "id",
   });
 
+  const { selectProps: pointDeCollecteSelectProps } =
+    useSelect<PointDeCollecte>({
+      resource: "point_de_collecte",
+      optionLabel: "nom",
+      optionValue: "id",
+      filters: [
+        { field: "type", value: ["Producteur", "Magasin"], operator: "in" },
+      ],
+    });
+
   return (
     <Form {...formProps} layout="vertical">
       <Form.Item
@@ -52,11 +62,32 @@ export const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item label="Date setup" name={["setup_date"]}>
         <Input type="date" />
       </Form.Item>
+      <Form.Item label="Statut" name={["statut"]}>
+        <Select
+          placeholder="Statut"
+          options={[
+            { value: "actif", label: "Actif" },
+            { value: "archive", label: "Archivé" },
+          ]}
+        />
+      </Form.Item>
       <Form.Item label="Type de point de collecte" name="type">
         <Select
           options={pointDeCollecteTypeOptions}
           allowClear
           placeholder="Type de point de collecte"
+        />
+      </Form.Item>
+      <Form.Item
+        label="Collecté via"
+        name="collecte_par_id"
+        help="À renseigner pour les points de collecte secondaires"
+        style={{ marginBottom: "2em" }}
+      >
+        <Select
+          allowClear={true}
+          placeholder=""
+          {...pointDeCollecteSelectProps}
         />
       </Form.Item>
       <Form.Item

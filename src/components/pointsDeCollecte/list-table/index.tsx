@@ -10,8 +10,12 @@ import {
   EmailField,
   useSelect,
 } from "@refinedev/antd";
-import { Input, Select, Space, Table } from "antd";
-import { EnvironmentOutlined, SearchOutlined } from "@ant-design/icons";
+import { Input, Select, Space, Table, Tag } from "antd";
+import {
+  ArrowRightOutlined,
+  EnvironmentOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import { PointDeCollecteType } from "../type";
 import { pointDeCollecteTypeOptions } from "../../../utility/options";
 import { PointDeCollecte, ZoneDeCollecte } from "../../../types";
@@ -74,6 +78,29 @@ export const PointDeCollecteListTable: React.FC<
     [zoneDeCollecteData]
   );
 
+  const { data: collecteParData } = useList<PointDeCollecte>({
+    resource: "point_de_collecte",
+    pagination: { mode: "off" },
+    filters: [
+      {
+        field: "id",
+        operator: "in",
+        value: pointsDeCollecte.map((pc) => pc.collecte_par_id).filter(Boolean),
+      },
+    ],
+    queryOptions: { enabled: pointsDeCollecte.length > 0 },
+  });
+
+  const collecteParById = useMemo(
+    () =>
+      (collecteParData?.data ?? []).reduce<{
+        [key: number]: PointDeCollecte;
+      }>((acc, collectePar) => {
+        return { ...acc, [collectePar.id]: collectePar };
+      }, {}),
+    [collecteParData]
+  );
+
   return (
     <Table {...tableProps} size="small" rowKey="id">
       <Table.Column
@@ -87,6 +114,20 @@ export const PointDeCollecteListTable: React.FC<
           <FilterDropdown {...props}>
             <Input style={{ width: "100%" }} placeholder="Rechercher un nom" />
           </FilterDropdown>
+        )}
+        render={(nom, record: PointDeCollecte) => (
+          <>
+            <div>{nom}</div>
+            {record.statut === "archive" && <Tag color="red">Archivé</Tag>}
+            {!!record.collecte_par_id && collecteParById && (
+              <div>
+                <Tag color="blue">
+                  <ArrowRightOutlined /> Collecté via{" "}
+                  {collecteParById[record.collecte_par_id]?.nom}
+                </Tag>
+              </div>
+            )}
+          </>
         )}
       />
       <Table.Column
@@ -111,6 +152,7 @@ export const PointDeCollecteListTable: React.FC<
           </FilterDropdown>
         )}
       />
+
       <Table.Column<PointDeCollecte>
         dataIndex="adresse"
         hidden={!columns.includes("adresse")}
