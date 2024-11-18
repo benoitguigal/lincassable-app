@@ -9,6 +9,7 @@ import TourneeMap from "../../components/tournee/map";
 import BonDeTourneeDownloadLink from "../../components/pdf/BonDeTourneeDownloadLink";
 import { StatutTourneeTag } from "../../components/tournee/statut-tournee";
 import BonDeTourneeUpload from "../../components/tournee/bon-de-tournee-upload";
+import { typeDeVehiculeOptions } from "../../utility/options";
 
 const { Title } = Typography;
 
@@ -85,6 +86,16 @@ export const TourneeShow = () => {
           {record && <StatutTourneeTag value={record.statut} />}
           <Title level={5}>Transporteur</Title>
           <TextField value={transporteurData?.data?.nom} />
+          <Title level={5}>Type de véhicule</Title>
+          {record?.type_de_vehicule && (
+            <TextField
+              value={
+                typeDeVehiculeOptions.find(
+                  (option) => option.value === record.type_de_vehicule
+                )?.label ?? ""
+              }
+            />
+          )}
           <Title level={5}>Prix</Title>
           {record?.prix && <NumberField value={record.prix} />}
           {record && zoneDeCollecteData?.data && (

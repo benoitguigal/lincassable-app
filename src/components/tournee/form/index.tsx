@@ -8,7 +8,10 @@ import dayjs from "dayjs";
 import { DatePicker, Form, Input, Select, Typography } from "antd";
 import { UseFormProps, UseFormReturnType, useSelect } from "@refinedev/antd";
 import CollecteListTable from "../../collecte/listTable";
-import { statutTourneeOptions } from "../../../utility/options";
+import {
+  statutTourneeOptions,
+  typeDeVehiculeOptions,
+} from "../../../utility/options";
 import { usePermissions } from "@refinedev/core";
 import { PermissionResponse } from "../../../authProvider";
 import BonDeTourneeUpload from "../bon-de-tournee-upload";
@@ -115,6 +118,14 @@ export const TourneeForm: React.FC<Props> = ({ form, action }) => {
           style={{ width: 300 }}
           {...pointDeMassificationSelectProps}
           disabled={!isStaff}
+        />
+      </Form.Item>
+      <Form.Item label="Type de véhicule" name={["type_de_vehicule"]}>
+        <Select
+          allowClear={true}
+          placeholder="Choisir un type de véhicule"
+          style={{ width: 300 }}
+          options={typeDeVehiculeOptions}
         />
       </Form.Item>
       <Form.Item label="Prix" name={["prix"]}>
