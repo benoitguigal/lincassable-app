@@ -46,6 +46,7 @@ const CreateRemplissageContenants: React.FC<IResourceComponentsProps> = () => {
 
   const nbCasiersTotal = Form.useWatch("nb_casiers_total", form);
   const nbCasiers = Form.useWatch("nb_casiers_plein", form);
+  const contenantCollecte = Form.useWatch("contenant_collecte", form);
   let nbCasiersTotalHelp = "";
 
   if (!!nbCasiersTotal && !!nbCasiers) {
@@ -80,12 +81,25 @@ const CreateRemplissageContenants: React.FC<IResourceComponentsProps> = () => {
 
           <Form
             form={form}
-            initialValues={{ demande_collecte: true }}
+            initialValues={{
+              demande_collecte: true,
+              contenant_collecte:
+                searchParams.get("contenant_collecte") ?? "casier",
+            }}
             layout="vertical"
             style={{ maxWidth: 500, marginTop: "2em" }}
-            onFinish={(values) => {
+            onFinish={({
+              contenant_collecte,
+              remplissage_palox,
+              nb_casiers_plein,
+              nb_casiers_total,
+              ...values
+            }) => {
               return onSubmit({
                 point_de_collecte_id: parseInt(pointDeCollecteId),
+                ...(contenant_collecte === "palox"
+                  ? { remplissage_palox }
+                  : { nb_casiers_plein, nb_casiers_total }),
                 ...values,
               });
             }}
@@ -101,7 +115,18 @@ const CreateRemplissageContenants: React.FC<IResourceComponentsProps> = () => {
                 </Space>
               </Radio.Group>
             </Form.Item>
-            {searchParams.get("contenant_collecte") === "palox" ? (
+            <Form.Item
+              label="Type de contenants de collecte"
+              name="contenant_collecte"
+            >
+              <Radio.Group>
+                <Space direction="vertical">
+                  <Radio value="casier_x12">Casier</Radio>
+                  <Radio value="palox">Palox</Radio>
+                </Space>
+              </Radio.Group>
+            </Form.Item>
+            {contenantCollecte === "palox" ? (
               <>
                 <Form.Item
                   label="Taux de remplissage palox (en %)"
