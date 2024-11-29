@@ -9,7 +9,7 @@ export const RemplissageContenantsList: React.FC<
 > = () => {
   const { tableProps, tableQueryResult } = useTable<RemplissageContenants>({
     syncWithLocation: true,
-    pagination: { mode: "server" },
+    pagination: { mode: "server", pageSize: 15 },
     sorters: {
       mode: "server",
       initial: [{ field: "date", order: "desc" }],
@@ -58,6 +58,11 @@ export const RemplissageContenantsList: React.FC<
           render={(value) => pointDeCollecteById[value]?.nom}
         />
         <Table.Column
+          dataIndex="demande_collecte"
+          title="Demande de collecte"
+          render={(value) => (value === true ? <b>Oui</b> : "Non")}
+        />
+        <Table.Column
           dataIndex="nb_casiers_plein"
           title="Nombre de casiers pleins"
         />
@@ -74,11 +79,6 @@ export const RemplissageContenantsList: React.FC<
           dataIndex="remplissage_palox"
           title="Remplissage palox"
           render={(value) => (value ? `${value}%` : "")}
-        />
-        <Table.Column
-          dataIndex="demande_collecte"
-          title="Demande de collecte"
-          render={(value) => (value === true ? "Oui" : "Non")}
         />
       </Table>
     </List>
