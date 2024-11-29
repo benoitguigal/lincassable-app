@@ -44,6 +44,8 @@ import dayjs from "dayjs";
 
 import "dayjs/locale/fr";
 import CreateRemplissageContenantsSuccess from "./pages/remplissage-contenants/createSuccess";
+import { PrevisionList } from "./pages/prevision/list";
+import { CollectesList } from "./pages/collectes/list";
 
 dayjs.locale("fr");
 
@@ -118,8 +120,13 @@ function App() {
                     list: "remplissage-contenants",
                     meta: {
                       parent: "collecte_menu",
-                      label: "Taux de remplissage",
+                      label: "Réponses formulaire",
                     },
+                  },
+                  {
+                    name: "previsions",
+                    list: "/previsions",
+                    meta: { label: "Prévisions", parent: "collecte_menu" },
                   },
                   {
                     name: "tournee",
@@ -131,6 +138,14 @@ function App() {
                       canDelete: true,
                       parent: "collecte_menu",
                       label: "Tournées",
+                    },
+                  },
+                  {
+                    name: "collecte_par_point",
+                    list: "/collectes",
+                    meta: {
+                      label: "Collectes par point",
+                      parent: "collecte_menu",
                     },
                   },
                   { name: "collecte" },
@@ -193,6 +208,12 @@ function App() {
                       <Route path="create" element={<TourneeCreate />} />
                       <Route path="edit/:id" element={<TourneeEdit />} />
                       <Route path="show/:id" element={<TourneeShow />} />
+                    </Route>
+                    <Route path="previsions">
+                      <Route index element={<PrevisionList />} />
+                    </Route>
+                    <Route path="collectes">
+                      <Route index element={<CollectesList />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
