@@ -11,44 +11,104 @@ export type Database = {
     Tables: {
       collecte: {
         Row: {
+          collecte_casier_75_plein_nb_palette: number
+          collecte_casier_75_plein_palette_type:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
+          collecte_fut_nb_palette: number
           collecte_nb_bouteilles: number
           collecte_nb_casier_75_plein: number
+          collecte_nb_fut_vide: number
           collecte_nb_palette_bouteille: number
+          collecte_nb_palette_vide: number
           collecte_nb_palox_plein: number
+          collecte_palette_vide_type:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
           created_at: string
           cyke_id: string | null
           id: number
+          livraison_casier_75_vide_nb_palette: number
+          livraison_casier_75_vide_palette_type:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
+          livraison_fut_nb_palette: number
           livraison_nb_casier_75_vide: number
+          livraison_nb_fut_vide: number
           livraison_nb_palette_bouteille: number
+          livraison_nb_palette_vide: number
           livraison_nb_palox_vide: number
+          livraison_palette_vide_type:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
           point_de_collecte_id: number
           tournee_id: number | null
         }
         Insert: {
+          collecte_casier_75_plein_nb_palette?: number
+          collecte_casier_75_plein_palette_type?:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
+          collecte_fut_nb_palette?: number
           collecte_nb_bouteilles?: number
           collecte_nb_casier_75_plein?: number
+          collecte_nb_fut_vide?: number
           collecte_nb_palette_bouteille?: number
+          collecte_nb_palette_vide?: number
           collecte_nb_palox_plein?: number
+          collecte_palette_vide_type?:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
           created_at?: string
           cyke_id?: string | null
           id?: number
+          livraison_casier_75_vide_nb_palette?: number
+          livraison_casier_75_vide_palette_type?:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
+          livraison_fut_nb_palette?: number
           livraison_nb_casier_75_vide?: number
+          livraison_nb_fut_vide?: number
           livraison_nb_palette_bouteille?: number
+          livraison_nb_palette_vide?: number
           livraison_nb_palox_vide?: number
+          livraison_palette_vide_type?:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
           point_de_collecte_id: number
           tournee_id?: number | null
         }
         Update: {
+          collecte_casier_75_plein_nb_palette?: number
+          collecte_casier_75_plein_palette_type?:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
+          collecte_fut_nb_palette?: number
           collecte_nb_bouteilles?: number
           collecte_nb_casier_75_plein?: number
+          collecte_nb_fut_vide?: number
           collecte_nb_palette_bouteille?: number
+          collecte_nb_palette_vide?: number
           collecte_nb_palox_plein?: number
+          collecte_palette_vide_type?:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
           created_at?: string
           cyke_id?: string | null
           id?: number
+          livraison_casier_75_vide_nb_palette?: number
+          livraison_casier_75_vide_palette_type?:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
+          livraison_fut_nb_palette?: number
           livraison_nb_casier_75_vide?: number
+          livraison_nb_fut_vide?: number
           livraison_nb_palette_bouteille?: number
+          livraison_nb_palette_vide?: number
           livraison_nb_palox_vide?: number
+          livraison_palette_vide_type?:
+            | Database["public"]["Enums"]["palette_type"]
+            | null
           point_de_collecte_id?: number
           tournee_id?: number | null
         }
@@ -405,6 +465,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_point_de_collecte_count: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      get_total_bouteilles_collecte: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       set_role: {
         Args: {
           event: Json
@@ -440,6 +508,7 @@ export type Database = {
         | "zone_de_collecte.delete"
       app_role: "staff" | "transporteur"
       contenant_collecte_type: "casier_x12" | "palox"
+      palette_type: "Europe" | "VMF"
       point_de_collecte_statut: "archive" | "actif"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
       statut_tournee: "En attente de validation" | "Validé"
