@@ -33,7 +33,7 @@ export const CollecteCreateButton: React.FC<CollecteCreateButtonProps> = ({
         onClick={() => show()}
       />
 
-      <Modal {...modalProps}>
+      <Modal {...modalProps} destroyOnClose={true}>
         <CollecteForm
           formProps={{
             ...formProps,
