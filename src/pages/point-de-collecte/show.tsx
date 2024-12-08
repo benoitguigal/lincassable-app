@@ -18,8 +18,6 @@ import PointDeCollecteName from "../../components/pointsDeCollecte/PointDeCollec
 
 const { Title } = Typography;
 
-const VITE_HOST = import.meta.env.VITE_HOST;
-
 export const PointDeCollecteShow = () => {
   const { queryResult } = useShow<PointDeCollecte>();
 
