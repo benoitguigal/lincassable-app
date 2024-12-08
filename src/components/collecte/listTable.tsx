@@ -7,12 +7,21 @@ import { CollecteEditButton } from "./editButton";
 import { CollecteCreateButton } from "./createButton";
 import { chargementCollecte } from "../../utility/weights";
 import Decimal from "decimal.js";
-import { title } from "process";
 
 type CollecteListTableProps = {
   tournee_id: number;
   canEdit: boolean;
 };
+
+function formatPaletteType(type: string | null) {
+  if (type === null) {
+    return "";
+  }
+  if (type === "VMF") {
+    return "100x120";
+  }
+  return type;
+}
 
 const CollecteListTable: React.FC<CollecteListTableProps> = ({
   tournee_id,
@@ -173,8 +182,9 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                   const nbCasierParPalette = new Decimal(value)
                     .dividedBy(nbPalettes)
                     .toFixed(0);
-                  const paletteType =
-                    record.collecte_casier_75_plein_palette_type;
+                  const paletteType = formatPaletteType(
+                    record.collecte_casier_75_plein_palette_type
+                  );
 
                   return (
                     <>
@@ -199,8 +209,9 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                   const nbCasierParPalette = new Decimal(value)
                     .dividedBy(nbPalettes)
                     .toFixed(0);
-                  const paletteType =
-                    record.livraison_casier_75_vide_palette_type;
+                  const paletteType = formatPaletteType(
+                    record.livraison_casier_75_vide_palette_type
+                  );
 
                   return (
                     <>
@@ -269,6 +280,9 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                   const nbFutsParPalette = new Decimal(value)
                     .dividedBy(nbPalettes)
                     .toFixed(0);
+                  const paletteType = formatPaletteType(
+                    record.collecte_fut_palette_type
+                  );
 
                   return (
                     <>
@@ -276,7 +290,8 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                       {nbPalettes > 0 && (
                         <div>
                           <i>
-                            {nbPalettes} palettes de {nbFutsParPalette} fûts
+                            {nbPalettes} palettes {paletteType} de{" "}
+                            {nbFutsParPalette} fûts
                           </i>
                         </div>
                       )}
@@ -292,6 +307,9 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                   const nbFutsParPalette = new Decimal(value)
                     .dividedBy(nbPalettes)
                     .toFixed(0);
+                  const paletteType = formatPaletteType(
+                    record.livraison_fut_palette_type
+                  );
 
                   return (
                     <>
@@ -299,7 +317,8 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                       {nbPalettes > 0 && (
                         <div>
                           <i>
-                            {nbPalettes} palettes de {nbFutsParPalette} fûts
+                            {nbPalettes} palettes {paletteType} de{" "}
+                            {nbFutsParPalette} fûts
                           </i>
                         </div>
                       )}
@@ -320,13 +339,17 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                 dataIndex: "collecte_nb_palette_vide",
                 title: "À collecter",
                 render: (value: number, record: Collecte) =>
-                  `${value} ${record.collecte_palette_vide_type ?? ""}`,
+                  `${value} ${formatPaletteType(
+                    record.collecte_palette_vide_type
+                  )}`,
               },
               {
                 dataIndex: "livraison_nb_palette_vide",
                 title: "À livrer",
                 render: (value: number, record: Collecte) =>
-                  `${value} ${record.livraison_palette_vide_type ?? ""}`,
+                  `${value} ${formatPaletteType(
+                    record.livraison_palette_vide_type
+                  )}`,
               },
             ],
           },
