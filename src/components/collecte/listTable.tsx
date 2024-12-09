@@ -2,7 +2,7 @@ import { useList } from "@refinedev/core";
 import { Collecte, PointDeCollecte } from "../../types";
 import { useMemo } from "react";
 import { DeleteButton, useTable } from "@refinedev/antd";
-import { Space, Table } from "antd";
+import { Popover, Space, Table } from "antd";
 import { CollecteEditButton } from "./editButton";
 import { CollecteCreateButton } from "./createButton";
 import { chargementCollecte } from "../../utility/weights";
@@ -122,14 +122,34 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
       render: (id: number) => {
         if (pointDeCollecteById && id) {
           return (
-            <>
-              <div style={{ marginBottom: "5px" }}>
+            <Popover
+              content={
+                <div>
+                  <div style={{ marginBottom: "5px" }}>
+                    {pointDeCollecteById[id]?.adresse}
+                  </div>
+                  <div style={{ marginBottom: "5px" }}>
+                    {pointDeCollecteById[id]?.horaires}
+                  </div>
+                  <div style={{ marginBottom: "5px" }}>
+                    {pointDeCollecteById[id]?.info}
+                  </div>
+                  <div>{pointDeCollecteById[id]?.contacts?.join("\n")}</div>
+                  <div style={{ marginBottom: "5px" }}>
+                    {pointDeCollecteById[id]?.telephones?.join("\n")}
+                  </div>
+                </div>
+              }
+            >
+              <div
+                style={{
+                  cursor: "pointer",
+                  color: "blue",
+                }}
+              >
                 {pointDeCollecteById[id]?.nom}
               </div>
-              <div style={{ fontStyle: "italic" }}>
-                {pointDeCollecteById[id]?.horaires}
-              </div>
-            </>
+            </Popover>
           );
         }
         return null;

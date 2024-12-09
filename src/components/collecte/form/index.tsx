@@ -60,13 +60,15 @@ export const CollecteForm: React.FC<Props> = ({ formProps }) => {
     form?.setFieldValue("livraison_nb_fut_vide", 0);
     form?.setFieldValue("collecte_fut_nb_palette", 0);
     form?.setFieldValue("livraison_fut_nb_palette", 0);
+    form?.setFieldValue("collecte_fut_palette_type", null);
+    form?.setFieldValue("livraison_fut_palette_type", null);
   }
 
   function resetPaletteVide() {
     form?.setFieldValue("collecte_nb_palette_vide", 0);
-    form?.setFieldValue("collecte_palette_vide_type", 0);
+    form?.setFieldValue("collecte_palette_vide_type", null);
     form?.setFieldValue("livraison_nb_palette_vide", 0);
-    form?.setFieldValue("livraison_palette_vide_type", 0);
+    form?.setFieldValue("livraison_palette_vide_type", null);
   }
 
   // Nombre de casiers pleins à collecter
