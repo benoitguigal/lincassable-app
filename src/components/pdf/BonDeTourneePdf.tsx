@@ -6,6 +6,7 @@ import {
   ZoneDeCollecte,
 } from "../../types";
 import { formatDate } from "../../utility/dateFormat";
+import Decimal from "decimal.js";
 
 const styles = StyleSheet.create({
   page: {
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
   },
   tableCell: {
     margin: 5,
-    fontSize: 10,
+    fontSize: 9,
   },
 });
 
@@ -49,6 +50,103 @@ type BonDeTourneeProps = {
   pointsDeCollecte: PointDeCollecte[];
   zoneDeCollecte?: ZoneDeCollecte;
 };
+
+function formatNumber(value: number) {
+  if (value === 0) {
+    return "";
+  }
+  return String(value);
+}
+
+function formatPaletteType(type: string | null) {
+  if (type === null) {
+    return "";
+  }
+  if (type === "VMF") {
+    return "100x120";
+  }
+  return type;
+}
+
+function conditionnements(collecte: Collecte): string {
+  let result = "";
+
+  if (
+    collecte.collecte_nb_casier_75_plein > 0 &&
+    collecte.collecte_casier_75_plein_nb_palette > 0
+  ) {
+    const nbCasierParPalette = new Decimal(collecte.collecte_nb_casier_75_plein)
+      .dividedBy(collecte.collecte_casier_75_plein_nb_palette)
+      .toDecimalPlaces(0);
+    result +=
+      `[collecte] ${collecte.collecte_casier_75_plein_nb_palette} palettes ` +
+      `${formatPaletteType(
+        collecte.collecte_casier_75_plein_palette_type
+      )} de ${nbCasierParPalette}` +
+      ` casiers (${collecte.collecte_nb_casier_75_plein})\n`;
+  }
+
+  if (
+    collecte.collecte_nb_fut_vide > 0 &&
+    collecte.collecte_fut_nb_palette > 0
+  ) {
+    const nbFutsParPalette = new Decimal(collecte.collecte_nb_fut_vide)
+      .dividedBy(collecte.collecte_fut_nb_palette)
+      .toDecimalPlaces(0);
+    result +=
+      `[collecte] ${
+        collecte.collecte_fut_nb_palette
+      } palettes ${formatPaletteType(collecte.collecte_fut_palette_type)}` +
+      ` de ${nbFutsParPalette} fûts (${collecte.collecte_nb_fut_vide})\n`;
+  }
+
+  if (collecte.collecte_nb_palette_vide > 0) {
+    result +=
+      `[collecte] ${collecte.collecte_nb_palette_vide}` +
+      ` palettes ${formatPaletteType(
+        collecte.collecte_palette_vide_type
+      )} vides\n`;
+  }
+
+  if (
+    collecte.livraison_nb_casier_75_vide > 0 &&
+    collecte.livraison_casier_75_vide_nb_palette > 0
+  ) {
+    const nbCasierParPalette = new Decimal(collecte.livraison_nb_casier_75_vide)
+      .dividedBy(collecte.livraison_casier_75_vide_nb_palette)
+      .toDecimalPlaces(0);
+    result +=
+      `[livraison] ${collecte.livraison_casier_75_vide_nb_palette} palettes ` +
+      `${formatPaletteType(
+        collecte.livraison_casier_75_vide_palette_type
+      )} de ${nbCasierParPalette}` +
+      ` casiers (${collecte.livraison_nb_casier_75_vide})\n`;
+  }
+
+  if (
+    collecte.livraison_nb_fut_vide > 0 &&
+    collecte.livraison_fut_nb_palette > 0
+  ) {
+    const nbFutsParPalette = new Decimal(collecte.livraison_nb_fut_vide)
+      .dividedBy(collecte.livraison_fut_nb_palette)
+      .toDecimalPlaces(0);
+    result +=
+      `[livraison] ${
+        collecte.livraison_fut_nb_palette
+      } palettes ${formatPaletteType(collecte.livraison_fut_palette_type)}` +
+      ` de ${nbFutsParPalette} fûts (${collecte.livraison_nb_fut_vide})\n`;
+  }
+
+  if (collecte.livraison_nb_palette_vide > 0) {
+    result +=
+      `[livraison] ${collecte.livraison_nb_palette_vide}` +
+      ` palettes ${formatPaletteType(
+        collecte.livraison_palette_vide_type
+      )} vides`;
+  }
+
+  return result;
+}
 
 const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
   tournee,
@@ -72,6 +170,8 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
   let livraisonNbPaloxTotal = 0;
   let collecteNbPaletteTotal = 0;
   let livraisonNbPaletteTotal = 0;
+  let collecteNbFutsTotal = 0;
+  let livraisonNbFutsTotal = 0;
 
   collectes.forEach((collecte) => {
     collecteNbCasierTotal += collecte.collecte_nb_casier_75_plein;
@@ -80,19 +180,23 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
     livraisonNbPaloxTotal += collecte.livraison_nb_palox_vide;
     collecteNbPaletteTotal += collecte.collecte_nb_palette_bouteille;
     livraisonNbPaletteTotal += collecte.livraison_nb_palette_bouteille;
+    collecteNbFutsTotal += collecte.collecte_nb_fut_vide;
+    livraisonNbFutsTotal += collecte.livraison_nb_fut_vide;
   });
 
   const hasCasiers = collecteNbCasierTotal + livraisonNbCasierTotal > 0;
   const hasPaloxs = collecteNbPaloxTotal + livraisonNbPaloxTotal > 0;
   const hasPalettes = collecteNbPaletteTotal + livraisonNbPaletteTotal > 0;
+  const hasFuts = collecteNbFutsTotal + livraisonNbFutsTotal > 0;
 
   const headers = [
-    { cell: "", span: 3 },
+    { cell: "", span: 2 },
     { cell: "", span: 3 },
     ...(hasCasiers ? [{ cell: "Casiers", span: 2 }] : []),
     ...(hasPaloxs ? [{ cell: "Paloxs", span: 2 }] : []),
     ...(hasPalettes ? [{ cell: "Palettes bouteilles", span: 2 }] : []),
-    { cell: "", span: 2 },
+    ...(hasFuts ? [{ cell: "Fûts", span: 2 }] : []),
+    { cell: "", span: 3 },
     { cell: "", span: 2 },
   ];
 
@@ -109,17 +213,21 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
   ];
 
   const subHeaders = [
-    { cell: "Nom / Horaires / Contact", span: 3 },
+    { cell: "Nom / Horaires / Contact", span: 2 },
     { cell: "Adresse / Infos", span: 3 },
     ...(hasCasiers ? contenantHeaders : []),
     ...(hasPaloxs ? contenantHeaders : []),
     ...(hasPalettes ? contenantHeaders : []),
-    { cell: "Observations (numéro de paloxs, incidents, etc)", span: 2 },
-    { cell: "Signature / tampon", span: 2 },
+    ...(hasFuts ? contenantHeaders : []),
+    {
+      cell: "Conditionnement",
+      span: 3,
+    },
+    { cell: "Signature / tampon - Observations", span: 2 },
   ];
 
   const footer = [
-    { cell: "", span: 3 },
+    { cell: "", span: 2 },
     { cell: "TOTAL", span: 3 },
     ...(hasCasiers
       ? [
@@ -139,7 +247,13 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
           { cell: livraisonNbPaletteTotal, span: 1 },
         ]
       : []),
-    { cell: "", span: 2 },
+    ...(hasFuts
+      ? [
+          { cell: collecteNbFutsTotal, span: 1 },
+          { cell: livraisonNbFutsTotal, span: 1 },
+        ]
+      : []),
+    { cell: "", span: 3 },
     { cell: "", span: 2 },
   ];
 
@@ -172,25 +286,34 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
     }
 
     return [
-      { cell: nom, span: 3 },
+      { cell: nom, span: 2 },
       { cell: adresse, span: 3 },
       ...(hasCasiers
         ? [c.collecte_nb_casier_75_plein, c.livraison_nb_casier_75_vide].map(
-            (cell) => ({ cell, span: 1 })
+            (cell) => ({
+              cell: formatNumber(cell),
+              span: 1,
+            })
           )
         : []),
       ...(hasPaloxs
         ? [c.collecte_nb_palox_plein, c.livraison_nb_palox_vide].map(
-            (cell) => ({ cell, span: 1 })
+            (cell) => ({ cell: formatNumber(cell), span: 1 })
           )
         : []),
       ...(hasPalettes
         ? [
             c.collecte_nb_palette_bouteille,
             c.livraison_nb_palette_bouteille,
-          ].map((cell) => ({ cell, span: 1 }))
+          ].map((cell) => ({ cell: formatNumber(cell), span: 1 }))
         : []),
-      { cell: "", span: 2 },
+      ...(hasFuts
+        ? [c.collecte_nb_fut_vide, c.livraison_nb_fut_vide].map((cell) => ({
+            cell: formatNumber(cell),
+            span: 1,
+          }))
+        : []),
+      { cell: conditionnements(c), span: 3 },
       { cell: "", span: 2 },
     ];
   });
