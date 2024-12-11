@@ -19,33 +19,31 @@ import { dataProvider, liveProvider } from "@refinedev/supabase";
 import { App as AntdApp, ConfigProvider, theme } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import authProvider from "./authProvider";
-import { Header } from "./components/header";
+import accessControlProvider from "./accessControlProvider";
 import { supabaseClient } from "./utility";
-import { LincassableTitle } from "./components/title";
-import {
-  PointDeCollecteCreate,
-  PointDeCollecteEdit,
-  PointDeCollecteList,
-  PointDeCollecteShow,
-} from "./pages/point-de-collecte";
-import { BouteilleIconSvg } from "./components/icons";
-import { DashboardPage } from "./pages/dashboard";
 import { DashboardOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { TourneeList } from "./pages/tournee/list";
-import { TourneeCreate } from "./pages/tournee/create";
-import { TourneeEdit } from "./pages/tournee/edit";
-import accessControlProvider from "./accessControlProvider";
-import { TourneeShow } from "./pages/tournee/show";
-import CreateRemplissageContenants from "./pages/remplissage-contenants/create";
-import { RemplissageContenantsList } from "./pages/remplissage-contenants/list";
 import locale from "antd/locale/fr_FR";
 import dayjs from "dayjs";
+import Dashboard from "./pages/Dashboard";
+import PointDeCollecteCreate from "./pages/point-de-collecte/PointDeCollecteCreate";
+import PointDeCollecteEdit from "./pages/point-de-collecte/PointDeCollecteEdit";
+import PointDeCollecteList from "./pages/point-de-collecte/PointDeCollecteList";
+import PointDeCollecteShow from "./pages/point-de-collecte/PointDeCollecteShow";
+import TourneeList from "./pages/tournee/TourneeList";
+import TourneeCreate from "./pages/tournee/TourneeCreate";
+import TourneeEdit from "./pages/tournee/TourneeEdit";
+import TourneeShow from "./pages/tournee/TourneeShow";
+import DemandeCollecte from "./pages/demande-collecte/DemandeDeCollecte";
+import DemandeDeCollecteSuccess from "./pages/demande-collecte/DemandeDeCollecteSuccess";
+import DemandeDeCollecteList from "./pages/demande-collecte/DemandeDeCollecteList";
+import PrevisionList from "./pages/PrevisionList";
+import CollecteList from "./pages/CollecteList";
+import Header from "./components/Header";
+import LincassableTitle from "./components/LincassableTitle";
+import { BouteilleIconSvg } from "./components/icons";
 
 import "dayjs/locale/fr";
-import CreateRemplissageContenantsSuccess from "./pages/remplissage-contenants/createSuccess";
-import { PrevisionList } from "./pages/prevision/list";
-import { CollectesList } from "./pages/collectes/list";
 
 dayjs.locale("fr");
 
@@ -184,7 +182,7 @@ function App() {
                       </Authenticated>
                     }
                   >
-                    <Route index element={<DashboardPage />} />
+                    <Route index element={<Dashboard />} />
                     <Route path="/point-de-collecte">
                       <Route index element={<PointDeCollecteList />} />
                       <Route
@@ -201,7 +199,7 @@ function App() {
                       />
                     </Route>
                     <Route path="/remplissage-contenants">
-                      <Route index element={<RemplissageContenantsList />} />
+                      <Route index element={<DemandeDeCollecteList />} />
                     </Route>
                     <Route path="/tournee">
                       <Route index element={<TourneeList />} />
@@ -213,18 +211,18 @@ function App() {
                       <Route index element={<PrevisionList />} />
                     </Route>
                     <Route path="collectes">
-                      <Route index element={<CollectesList />} />
+                      <Route index element={<CollecteList />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
                   {/* Formulaire point de vente */}
                   <Route
                     path="/point-de-collecte/taux-de-remplissage/:id"
-                    element={<CreateRemplissageContenants />}
+                    element={<DemandeCollecte />}
                   />
                   <Route
                     path="/point-de-collecte/taux-de-remplissage/success"
-                    element={<CreateRemplissageContenantsSuccess />}
+                    element={<DemandeDeCollecteSuccess />}
                   />
                   <Route
                     element={
