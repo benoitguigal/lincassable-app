@@ -10,3 +10,14 @@ export function getPointDeCollecteFormulaireUrl(
     `nom=${pointDeCollecte.nom}&contenant_collecte=${pointDeCollecte.contenant_collecte_type}`
   );
 }
+
+export function getPointDeCollecteConsigneFormulaireUrl(
+  pointDeCollecte: PointDeCollecte,
+  start: string,
+  end: string
+) {
+  return (
+    `${VITE_HOST}/point-de-collecte/consigne/${pointDeCollecte.id}?` +
+    `nom=${pointDeCollecte.nom}&start=${start}&end=${end}`
+  );
+}

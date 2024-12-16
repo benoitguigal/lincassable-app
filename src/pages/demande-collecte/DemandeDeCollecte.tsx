@@ -81,6 +81,7 @@ const DemandeCollecte: React.FC<IResourceComponentsProps> = () => {
                 searchParams.get("contenant_collecte") ?? "casier",
             }}
             layout="vertical"
+            autoComplete="off"
             style={{ maxWidth: 500, marginTop: "2em" }}
             onFinish={({
               contenant_collecte,

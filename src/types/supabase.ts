@@ -147,10 +147,46 @@ export type Database = {
           },
         ]
       }
+      consigne: {
+        Row: {
+          consigne: number
+          date: string
+          deconsigne: number
+          id: number
+          montant: number
+          point_de_collecte_id: number | null
+        }
+        Insert: {
+          consigne: number
+          date: string
+          deconsigne: number
+          id?: number
+          montant: number
+          point_de_collecte_id?: number | null
+        }
+        Update: {
+          consigne?: number
+          date?: string
+          deconsigne?: number
+          id?: number
+          montant?: number
+          point_de_collecte_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consigne_point_de_collecte_id_fkey"
+            columns: ["point_de_collecte_id"]
+            isOneToOne: false
+            referencedRelation: "point_de_collecte"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       point_de_collecte: {
         Row: {
           adresse: string
           collecte_par_id: number | null
+          consigne: boolean
           contacts: string[]
           contenant_collecte_type:
             | Database["public"]["Enums"]["contenant_collecte_type"]
@@ -175,6 +211,7 @@ export type Database = {
         Insert: {
           adresse: string
           collecte_par_id?: number | null
+          consigne?: boolean
           contacts?: string[]
           contenant_collecte_type?:
             | Database["public"]["Enums"]["contenant_collecte_type"]
@@ -199,6 +236,7 @@ export type Database = {
         Update: {
           adresse?: string
           collecte_par_id?: number | null
+          consigne?: boolean
           contacts?: string[]
           contenant_collecte_type?:
             | Database["public"]["Enums"]["contenant_collecte_type"]

@@ -31,6 +31,8 @@ export type TransporteurUser =
 export type ZoneDeCollecte =
   Database["public"]["Tables"]["zone_de_collecte"]["Row"];
 
+export type Consigne = Database["public"]["Tables"]["consigne"]["Row"];
+
 export type Identity = {
   id: string;
   email: string;
