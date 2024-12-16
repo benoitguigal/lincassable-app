@@ -12,7 +12,10 @@ import { PointDeCollecte, ZoneDeCollecte } from "../../types";
 import PointDeCollecteMap from "../../components/pointsDeCollecte/PointDeCollecteMap";
 import LienFormulairePointDeCollecteDownloadLink from "../../components/pdf/LienFormulairePointDeCollecteDownloadLink";
 import ContenantDeCollecteType from "../../components/ContenantDeCollecteType";
-import { getPointDeCollecteFormulaireUrl } from "../../utility/urls";
+import {
+  getPointDeCollecteConsigneFormulaireUrl,
+  getPointDeCollecteFormulaireUrl,
+} from "../../utility/urls";
 import PointDeCollecteName from "../../components/pointsDeCollecte/PointDeCollecteName";
 import PointDeCollecteType from "../../components/pointsDeCollecte/PointDeCollecteType";
 
@@ -33,6 +36,14 @@ const PointDeCollecteShow = () => {
 
   const pointDeCollecteFormulaireUrl = pointDeCollecte
     ? getPointDeCollecteFormulaireUrl(pointDeCollecte)
+    : null;
+
+  const pointDeCollecteConsigneFormulaire2024Url = pointDeCollecte
+    ? getPointDeCollecteConsigneFormulaireUrl(
+        pointDeCollecte,
+        "2024-01-01",
+        "2024-12-01"
+      )
     : null;
 
   return (
@@ -98,6 +109,13 @@ const PointDeCollecteShow = () => {
       <NumberField value={pointDeCollecte?.stock_casiers_75 ?? 0} />
       <Title level={5}>Stock paloxs</Title>
       <NumberField value={pointDeCollecte?.stock_paloxs ?? 0} />
+      <Title level={5}>Pratique la consigne ?</Title>
+      <TextField value={pointDeCollecte?.consigne ? "Oui" : "Non"} />
+      <Title level={5}>Formulaire consigne 2024</Title>
+      {pointDeCollecte && pointDeCollecteConsigneFormulaire2024Url && (
+        <UrlField value={pointDeCollecteConsigneFormulaire2024Url} />
+      )}
+
       <Title level={5}>Informations compl.</Title>
       <TextField value={pointDeCollecte?.info} />
       <Title level={5}>Formulaire Taux de remplissage</Title>

@@ -165,6 +165,14 @@ const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item label="Stock paloxs" name="stock_paloxs">
         <Input type="number" min={0} />
       </Form.Item>
+      <Form.Item label="Pratiques la consigne" name="consigne">
+        <Select
+          options={[
+            { value: true, label: "Oui" },
+            { value: false, label: "Non" },
+          ]}
+        />
+      </Form.Item>
       <Form.Item label="Informations complémentaires" name="info">
         <Input />
       </Form.Item>

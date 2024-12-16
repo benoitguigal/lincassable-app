@@ -1,0 +1,6 @@
+
+
+
+.consignes .ant-picker .ant-picker-input > input[disabled]{
+  color: black; /* Garde la couleur actuelle */
+}

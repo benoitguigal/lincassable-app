@@ -21,7 +21,7 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import authProvider from "./authProvider";
 import accessControlProvider from "./accessControlProvider";
 import { supabaseClient } from "./utility";
-import { DashboardOutlined } from "@ant-design/icons";
+import { DashboardOutlined, EuroCircleOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import locale from "antd/locale/fr_FR";
 import dayjs from "dayjs";
@@ -44,6 +44,9 @@ import LincassableTitle from "./components/LincassableTitle";
 import { BouteilleIconSvg } from "./components/icons";
 
 import "dayjs/locale/fr";
+import ConsigneList from "./pages/consigne/ConsigneList";
+import ConsigneCreate from "./pages/consigne/ConsigneCreate";
+import ConsigneCreateSuccess from "./pages/consigne/ConsigneCreateSuccess";
 
 dayjs.locale("fr");
 
@@ -146,6 +149,11 @@ function App() {
                       parent: "collecte_menu",
                     },
                   },
+                  // {
+                  //   name: "consigne",
+                  //   list: "/consigne",
+                  //   meta: { label: "Consignes", icon: <EuroCircleOutlined /> },
+                  // },
                   { name: "collecte" },
                   { name: "transporteur" },
                   { name: "transporteur_users" },
@@ -213,6 +221,9 @@ function App() {
                     <Route path="collectes">
                       <Route index element={<CollecteList />} />
                     </Route>
+                    <Route path="/consigne">
+                      <Route index element={<ConsigneList />} />
+                    </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
                   {/* Formulaire point de vente */}
@@ -223,6 +234,14 @@ function App() {
                   <Route
                     path="/point-de-collecte/taux-de-remplissage/success"
                     element={<DemandeDeCollecteSuccess />}
+                  />
+                  <Route
+                    path="/point-de-collecte/consigne/:id"
+                    element={<ConsigneCreate />}
+                  />
+                  <Route
+                    path="/point-de-collecte/consigne/success"
+                    element={<ConsigneCreateSuccess />}
                   />
                   <Route
                     element={
