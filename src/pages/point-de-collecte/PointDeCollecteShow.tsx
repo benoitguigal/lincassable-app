@@ -41,7 +41,7 @@ const PointDeCollecteShow = () => {
   const pointDeCollecteConsigneFormulaire2024Url = pointDeCollecte
     ? getPointDeCollecteConsigneFormulaireUrl(
         pointDeCollecte,
-        "2024-01-01",
+        "2024-07-01",
         "2024-12-01"
       )
     : null;
@@ -111,7 +111,7 @@ const PointDeCollecteShow = () => {
       <NumberField value={pointDeCollecte?.stock_paloxs ?? 0} />
       <Title level={5}>Pratique la consigne ?</Title>
       <TextField value={pointDeCollecte?.consigne ? "Oui" : "Non"} />
-      <Title level={5}>Formulaire consigne 2024</Title>
+      <Title level={5}>Formulaire consigne 2ème semestre 2024</Title>
       {pointDeCollecte && pointDeCollecteConsigneFormulaire2024Url && (
         <UrlField value={pointDeCollecteConsigneFormulaire2024Url} />
       )}
