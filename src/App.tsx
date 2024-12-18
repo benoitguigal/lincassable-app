@@ -149,11 +149,11 @@ function App() {
                       parent: "collecte_menu",
                     },
                   },
-                  // {
-                  //   name: "consigne",
-                  //   list: "/consigne",
-                  //   meta: { label: "Consignes", icon: <EuroCircleOutlined /> },
-                  // },
+                  {
+                    name: "consigne",
+                    list: "/consigne",
+                    meta: { label: "Consigne", icon: <EuroCircleOutlined /> },
+                  },
                   { name: "collecte" },
                   { name: "transporteur" },
                   { name: "transporteur_users" },

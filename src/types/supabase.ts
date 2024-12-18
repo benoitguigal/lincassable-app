@@ -150,6 +150,7 @@ export type Database = {
       consigne: {
         Row: {
           consigne: number
+          created_at: string
           date: string
           deconsigne: number
           id: number
@@ -158,6 +159,7 @@ export type Database = {
         }
         Insert: {
           consigne: number
+          created_at?: string
           date: string
           deconsigne: number
           id?: number
@@ -166,6 +168,7 @@ export type Database = {
         }
         Update: {
           consigne?: number
+          created_at?: string
           date?: string
           deconsigne?: number
           id?: number
