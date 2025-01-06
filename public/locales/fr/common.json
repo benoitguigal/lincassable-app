@@ -139,5 +139,21 @@
       "show": "Afficher point de collecte",
       "create": "Ajouter un point de collecte"
     }
+  },
+  "tournee": {
+    "titles": {
+      "list": "Liste des tournées",
+      "edit": "Modifier tournée",
+      "show": "Afficher tournée",
+      "create": "Programmer tournée"
+    }
+  },
+  "collecte": {
+    "titles": {
+      "list": "Liste des collectes par point",
+      "edit": "Modifier collecte",
+      "show": "Afficher collecte",
+      "create": "Ajouter une collecte"
+    }
   }
 }

@@ -48,6 +48,7 @@ import ConsigneList from "./pages/consigne/ConsigneList";
 import ConsigneCreate from "./pages/consigne/ConsigneCreate";
 import ConsigneCreateSuccess from "./pages/consigne/ConsigneCreateSuccess";
 import CollecteCreate from "./pages/collecte/CollecteCreate";
+import CollecteEdit from "./pages/collecte/CollecteEdit";
 
 dayjs.locale("fr");
 
@@ -151,8 +152,9 @@ function App() {
                     name: "collecte",
                     list: "/collecte",
                     create: "/collecte/create",
+                    edit: "/collecte/edit/:id",
                     meta: {
-                      label: "Collectes par point",
+                      label: "Collectes",
                       parent: "collecte_menu",
                     },
                   },
@@ -222,6 +224,7 @@ function App() {
                     <Route path="collecte">
                       <Route index element={<CollecteList />} />
                       <Route path="create" index element={<CollecteCreate />} />
+                      <Route path="edit/:id" element={<CollecteEdit />} />
                     </Route>
                     <Route path="/consigne">
                       <Route index element={<ConsigneList />} />

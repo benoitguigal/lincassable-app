@@ -1,8 +1,9 @@
 import { UseModalFormReturnType, useSelect } from "@refinedev/antd";
-import { Checkbox, Flex, Form, Input, Select } from "antd";
-import { Collecte, PointDeCollecte } from "../../types";
+import { Checkbox, DatePicker, Flex, Form, Input, Select } from "antd";
+import { Collecte, PointDeCollecte, Tournee } from "../../types";
 import { useEffect, useMemo, useState } from "react";
 import Decimal from "decimal.js";
+import dayjs from "dayjs";
 
 type Props = Pick<UseModalFormReturnType<Collecte>, "formProps">;
 
@@ -14,12 +15,24 @@ const paletteOptions = [
 
 const CollecteForm: React.FC<Props> = ({ formProps }) => {
   const { selectProps } = useSelect<PointDeCollecte>({
+    pagination: { mode: "off" },
     resource: "point_de_collecte",
     optionLabel: "nom",
     optionValue: "id",
   });
 
+  const { selectProps: tourneeSelectProps } = useSelect<Tournee>({
+    pagination: { mode: "off" },
+    resource: "tournee",
+    optionLabel: "id",
+    optionValue: "id",
+    sorters: [{ field: "id", order: "desc" }],
+    queryOptions: { enabled: !formProps.initialValues?.tournee_id },
+  });
+
   const { form, initialValues } = formProps;
+
+  const hasTournee = !!formProps.initialValues?.tournee_id;
 
   const handleCollecteChange = () => {
     const nbCasiers = form?.getFieldValue("collecte_nb_casier_75_plein") ?? 0;
@@ -218,10 +231,32 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
       <Form.Item
         name="tournee_id"
         label="Identifiant de la tournée"
-        hidden={true}
+        hidden={hasTournee}
+        help="Laisser vide dans le cas d'un apport direct par un producteur"
       >
-        <Input />
+        <Select
+          {...tourneeSelectProps}
+          style={{ width: 300 }}
+          placeholder="Choisir une tournée"
+        />
       </Form.Item>
+      {!hasTournee && (
+        <Form.Item
+          name="date"
+          label="Date de la collecte"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+          getValueProps={(value) => ({
+            value: value ? dayjs(value) : undefined,
+          })}
+        >
+          <DatePicker placeholder="Sélectionner une date" size="large" />
+        </Form.Item>
+      )}
+
       <Form.Item
         name="point_de_collecte_id"
         label="Point de collecte"

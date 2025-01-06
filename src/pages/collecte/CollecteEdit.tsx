@@ -3,12 +3,12 @@ import { IResourceComponentsProps } from "@refinedev/core";
 import CollecteForm from "../../components/collecte/CollecteForm";
 import { Collecte } from "../../types";
 
-const CollecteCreate: React.FC<IResourceComponentsProps> = () => {
-  const form = useForm<Collecte>({ action: "create" });
+const CollecteEdit: React.FC<IResourceComponentsProps> = () => {
+  const form = useForm<Collecte>({ action: "edit" });
 
   return (
     <Create
-      title="Ajouter une collecte ou un apport direct du producteur"
+      title="Modifier une collecte ou un apport direct du producteur"
       saveButtonProps={form.saveButtonProps}
       breadcrumb={false}
     >
@@ -17,4 +17,4 @@ const CollecteCreate: React.FC<IResourceComponentsProps> = () => {
   );
 };
 
-export default CollecteCreate;
+export default CollecteEdit;

@@ -1,5 +1,17 @@
-import { List, useSelect, useTable } from "@refinedev/antd";
-import { IResourceComponentsProps, useLink, useList } from "@refinedev/core";
+import {
+  CreateButton,
+  DeleteButton,
+  EditButton,
+  List,
+  useSelect,
+  useTable,
+} from "@refinedev/antd";
+import {
+  BaseRecord,
+  IResourceComponentsProps,
+  useLink,
+  useList,
+} from "@refinedev/core";
 import {
   Collecte,
   PointDeCollecte,
@@ -7,7 +19,7 @@ import {
   Transporteur,
   ZoneDeCollecte,
 } from "../../types";
-import { Select, Table } from "antd";
+import { Select, Space, Table } from "antd";
 import { useMemo } from "react";
 
 const CollecteList: React.FC<IResourceComponentsProps> = () => {
@@ -126,7 +138,16 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
     });
 
   return (
-    <List title="Collectes" canCreate={true} breadcrumb={false}>
+    <List
+      title="Liste des collectes par point"
+      canCreate={true}
+      breadcrumb={false}
+      headerButtons={(props) => [
+        <CreateButton {...props.createButtonProps}>
+          Ajouter une collecte
+        </CreateButton>,
+      ]}
+    >
       <Select
         {...pointDeCollecteSelectProps}
         style={{ width: "300px", marginBottom: "20px" }}
@@ -147,7 +168,17 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
         <Table.Column
           dataIndex="point_de_collecte_id"
           title="Point de collecte"
-          render={(id) => pointDeCollecteById[id]?.nom ?? ""}
+          render={(id) => {
+            const pointDeCollecte = pointDeCollecteById[id];
+            if (pointDeCollecte) {
+              return (
+                <Link to={`/point-de-collecte/show/${id}`}>
+                  {pointDeCollecte.nom}
+                </Link>
+              );
+            }
+            return "";
+          }}
         />
         <Table.Column dataIndex="date" title="Date" />
         <Table.Column
@@ -194,6 +225,17 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
             }
             return "";
           }}
+        />
+        <Table.Column
+          title="Actions"
+          dataIndex="actions"
+          render={(_, record: BaseRecord) => (
+            <Space>
+              <EditButton hideText size="small" recordItemId={record.id} />
+              {/* <ShowButton hideText size="small" recordItemId={record.id} /> */}
+              <DeleteButton hideText size="small" recordItemId={record.id} />
+            </Space>
+          )}
         />
       </Table>
     </List>

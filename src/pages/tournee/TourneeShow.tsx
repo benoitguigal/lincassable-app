@@ -52,6 +52,7 @@ const TourneeShow = () => {
   return (
     <Show
       isLoading={loading}
+      breadcrumb={false}
       headerButtons={(props) => [
         <Segmented<View>
           key="view"
