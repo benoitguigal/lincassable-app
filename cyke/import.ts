@@ -26,6 +26,7 @@ interface Tournee {
   zone_de_collecte_id: number;
   statut: string;
   prix: number;
+  type_de_vehicule: "velo";
 }
 
 interface Collecte {
@@ -90,6 +91,16 @@ async function readCsv(path: string) {
     password: SUPABASE_AUTH_PASSWORD,
   });
 
+  // Vérifie que tous les points de collectes sont inclus dans le mapping
+  for (const record of data) {
+    const pointDeCollecte = record["Dépose – Entreprise"];
+    if (!pointDeCollectesIds[pointDeCollecte]) {
+      throw new Error(
+        `Il manque un mapping pour le point de collecte ${pointDeCollecte}`
+      );
+    }
+  }
+
   const collecteByDate: { [date: string]: CsvRecord[] } = data.reduce(
     (acc, record) => {
       if (record.Statut !== "delivered") {
@@ -128,6 +139,7 @@ async function readCsv(path: string) {
       zone_de_collecte_id: 1, // Marseille Centre
       statut: "Validé",
       prix,
+      type_de_vehicule: "velo",
     };
 
     const { data, error } = await supabase
@@ -142,87 +154,19 @@ async function readCsv(path: string) {
     const tournee_id = data?.[0].id as number;
 
     if (tournee_id) {
-      const collectesByPoint: { [key: number]: Collecte } = collectes.reduce(
-        (acc, c) => {
-          if (c["Ramasse – Entreprise"] === "Hub vivaux") {
-            // Trajet du dépôt vers le point de collecte
-            // Le point de collecte correspond au champ "Dépose - Entreprise"
-            const pointDeCollecte = c["Dépose – Entreprise"];
-            const point_de_collecte_id = pointDeCollectesIds[pointDeCollecte];
-            const colisage = {
-              livraison_nb_casier_75_vide: parseInt(c["Nombre de colis"]),
-            };
-            if (!point_de_collecte_id) {
-              return acc;
-            }
-            if (acc[point_de_collecte_id]) {
-              return {
-                ...acc,
-                [point_de_collecte_id]: {
-                  ...acc[point_de_collecte_id],
-                  cyke_id: c["Identifiant livraison Cyke"],
-                  ...colisage,
-                },
-              };
-            } else {
-              return {
-                ...acc,
-                [point_de_collecte_id]: {
-                  point_de_collecte_id,
-                  cyke_id: c["Identifiant livraison Cyke"],
-                  tournee_id,
-                  ...colisage,
-                },
-              };
-            }
-          } else if (c["Dépose – Entreprise"] === "Hub vivaux") {
-            // inbound - Trajet du point de collecte vers le dépôt
-            // Le point de collecte correspond au champ "Ramasse - Entreprise"
-            const pointDeCollecte = c["Ramasse – Entreprise"];
-            const point_de_collecte_id = pointDeCollectesIds[pointDeCollecte];
-            const nbCasiers = parseInt(c["Nombre de colis"]);
-            const colisage = {
-              collecte_nb_casier_75_plein: nbCasiers,
-              collecte_nb_bouteilles: nbCasiers * 12,
-            };
-
-            if (!point_de_collecte_id) {
-              return acc;
-            }
-
-            if (acc[point_de_collecte_id]) {
-              return {
-                ...acc,
-                [point_de_collecte_id]: {
-                  ...acc[point_de_collecte_id],
-                  cyke_id: c["Identifiant livraison Cyke"],
-                  ...colisage,
-                },
-              };
-            } else {
-              return {
-                ...acc,
-                [point_de_collecte_id]: {
-                  point_de_collecte_id,
-                  tournee_id,
-                  cyke_id: c["Identifiant livraison Cyke"],
-                  ...colisage,
-                },
-              };
-            }
-          } else {
-            return acc;
-          }
-        },
-        {}
-      );
-
-      const collecteData = Object.values(collectesByPoint).map((c) => ({
-        ...c,
-        collecte_nb_casier_75_plein: c.collecte_nb_casier_75_plein ?? 0,
-        collecte_nb_bouteilles: c.collecte_nb_bouteilles ?? 0,
-        livraison_nb_casier_75_vide: c.livraison_nb_casier_75_vide ?? 0,
-      }));
+      const collecteData: Collecte[] = collectes.map((collecte) => {
+        const pointDeCollecte = collecte["Dépose – Entreprise"];
+        const point_de_collecte_id = pointDeCollectesIds[pointDeCollecte];
+        const nbCasiers = parseInt(collecte["Nombre de colis"]);
+        return {
+          tournee_id,
+          cyke_id: collecte["Identifiant livraison Cyke"],
+          point_de_collecte_id,
+          livraison_nb_casier_75_vide: nbCasiers,
+          collecte_nb_casier_75_plein: nbCasiers,
+          collecte_nb_bouteilles: nbCasiers * 12,
+        };
+      });
 
       const { error: errorCollecte } = await supabase
         .from("collecte")
