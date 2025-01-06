@@ -38,7 +38,7 @@ import DemandeCollecte from "./pages/demande-collecte/DemandeDeCollecte";
 import DemandeDeCollecteSuccess from "./pages/demande-collecte/DemandeDeCollecteSuccess";
 import DemandeDeCollecteList from "./pages/demande-collecte/DemandeDeCollecteList";
 import PrevisionList from "./pages/PrevisionList";
-import CollecteList from "./pages/CollecteList";
+import CollecteList from "./pages/collecte/CollecteList";
 import Header from "./components/Header";
 import LincassableTitle from "./components/LincassableTitle";
 import { BouteilleIconSvg } from "./components/icons";
@@ -142,19 +142,18 @@ function App() {
                     },
                   },
                   {
-                    name: "collecte_par_point",
-                    list: "/collectes",
+                    name: "consigne",
+                    list: "/consigne",
+                    meta: { label: "Consigne", icon: <EuroCircleOutlined /> },
+                  },
+                  {
+                    name: "collecte",
+                    list: "/collecte",
                     meta: {
                       label: "Collectes par point",
                       parent: "collecte_menu",
                     },
                   },
-                  {
-                    name: "consigne",
-                    list: "/consigne",
-                    meta: { label: "Consigne", icon: <EuroCircleOutlined /> },
-                  },
-                  { name: "collecte" },
                   { name: "transporteur" },
                   { name: "transporteur_users" },
                   { name: "zone_de_collecte" },
@@ -218,7 +217,7 @@ function App() {
                     <Route path="previsions">
                       <Route index element={<PrevisionList />} />
                     </Route>
-                    <Route path="collectes">
+                    <Route path="collecte">
                       <Route index element={<CollecteList />} />
                     </Route>
                     <Route path="/consigne">
