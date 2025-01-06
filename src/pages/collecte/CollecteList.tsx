@@ -180,8 +180,16 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
           title="Nombre de casiers collectés"
         />
         <Table.Column
+          dataIndex="livraison_nb_casier_75_vide"
+          title="Nombre de casiers livrés"
+        />
+        <Table.Column
           dataIndex="collecte_nb_palox_plein"
           title="Nombre de paloxs collectés"
+        />
+        <Table.Column
+          dataIndex="livraison_nb_palox_vide"
+          title="Nombre de paloxs livrés"
         />
         <Table.Column
           dataIndex="tournee_id"
