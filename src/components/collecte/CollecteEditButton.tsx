@@ -48,7 +48,7 @@ const CollecteEditButton: React.FC<CollecteEditButtonProps> = ({
           </>
         )}
       >
-        <CollecteForm formProps={formProps} />
+        {modalProps.open && <CollecteForm formProps={formProps} />}
       </Modal>
     </>
   );

@@ -36,27 +36,24 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
 
   const collectes = useMemo(() => tableQuery.data?.data ?? [], [tableQuery]);
 
-  const { data: pointDeCollecteData } = useList<PointDeCollecte>({
+  const {
+    selectProps: pointDeCollecteSelectProps,
+    query: pointDeCollecteQuery,
+  } = useSelect<PointDeCollecte>({
     resource: "point_de_collecte",
     pagination: { mode: "off" },
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: collectes.map((c) => c.point_de_collecte_id).filter(Boolean),
-      },
-    ],
-    queryOptions: { enabled: collectes.length > 0 },
+    optionLabel: "nom",
+    optionValue: "id",
   });
 
   const pointDeCollecteById = useMemo(
     () =>
-      (pointDeCollecteData?.data ?? []).reduce<{
+      (pointDeCollecteQuery.data?.data ?? []).reduce<{
         [key: number]: PointDeCollecte;
       }>((acc, pc) => {
         return { ...acc, [pc.id]: pc };
       }, {}),
-    [pointDeCollecteData]
+    [pointDeCollecteQuery]
   );
 
   const { data: tourneeData } = useList<Tournee>({
@@ -129,13 +126,6 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
       }, {}),
     [zoneDeCollecteData]
   );
-
-  const { selectProps: pointDeCollecteSelectProps } =
-    useSelect<PointDeCollecte>({
-      resource: "point_de_collecte",
-      optionLabel: "nom",
-      optionValue: "id",
-    });
 
   return (
     <List
