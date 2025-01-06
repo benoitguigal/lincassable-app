@@ -38,7 +38,7 @@ import DemandeCollecte from "./pages/demande-collecte/DemandeDeCollecte";
 import DemandeDeCollecteSuccess from "./pages/demande-collecte/DemandeDeCollecteSuccess";
 import DemandeDeCollecteList from "./pages/demande-collecte/DemandeDeCollecteList";
 import PrevisionList from "./pages/PrevisionList";
-import CollecteList from "./pages/CollecteList";
+import CollecteList from "./pages/collecte/CollecteList";
 import Header from "./components/Header";
 import LincassableTitle from "./components/LincassableTitle";
 import { BouteilleIconSvg } from "./components/icons";
@@ -47,6 +47,8 @@ import "dayjs/locale/fr";
 import ConsigneList from "./pages/consigne/ConsigneList";
 import ConsigneCreate from "./pages/consigne/ConsigneCreate";
 import ConsigneCreateSuccess from "./pages/consigne/ConsigneCreateSuccess";
+import CollecteCreate from "./pages/collecte/CollecteCreate";
+import CollecteEdit from "./pages/collecte/CollecteEdit";
 
 dayjs.locale("fr");
 
@@ -142,19 +144,20 @@ function App() {
                     },
                   },
                   {
-                    name: "collecte_par_point",
-                    list: "/collectes",
-                    meta: {
-                      label: "Collectes par point",
-                      parent: "collecte_menu",
-                    },
-                  },
-                  {
                     name: "consigne",
                     list: "/consigne",
                     meta: { label: "Consigne", icon: <EuroCircleOutlined /> },
                   },
-                  { name: "collecte" },
+                  {
+                    name: "collecte",
+                    list: "/collecte",
+                    create: "/collecte/create",
+                    edit: "/collecte/edit/:id",
+                    meta: {
+                      label: "Collectes",
+                      parent: "collecte_menu",
+                    },
+                  },
                   { name: "transporteur" },
                   { name: "transporteur_users" },
                   { name: "zone_de_collecte" },
@@ -218,8 +221,10 @@ function App() {
                     <Route path="previsions">
                       <Route index element={<PrevisionList />} />
                     </Route>
-                    <Route path="collectes">
+                    <Route path="collecte">
                       <Route index element={<CollecteList />} />
+                      <Route path="create" index element={<CollecteCreate />} />
+                      <Route path="edit/:id" element={<CollecteEdit />} />
                     </Route>
                     <Route path="/consigne">
                       <Route index element={<ConsigneList />} />

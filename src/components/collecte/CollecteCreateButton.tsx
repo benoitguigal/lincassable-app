@@ -34,12 +34,14 @@ const CollecteCreateButton: React.FC<CollecteCreateButtonProps> = ({
       />
 
       <Modal {...modalProps}>
-        <CollecteForm
-          formProps={{
-            ...formProps,
-            initialValues: { ...formProps.initialValues, tournee_id },
-          }}
-        />
+        {modalProps.open && (
+          <CollecteForm
+            formProps={{
+              ...formProps,
+              initialValues: { ...formProps.initialValues, tournee_id },
+            }}
+          />
+        )}
       </Modal>
     </CanAccess>
   );

@@ -30,6 +30,7 @@ export type Database = {
             | null
           created_at: string
           cyke_id: string | null
+          date: string | null
           id: number
           livraison_casier_75_vide_nb_palette: number
           livraison_casier_75_vide_palette_type:
@@ -70,6 +71,7 @@ export type Database = {
             | null
           created_at?: string
           cyke_id?: string | null
+          date?: string | null
           id?: number
           livraison_casier_75_vide_nb_palette?: number
           livraison_casier_75_vide_palette_type?:
@@ -110,6 +112,7 @@ export type Database = {
             | null
           created_at?: string
           cyke_id?: string | null
+          date?: string | null
           id?: number
           livraison_casier_75_vide_nb_palette?: number
           livraison_casier_75_vide_palette_type?:

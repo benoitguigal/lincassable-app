@@ -32,3 +32,5 @@ supabase/seed.sql
 cyke/*.csv
 cyke/.env
 cyke/mapping.json
+
+src/script/
