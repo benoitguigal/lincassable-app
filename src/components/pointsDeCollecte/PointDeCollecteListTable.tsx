@@ -23,10 +23,12 @@ type PointDeCollecteListTableProps = {
   columns: string[];
 };
 
+type Record = PointDeCollecte & { zone_de_collecte?: ZoneDeCollecte };
+
 const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
   columns,
 }) => {
-  const { tableProps, filters, tableQueryResult } = useTable<PointDeCollecte>({
+  const { tableProps, filters } = useTable<Record>({
     syncWithLocation: true,
     pagination: { pageSize: 15, mode: "server" },
     filters: {
@@ -37,43 +39,14 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
       mode: "server",
       initial: [{ field: "nom", order: "asc" }],
     },
+    meta: { select: "*, zone_de_collecte(nom)" },
   });
-
-  const pointsDeCollecte = useMemo(
-    () => tableQueryResult?.data?.data ?? [],
-    [tableQueryResult]
-  );
 
   const { selectProps: zoneDeCollecteSelectProps } = useSelect<ZoneDeCollecte>({
     resource: "zone_de_collecte",
     optionLabel: "nom",
     optionValue: "id",
   });
-
-  const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
-    resource: "zone_de_collecte",
-    pagination: { mode: "off" },
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: pointsDeCollecte
-          .map((pc) => pc.zone_de_collecte_id)
-          .filter(Boolean),
-      },
-    ],
-    queryOptions: { enabled: pointsDeCollecte.length > 0 },
-  });
-
-  const zoneDeCollecteById = useMemo(
-    () =>
-      (zoneDeCollecteData?.data ?? []).reduce<{
-        [key: number]: ZoneDeCollecte;
-      }>((acc, zone) => {
-        return { ...acc, [zone.id]: zone };
-      }, {}),
-    [zoneDeCollecteData]
-  );
 
   return (
     <Table {...tableProps} size="small" rowKey="id">
@@ -131,10 +104,10 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
         )}
       />
       <Table.Column
-        dataIndex="zone_de_collecte_id"
+        dataIndex="zone_de_collecte"
         hidden={!columns.includes("zone_de_collecte_id")}
         title="Zone de collecte"
-        render={(value: number) => zoneDeCollecteById[value]?.nom ?? ""}
+        render={(zoneDeCollecte: ZoneDeCollecte) => zoneDeCollecte?.nom}
         sorter
         filterDropdown={(props) => (
           <FilterDropdown {...props}>
