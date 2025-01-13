@@ -11,10 +11,15 @@ type TourneeListCalendarProps = {
   user: Identity;
 };
 
+type Record = Tournee & {
+  transporteur: Transporteur;
+  zone_de_collecte: ZoneDeCollecte;
+};
+
 const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({ user }) => {
   const isTransporteur = user.appRole === "transporteur";
 
-  const { data: tourneeData } = useList<Tournee>({
+  const { data: tourneeData } = useList<Record>({
     resource: "tournee",
     pagination: {
       mode: "off",
@@ -30,59 +35,14 @@ const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({ user }) => {
           ],
         }
       : {}),
+    meta: {
+      select: "*, transporteur(nom),zone_de_collecte(nom)",
+    },
   });
 
   const tourneeList = useMemo(() => {
     return tourneeData?.data ?? [];
   }, [tourneeData]);
-
-  const { data: transporteursData } = useList<Transporteur>({
-    resource: "transporteur",
-    pagination: { mode: "off" },
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: [...new Set(tourneeList.map((t) => t.transporteur_id))],
-      },
-    ],
-    queryOptions: { enabled: tourneeList?.length > 0 },
-  });
-
-  const transporteurById = useMemo(
-    () =>
-      (transporteursData?.data ?? []).reduce<{
-        [key: number]: Transporteur;
-      }>((acc, t) => {
-        return { ...acc, [t.id]: t };
-      }, {}),
-    [transporteursData]
-  );
-
-  const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
-    resource: "zone_de_collecte",
-    pagination: { mode: "off" },
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: tourneeList
-          .map((tournee) => tournee.zone_de_collecte_id)
-          .filter(Boolean),
-      },
-    ],
-    queryOptions: { enabled: tourneeList.length > 0 },
-  });
-
-  const zoneDeCollecteById = useMemo(
-    () =>
-      (zoneDeCollecteData?.data ?? []).reduce<{
-        [key: number]: ZoneDeCollecte;
-      }>((acc, zone) => {
-        return { ...acc, [zone.id]: zone };
-      }, {}),
-    [zoneDeCollecteData]
-  );
 
   return (
     <Calendar
@@ -93,8 +53,8 @@ const TourneeListCalendar: React.FC<TourneeListCalendarProps> = ({ user }) => {
         if (tournee) {
           return (
             <div>
-              <div>{zoneDeCollecteById[tournee.zone_de_collecte_id]?.nom}</div>
-              <div>{transporteurById[tournee.transporteur_id]?.nom}</div>
+              <div>{tournee.zone_de_collecte?.nom}</div>
+              <div>{tournee.transporteur?.nom}</div>
             </div>
           );
         }

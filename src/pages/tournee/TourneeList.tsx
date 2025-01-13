@@ -1,12 +1,20 @@
 import {
   IResourceComponentsProps,
+  useExport,
   useGetIdentity,
   useNavigation,
 } from "@refinedev/core";
-import { CreateButton, List } from "@refinedev/antd";
+import { CreateButton, ExportButton, List } from "@refinedev/antd";
 import dayjs from "dayjs";
 import "dayjs/locale/fr";
-import { Identity } from "../../types";
+import {
+  Collecte,
+  Identity,
+  PointDeCollecte,
+  Tournee,
+  Transporteur,
+  ZoneDeCollecte,
+} from "../../types";
 import { useMemo, useState } from "react";
 import TourneeListTable from "../../components/tournee/TourneeListTable";
 import { Segmented } from "antd";
@@ -18,15 +26,21 @@ dayjs.locale("fr"); // use locale globally
 type View = "table" | "calendar";
 const viewName = "tournee-view";
 
+const select =
+  "*, collecte(*,point_de_collecte(nom)),transporteur(nom),zone_de_collecte(nom)";
+
+type Record = Tournee & {
+  collecte: (Collecte & { point_de_collecte: PointDeCollecte })[];
+  transporteur: Transporteur;
+  zone_de_collecte: ZoneDeCollecte;
+};
+
 const TourneeList: React.FC<IResourceComponentsProps> = () => {
-  const { replace } = useNavigation();
   const [view, setView] = useState<View>(
     (localStorage.getItem(viewName) as View) || "table"
   );
 
   const handleViewChange = (value: View) => {
-    // remove query params (pagination, filters, etc.) when changing view
-    replace("");
     setView(value);
     localStorage.setItem(viewName, value);
   };
@@ -35,10 +49,24 @@ const TourneeList: React.FC<IResourceComponentsProps> = () => {
 
   const user = useMemo(() => identityResponse.data, [identityResponse]);
 
-  // const loading = useMemo(
-  //   () => isTransporteur && transporteurUsersIsLoading,
-  //   [isTransporteur, transporteurUsersIsLoading]
-  // );
+  const { isLoading, triggerExport } = useExport<Record>({
+    mapData: (tournee) => {
+      return {
+        date: tournee.date,
+        "Zone de collecte": tournee.zone_de_collecte?.nom,
+        Statut: tournee.statut,
+        Transporteur: tournee.transporteur?.nom,
+        Collectes: tournee.collecte
+          .map((c) => c.point_de_collecte?.nom)
+          .join(", "),
+        "Type de véhicule": tournee.type_de_vehicule,
+        Prix: tournee.prix,
+      };
+    },
+    meta: {
+      select,
+    },
+  });
 
   return (
     <List
@@ -65,13 +93,13 @@ const TourneeList: React.FC<IResourceComponentsProps> = () => {
           ]}
           onChange={handleViewChange}
         />,
-        // <ExportButton
-        //   style={{ marginRight: "10px" }}
-        //   onClick={triggerExport}
-        //   loading={isLoading}
-        // >
-        //   Exporter
-        // </ExportButton>,
+        <ExportButton
+          style={{ marginRight: "10px" }}
+          onClick={triggerExport}
+          loading={isLoading}
+        >
+          Exporter
+        </ExportButton>,
         <CreateButton {...props.createButtonProps}>
           Programmer une tournée
         </CreateButton>,

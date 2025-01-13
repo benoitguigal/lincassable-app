@@ -2,15 +2,18 @@ import {
   CreateButton,
   DeleteButton,
   EditButton,
+  ExportButton,
   List,
   useSelect,
   useTable,
 } from "@refinedev/antd";
 import {
+  BaseOption,
   BaseRecord,
   IResourceComponentsProps,
+  LogicalFilter,
+  useExport,
   useLink,
-  useList,
 } from "@refinedev/core";
 import {
   Collecte,
@@ -19,22 +22,37 @@ import {
   Transporteur,
   ZoneDeCollecte,
 } from "../../types";
-import { Select, Space, Table } from "antd";
+import { Flex, Select, Space, Table, DatePicker } from "antd";
 import { useMemo } from "react";
+import dayjs from "dayjs";
+
+const { RangePicker } = DatePicker;
+
+const select =
+  "*, tournee!inner(*,transporteur(nom),zone_de_collecte(nom)),point_de_collecte(id,nom)";
+
+type Record = Collecte & {
+  tournee?: Tournee & {
+    transporteur: Pick<Transporteur, "nom">;
+    zone_de_collecte: Pick<ZoneDeCollecte, "nom">;
+  };
+} & { point_de_collecte: Pick<PointDeCollecte, "id" | "nom"> };
 
 const CollecteList: React.FC<IResourceComponentsProps> = () => {
-  const { tableProps, tableQuery, setFilters } = useTable<Collecte>({
+  const { tableProps, setFilters, filters } = useTable<Record>({
     syncWithLocation: true,
     pagination: { pageSize: 20, mode: "server" },
     sorters: {
       mode: "server",
       initial: [{ field: "date", order: "desc" }],
     },
+    // see https://refine.dev/docs/data/packages/supabase/#deep-filtering
+    meta: {
+      select,
+    },
   });
 
   const Link = useLink();
-
-  const collectes = useMemo(() => tableQuery.data?.data ?? [], [tableQuery]);
 
   const {
     selectProps: pointDeCollecteSelectProps,
@@ -56,76 +74,83 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
     [pointDeCollecteQuery]
   );
 
-  const { data: tourneeData } = useList<Tournee>({
-    resource: "tournee",
-    pagination: { mode: "off" },
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: collectes.map((c) => c.tournee_id).filter(Boolean),
-      },
-    ],
-    queryOptions: { enabled: collectes.length > 0 },
-  });
-
-  const tourneeById = useMemo(
-    () =>
-      (tourneeData?.data ?? []).reduce<{
-        [key: number]: Tournee;
-      }>((acc, tournee) => {
-        return { ...acc, [tournee.id]: tournee };
-      }, {}),
-    [tourneeData]
-  );
-
-  const { data: transporteurData } = useList<Transporteur>({
-    resource: "transporteur",
-    pagination: { mode: "off" },
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: tourneeData?.data.map((t) => t.transporteur_id).filter(Boolean),
-      },
-    ],
-    queryOptions: { enabled: !!tourneeData && tourneeData.data.length > 0 },
-  });
+  const { selectProps: transporteurSelectProps, query: transportersQuery } =
+    useSelect<Transporteur>({
+      resource: "transporteur",
+      pagination: { mode: "off" },
+      optionLabel: "nom",
+      optionValue: "id",
+    });
 
   const transporteurById = useMemo(
     () =>
-      (transporteurData?.data ?? []).reduce<{
+      (transportersQuery?.data?.data ?? []).reduce<{
         [key: number]: Transporteur;
       }>((acc, transporteur) => {
         return { ...acc, [transporteur.id]: transporteur };
       }, {}),
-    [transporteurData]
+    [transportersQuery]
   );
 
-  const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
-    resource: "zone_de_collecte",
-    pagination: { mode: "off" },
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: tourneeData?.data
-          .map((t) => t.zone_de_collecte_id)
-          .filter(Boolean),
-      },
-    ],
-    queryOptions: { enabled: !!tourneeData && tourneeData.data.length > 0 },
+  const pointDeCollecteFilter = useMemo<BaseOption | null>(() => {
+    const filter = filters.find(
+      (f) => (f as LogicalFilter).field === "point_de_collecte_id"
+    );
+    if (filter) {
+      return {
+        value: filter.value,
+        label: pointDeCollecteById[filter.value]?.nom ?? "",
+      };
+    }
+    return null;
+  }, [filters, pointDeCollecteById]);
+
+  const transporteurFilter = useMemo<BaseOption | null>(() => {
+    const filter = filters.find(
+      (f) => (f as LogicalFilter).field === "tournee.transporteur_id"
+    );
+    if (filter) {
+      return {
+        value: filter.value,
+        label: transporteurById[filter.value]?.nom ?? "",
+      };
+    }
+    return null;
+  }, [filters, transporteurById]);
+
+  const dateFilter = useMemo<[dayjs.Dayjs | null, dayjs.Dayjs | null]>(() => {
+    const filterGte = filters.find(
+      (f) => (f as LogicalFilter).field === "date" && f.operator === "gte"
+    );
+    const filterLte = filters.find(
+      (f) => (f as LogicalFilter).field === "date" && f.operator === "lte"
+    );
+
+    return [
+      filterGte ? dayjs(filterGte.value) : null,
+      filterLte ? dayjs(filterLte.value) : null,
+    ];
+  }, [filters]);
+
+  const { isLoading, triggerExport } = useExport<Record>({
+    mapData: (collecte) => {
+      return {
+        "Point de collecte":
+          pointDeCollecteById[collecte.point_de_collecte_id]?.nom ?? "",
+        Date: collecte.date,
+        "Nombre de bouteilles collectées": collecte.collecte_nb_bouteilles,
+        "Nombre de casiers collectées": collecte.collecte_nb_casier_75_plein,
+        "Nombre de casiers livrés": collecte.livraison_nb_casier_75_vide,
+        "Nombre de paloxs collectés": collecte.collecte_nb_palox_plein,
+        "Nombre de paloxs livrées": collecte.livraison_nb_palox_vide,
+        Tournée: collecte.tournee_id,
+        Transporteur: collecte.tournee ? collecte.tournee.transporteur.nom : "",
+      };
+    },
+    meta: {
+      select,
+    },
   });
-
-  const zoneDeCollecteById = useMemo(
-    () =>
-      (zoneDeCollecteData?.data ?? []).reduce<{
-        [key: number]: ZoneDeCollecte;
-      }>((acc, zoneDeCollecte) => {
-        return { ...acc, [zoneDeCollecte.id]: zoneDeCollecte };
-      }, {}),
-    [zoneDeCollecteData]
-  );
 
   return (
     <List
@@ -133,36 +158,116 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
       canCreate={true}
       breadcrumb={false}
       headerButtons={(props) => [
+        <ExportButton
+          style={{ marginRight: "10px" }}
+          onClick={triggerExport}
+          loading={isLoading}
+        >
+          Exporter
+        </ExportButton>,
         <CreateButton {...props.createButtonProps}>
           Ajouter une collecte
         </CreateButton>,
       ]}
     >
-      <Select
-        {...pointDeCollecteSelectProps}
-        style={{ width: "300px", marginBottom: "20px" }}
-        allowClear
-        placeholder="Point de collecte"
-        onChange={(value) => {
-          if (value) {
-            setFilters(
-              [{ field: "point_de_collecte_id", operator: "eq", value }],
-              "replace"
-            );
-          } else {
-            setFilters([], "replace");
-          }
-        }}
-      />
+      <Flex gap="middle" style={{ marginBottom: "20px" }}>
+        <Select
+          {...pointDeCollecteSelectProps}
+          style={{ width: "250px" }}
+          allowClear
+          placeholder="Point de collecte"
+          value={pointDeCollecteFilter}
+          onChange={(value) => {
+            if (value) {
+              setFilters(
+                [{ field: "point_de_collecte_id", operator: "eq", value }],
+                "merge"
+              );
+            } else {
+              setFilters(
+                filters.filter(
+                  (f) => (f as LogicalFilter).field !== "point_de_collecte_id"
+                ),
+                "replace"
+              );
+            }
+          }}
+        />
+        <Select
+          {...transporteurSelectProps}
+          style={{ width: "250px" }}
+          allowClear
+          placeholder="Transporteur"
+          value={transporteurFilter}
+          onChange={(value) => {
+            if (value) {
+              // see https://refine.dev/docs/data/packages/supabase/#deep-filtering
+              setFilters(
+                [{ field: "tournee.transporteur_id", operator: "eq", value }],
+                "merge"
+              );
+            } else {
+              setFilters(
+                filters.filter(
+                  (f) =>
+                    (f as LogicalFilter).field !== "tournee.transporteur_id"
+                ),
+                "replace"
+              );
+            }
+          }}
+        />
+        <RangePicker
+          style={{ width: "250px" }}
+          allowEmpty={true}
+          allowClear={true}
+          value={dateFilter}
+          onChange={(value) => {
+            if (value) {
+              const [gte, lte] = value;
+              if (gte) {
+                setFilters(
+                  [
+                    {
+                      field: "date",
+                      operator: "gte",
+                      value: gte.format("YYYY-MM-DD"),
+                    },
+                  ],
+                  "merge"
+                );
+              }
+
+              if (lte) {
+                setFilters(
+                  [
+                    {
+                      field: "date",
+                      operator: "lte",
+                      value: lte.format("YYYY-MM-DD"),
+                    },
+                  ],
+                  "merge"
+                );
+              }
+            } else {
+              setFilters(
+                filters.filter((f) => (f as LogicalFilter).field !== "date"),
+                "replace"
+              );
+            }
+          }}
+        />
+      </Flex>
+
       <Table {...tableProps} size="small" rowKey="id">
         <Table.Column
-          dataIndex="point_de_collecte_id"
+          dataIndex="point_de_collecte"
           title="Point de collecte"
-          render={(id) => {
-            const pointDeCollecte = pointDeCollecteById[id];
+          render={(pointDeCollecte: Record["point_de_collecte"]) => {
             if (pointDeCollecte) {
               return (
-                <Link to={`/point-de-collecte/show/${id}`}>
+                <Link to={`/point-de-collecte/show/${pointDeCollecte.id}`}>
                   {pointDeCollecte.nom}
                 </Link>
               );
@@ -191,35 +296,26 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
           dataIndex="livraison_nb_palox_vide"
           title="Nombre de paloxs livrés"
         />
-        <Table.Column
-          dataIndex="tournee_id"
+        <Table.Column<Record>
+          dataIndex="tournee"
           title="Tournée"
-          render={(id) => {
-            const tournee = tourneeById[id];
-            if (tournee) {
-              const zoneDeCollecte =
-                zoneDeCollecteById[tournee.zone_de_collecte_id];
-              if (zoneDeCollecte) {
-                return (
-                  <Link to={`/tournee/show/${id}`}>
-                    {id} - {zoneDeCollecte.nom}
-                  </Link>
-                );
-              }
+          render={(tournee: Record["tournee"]) => {
+            if (tournee && tournee.zone_de_collecte) {
+              return (
+                <Link to={`/tournee/show/${tournee.id}`}>
+                  {tournee.id} - {tournee.zone_de_collecte.nom}
+                </Link>
+              );
             }
             return "";
           }}
         />
-        <Table.Column
-          dataIndex="tournee_id"
+        <Table.Column<Record>
+          dataIndex="tournee"
           title="Transporteur"
-          render={(id) => {
-            const tournee = tourneeById[id];
-            if (tournee) {
-              const transporteur = transporteurById[tournee.transporteur_id];
-              if (transporteur) {
-                return transporteur.nom;
-              }
+          render={(tournee: Record["tournee"]) => {
+            if (tournee && tournee.transporteur) {
+              return tournee.transporteur.nom;
             }
             return "";
           }}
