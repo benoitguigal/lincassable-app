@@ -7,11 +7,11 @@ import "https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts";
 
 import { corsHeaders } from "../_shared/cors.ts";
 
-import sgMail from "npm:@sendgrid/mail";
+import brevo from "npm:@getbrevo/brevo";
 
-const sendGridApiKey = Deno.env.get("SENDGRID_API_KEY");
-
-sgMail.setApiKey(sendGridApiKey);
+const client = new brevo.TransactionalEmailsApi();
+const apiKey = client.authentications["apiKey"];
+apiKey.apiKey = Deno.env.get("BREVO_API_KEY");
 
 Deno.serve(async (req) => {
   // permet de faire des requêtes depuis le navigateur
@@ -21,16 +21,19 @@ Deno.serve(async (req) => {
 
   const { subject, html, to } = await req.json();
 
-  const msg = {
-    to,
-    from: "collecte@lincassable.com",
-    subject: subject,
-    html,
+  const sendSmtpEmail = new brevo.SendSmtpEmail();
+
+  sendSmtpEmail.subject = subject;
+  sendSmtpEmail.htmlContent = html;
+  sendSmtpEmail.sender = {
+    name: "L'INCASSABLE",
+    email: "contact@lincassable.com",
   };
+  sendSmtpEmail.to = [{ email: to }];
 
   try {
-    const response = await sgMail.send(msg);
-    const data = { status: response[0].statusCode };
+    const { response } = await client.sendTransacEmail(sendSmtpEmail);
+    const data = { status: response.statusCode };
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
