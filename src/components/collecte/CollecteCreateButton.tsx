@@ -17,6 +17,7 @@ const CollecteCreateButton: React.FC<CollecteCreateButtonProps> = ({
     resource: "collecte",
     action: "create",
     warnWhenUnsavedChanges: true,
+    redirect: false,
   });
 
   const { data: permissions } = usePermissions<PermissionResponse>();

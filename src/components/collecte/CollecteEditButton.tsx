@@ -15,6 +15,7 @@ const CollecteEditButton: React.FC<CollecteEditButtonProps> = ({
     resource: "collecte",
     action: "edit",
     warnWhenUnsavedChanges: true,
+    redirect: false,
   });
 
   // const deleteButtonProps = useDeleteButton({
