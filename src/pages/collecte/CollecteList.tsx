@@ -14,7 +14,6 @@ import {
   LogicalFilter,
   useExport,
   useLink,
-  useList,
 } from "@refinedev/core";
 import {
   Collecte,
@@ -29,10 +28,18 @@ import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
 
+const select =
+  "*, tournee!inner(*,transporteur(nom),zone_de_collecte(nom)),point_de_collecte(id,nom)";
+
+type Record = Collecte & {
+  tournee?: Tournee & {
+    transporteur: Pick<Transporteur, "nom">;
+    zone_de_collecte: Pick<ZoneDeCollecte, "nom">;
+  };
+} & { point_de_collecte: Pick<PointDeCollecte, "id" | "nom"> };
+
 const CollecteList: React.FC<IResourceComponentsProps> = () => {
-  const { tableProps, tableQuery, setFilters, filters } = useTable<
-    Collecte & { tournee: Tournee }
-  >({
+  const { tableProps, setFilters, filters } = useTable<Record>({
     syncWithLocation: true,
     pagination: { pageSize: 20, mode: "server" },
     sorters: {
@@ -41,13 +48,11 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
     },
     // see https://refine.dev/docs/data/packages/supabase/#deep-filtering
     meta: {
-      select: "*, tournee!inner(id,transporteur_id,zone_de_collecte_id)",
+      select,
     },
   });
 
   const Link = useLink();
-
-  const collectes = useMemo(() => tableQuery.data?.data ?? [], [tableQuery]);
 
   const {
     selectProps: pointDeCollecteSelectProps,
@@ -85,33 +90,6 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
         return { ...acc, [transporteur.id]: transporteur };
       }, {}),
     [transportersQuery]
-  );
-
-  const { data: zoneDeCollecteData } = useList<ZoneDeCollecte>({
-    resource: "zone_de_collecte",
-    pagination: { mode: "off" },
-    filters: [
-      {
-        field: "id",
-        operator: "in",
-        value: [
-          ...new Set(
-            collectes.map((c) => c.tournee.zone_de_collecte_id).filter(Boolean)
-          ),
-        ],
-      },
-    ],
-    queryOptions: { enabled: !!collectes && collectes.length > 0 },
-  });
-
-  const zoneDeCollecteById = useMemo(
-    () =>
-      (zoneDeCollecteData?.data ?? []).reduce<{
-        [key: number]: ZoneDeCollecte;
-      }>((acc, zoneDeCollecte) => {
-        return { ...acc, [zoneDeCollecte.id]: zoneDeCollecte };
-      }, {}),
-    [zoneDeCollecteData]
   );
 
   const pointDeCollecteFilter = useMemo<BaseOption | null>(() => {
@@ -154,9 +132,7 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
     ];
   }, [filters]);
 
-  const { isLoading, triggerExport } = useExport<
-    Collecte & { tournee: Tournee }
-  >({
+  const { isLoading, triggerExport } = useExport<Record>({
     mapData: (collecte) => {
       return {
         "Point de collecte":
@@ -168,13 +144,11 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
         "Nombre de paloxs collectés": collecte.collecte_nb_palox_plein,
         "Nombre de paloxs livrées": collecte.livraison_nb_palox_vide,
         Tournée: collecte.tournee_id,
-        Transporteur: collecte.tournee
-          ? transporteurById[collecte.tournee.transporteur_id]?.nom ?? ""
-          : "",
+        Transporteur: collecte.tournee ? collecte.tournee.transporteur.nom : "",
       };
     },
     meta: {
-      select: "*, tournee!inner(transporteur_id)",
+      select,
     },
   });
 
@@ -288,13 +262,12 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
 
       <Table {...tableProps} size="small" rowKey="id">
         <Table.Column
-          dataIndex="point_de_collecte_id"
+          dataIndex="point_de_collecte"
           title="Point de collecte"
-          render={(id) => {
-            const pointDeCollecte = pointDeCollecteById[id];
+          render={(pointDeCollecte: Record["point_de_collecte"]) => {
             if (pointDeCollecte) {
               return (
-                <Link to={`/point-de-collecte/show/${id}`}>
+                <Link to={`/point-de-collecte/show/${pointDeCollecte.id}`}>
                   {pointDeCollecte.nom}
                 </Link>
               );
@@ -323,33 +296,26 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
           dataIndex="livraison_nb_palox_vide"
           title="Nombre de paloxs livrés"
         />
-        <Table.Column
+        <Table.Column<Record>
           dataIndex="tournee"
           title="Tournée"
-          render={(tournee) => {
-            if (tournee) {
-              const zoneDeCollecte =
-                zoneDeCollecteById[tournee.zone_de_collecte_id];
-              if (zoneDeCollecte) {
-                return (
-                  <Link to={`/tournee/show/${tournee.id}`}>
-                    {tournee.id} - {zoneDeCollecte.nom}
-                  </Link>
-                );
-              }
+          render={(tournee: Record["tournee"]) => {
+            if (tournee && tournee.zone_de_collecte) {
+              return (
+                <Link to={`/tournee/show/${tournee.id}`}>
+                  {tournee.id} - {tournee.zone_de_collecte.nom}
+                </Link>
+              );
             }
             return "";
           }}
         />
-        <Table.Column
+        <Table.Column<Record>
           dataIndex="tournee"
           title="Transporteur"
-          render={(tournee) => {
-            if (tournee) {
-              const transporteur = transporteurById[tournee.transporteur_id];
-              if (transporteur) {
-                return transporteur.nom;
-              }
+          render={(tournee: Record["tournee"]) => {
+            if (tournee && tournee.transporteur) {
+              return tournee.transporteur.nom;
             }
             return "";
           }}
