@@ -26,9 +26,6 @@ dayjs.locale("fr"); // use locale globally
 type View = "table" | "calendar";
 const viewName = "tournee-view";
 
-const select =
-  "*, collecte(*,point_de_collecte(nom)),transporteur(nom),zone_de_collecte(nom)";
-
 type Record = Tournee & {
   collecte: (Collecte & { point_de_collecte: PointDeCollecte })[];
   transporteur: Transporteur;
@@ -64,7 +61,8 @@ const TourneeList: React.FC<IResourceComponentsProps> = () => {
       };
     },
     meta: {
-      select,
+      select:
+        "*, collecte(*,point_de_collecte(nom)),transporteur(nom),zone_de_collecte(nom)",
     },
   });
 

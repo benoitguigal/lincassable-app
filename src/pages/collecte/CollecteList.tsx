@@ -154,7 +154,7 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
 
   return (
     <List
-      title="Liste des collectes par point"
+      title="Liste des collectes"
       canCreate={true}
       breadcrumb={false}
       headerButtons={(props) => [

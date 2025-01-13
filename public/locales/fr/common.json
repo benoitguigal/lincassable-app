@@ -150,7 +150,7 @@
   },
   "collecte": {
     "titles": {
-      "list": "Liste des collectes par point",
+      "list": "Liste des collectes",
       "edit": "Modifier collecte",
       "show": "Afficher collecte",
       "create": "Ajouter une collecte"

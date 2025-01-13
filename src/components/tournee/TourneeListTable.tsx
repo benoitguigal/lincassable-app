@@ -33,9 +33,6 @@ type TourneeListTableProps = {
   user: Identity;
 };
 
-const select =
-  "*, collecte(*,point_de_collecte(nom)),transporteur(nom),zone_de_collecte(nom)";
-
 type Record = Tournee & {
   collecte: (Collecte & { point_de_collecte: PointDeCollecte })[];
   transporteur: Transporteur;
