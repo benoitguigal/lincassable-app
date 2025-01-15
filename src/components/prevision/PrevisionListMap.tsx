@@ -1,5 +1,5 @@
 const PrevisionListMap: React.FC = () => {
-  return "map";
+  return "Cartographie des prévisions en construction";
 };
 
 export default PrevisionListMap;
