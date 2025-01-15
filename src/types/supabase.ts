@@ -281,6 +281,59 @@ export type Database = {
           },
         ]
       }
+      prevision: {
+        Row: {
+          capacite: number | null
+          created_at: string
+          date_avant_derniere_collecte: string | null
+          date_dernier_formulaire_remplissage: string | null
+          date_derniere_collecte: string | null
+          date_estimation_prochaine_collecte: string | null
+          id: number
+          nb_bouteilles_avant_derniere_collecte: number | null
+          nb_bouteilles_dernier_formulaire_remplissage: number | null
+          nb_bouteilles_derniere_collecte: number | null
+          nb_jours_avant_estimation_prochaine_collecte: number | null
+          point_de_collecte_id: number
+        }
+        Insert: {
+          capacite?: number | null
+          created_at?: string
+          date_avant_derniere_collecte?: string | null
+          date_dernier_formulaire_remplissage?: string | null
+          date_derniere_collecte?: string | null
+          date_estimation_prochaine_collecte?: string | null
+          id?: number
+          nb_bouteilles_avant_derniere_collecte?: number | null
+          nb_bouteilles_dernier_formulaire_remplissage?: number | null
+          nb_bouteilles_derniere_collecte?: number | null
+          nb_jours_avant_estimation_prochaine_collecte?: number | null
+          point_de_collecte_id: number
+        }
+        Update: {
+          capacite?: number | null
+          created_at?: string
+          date_avant_derniere_collecte?: string | null
+          date_dernier_formulaire_remplissage?: string | null
+          date_derniere_collecte?: string | null
+          date_estimation_prochaine_collecte?: string | null
+          id?: number
+          nb_bouteilles_avant_derniere_collecte?: number | null
+          nb_bouteilles_dernier_formulaire_remplissage?: number | null
+          nb_bouteilles_derniere_collecte?: number | null
+          nb_jours_avant_estimation_prochaine_collecte?: number | null
+          point_de_collecte_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prevision_point_de_collecte_id_fkey"
+            columns: ["point_de_collecte_id"]
+            isOneToOne: true
+            referencedRelation: "point_de_collecte"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       remplissage_contenants: {
         Row: {
           date: string
@@ -540,6 +593,10 @@ export type Database = {
           event: Json
         }
         Returns: Json
+      }
+      update_prevision: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {

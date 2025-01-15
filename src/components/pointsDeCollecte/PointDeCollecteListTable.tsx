@@ -5,7 +5,6 @@ import {
   EditButton,
   ShowButton,
   DeleteButton,
-  FilterDropdown,
   TextField,
   EmailField,
   useSelect,
