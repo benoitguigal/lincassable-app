@@ -2,7 +2,6 @@ import {
   IResourceComponentsProps,
   useExport,
   useGetIdentity,
-  useNavigation,
 } from "@refinedev/core";
 import { CreateButton, ExportButton, List } from "@refinedev/antd";
 import dayjs from "dayjs";

@@ -127,7 +127,7 @@ function App() {
                     },
                   },
                   {
-                    name: "previsions",
+                    name: "prevision",
                     list: "/previsions",
                     meta: { label: "Prévisions", parent: "collecte_menu" },
                   },
@@ -218,10 +218,10 @@ function App() {
                       <Route path="edit/:id" element={<TourneeEdit />} />
                       <Route path="show/:id" element={<TourneeShow />} />
                     </Route>
-                    <Route path="previsions">
+                    <Route path="/previsions">
                       <Route index element={<PrevisionList />} />
                     </Route>
-                    <Route path="collecte">
+                    <Route path="/collecte">
                       <Route index element={<CollecteList />} />
                       <Route path="create" index element={<CollecteCreate />} />
                       <Route path="edit/:id" element={<CollecteEdit />} />
