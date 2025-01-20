@@ -4,7 +4,7 @@ import { IResourceComponentsProps, useExport } from "@refinedev/core";
 import { Segmented } from "antd";
 import { useState } from "react";
 import PrevisionListTable from "../components/prevision/PrevisionListTable";
-import PrevisionListMap from "../components/prevision/PrevisionListMap";
+import PrevisionMap from "../components/prevision/PrevisionMap";
 import { PointDeCollecte, Prevision } from "../types";
 
 type View = "table" | "map";
@@ -65,7 +65,7 @@ const PrevisionList: React.FC<IResourceComponentsProps> = () => {
       ]}
     >
       {view === "table" && <PrevisionListTable />}
-      {view === "map" && <PrevisionListMap />}
+      {view === "map" && <PrevisionMap />}
     </List>
   );
   // return (

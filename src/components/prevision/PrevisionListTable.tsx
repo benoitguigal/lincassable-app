@@ -25,7 +25,7 @@ function rowClassName(record: Record) {
 }
 
 const PrevisionListTable: React.FC = () => {
-  const { tableProps, setFilters, filters } = useTable<Record>({
+  const { tableProps } = useTable<Record>({
     resource: "prevision",
     syncWithLocation: true,
     pagination: { pageSize: 20, mode: "server" },
