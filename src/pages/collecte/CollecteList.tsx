@@ -29,7 +29,7 @@ import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 
 const select =
-  "*, tournee!inner(*,transporteur(nom),zone_de_collecte(nom)),point_de_collecte(id,nom)";
+  "*, tournee(*,transporteur(nom),zone_de_collecte(nom)),point_de_collecte(id,nom)";
 
 type Record = Collecte & {
   tournee?: Tournee & {
@@ -45,6 +45,15 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
     sorters: {
       mode: "server",
       initial: [{ field: "date", order: "desc" }],
+    },
+    filters: {
+      initial: [
+        {
+          field: "date",
+          operator: "lte",
+          value: dayjs().format("YYYY-MM-DD"),
+        },
+      ],
     },
     // see https://refine.dev/docs/data/packages/supabase/#deep-filtering
     meta: {
