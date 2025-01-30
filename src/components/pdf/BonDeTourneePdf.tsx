@@ -83,7 +83,7 @@ function conditionnements(collecte: Collecte): string {
       `${formatPaletteType(
         collecte.collecte_casier_75_plein_palette_type
       )} de ${nbCasierParPalette}` +
-      ` casiers (${collecte.collecte_nb_casier_75_plein})\n`;
+      ` casiers 75cl (${collecte.collecte_nb_casier_75_plein})\n`;
   }
 
   if (
@@ -135,7 +135,22 @@ function conditionnements(collecte: Collecte): string {
       `${formatPaletteType(
         collecte.livraison_casier_75_vide_palette_type
       )} de ${nbCasierParPalette}` +
-      ` casiers (${collecte.livraison_nb_casier_75_vide})\n`;
+      ` casiers 75cl (${collecte.livraison_nb_casier_75_vide})\n`;
+  }
+
+  if (
+    collecte.livraison_nb_casier_33_vide > 0 &&
+    collecte.livraison_casier_33_vide_nb_palette > 0
+  ) {
+    const nbCasierParPalette = new Decimal(collecte.livraison_nb_casier_33_vide)
+      .dividedBy(collecte.livraison_casier_33_vide_nb_palette)
+      .toDecimalPlaces(0);
+    result +=
+      `[livraison] ${collecte.livraison_casier_33_vide_nb_palette} palettes ` +
+      `${formatPaletteType(
+        collecte.livraison_casier_33_vide_palette_type
+      )} de ${nbCasierParPalette}` +
+      ` casiers 33cl (${collecte.livraison_nb_casier_33_vide})\n`;
   }
 
   if (
