@@ -36,14 +36,17 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
   const handleCollecteChange = () => {
     const nbCasiers = form?.getFieldValue("collecte_nb_casier_75_plein") ?? 0;
+    const nbCasiers33 = form?.getFieldValue("collecte_nb_casier_33_plein") ?? 0;
     const nbPaloxs = form?.getFieldValue("collecte_nb_palox_plein") ?? 0;
     const nbPalettes =
       form?.getFieldValue("collecte_nb_palette_bouteille") ?? 0;
-    const nbBouteilles = nbCasiers * 12 + nbPaloxs * 550 + nbPalettes * 1200;
+    const nbBouteilles =
+      nbCasiers * 12 + nbCasiers33 * 24 + nbPaloxs * 550 + nbPalettes * 1200;
     form?.setFieldValue("collecte_nb_bouteilles", nbBouteilles);
   };
 
   const [hasCasier, setHasCasier] = useState(false);
+  const [hasCasier33, setHasCasier33] = useState(false);
   const [hasPalox, setHasPalox] = useState(false);
   const [hasPaletteBouteilles, setHasPaletteBouteilles] = useState(false);
   const [hasFuts, setHasFuts] = useState(false);
@@ -56,6 +59,15 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     form?.setFieldValue("livraison_casier_75_vide_nb_palette", 0);
     form?.setFieldValue("collecte_casier_75_plein_palette_type", null);
     form?.setFieldValue("livraison_casier_75_vide_palette_type", null);
+  }
+
+  function resetCasiers33() {
+    form?.setFieldValue("collecte_nb_casier_33_plein", 0);
+    form?.setFieldValue("collecte_casier_33_plein_nb_palette", 0);
+    form?.setFieldValue("livraison_nb_casier_33_vide", 0);
+    form?.setFieldValue("livraison_casier_33_vide_nb_palette", 0);
+    form?.setFieldValue("collecte_casier_33_plein_palette_type", null);
+    form?.setFieldValue("livraison_casier_33_vide_palette_type", null);
   }
 
   function resetPaloxs() {
@@ -142,6 +154,64 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     return 0;
   }, [livraisonNbCasierVides, livraisonNbCasierPalette]);
 
+  // Nombre de casiers 33cl pleins à collecter
+  const collecteNbCasier33Pleins = Form.useWatch(
+    "collecte_nb_casier_33_plein",
+    form
+  );
+
+  // Nombre de palettes pour le conditionnement
+  // des casiers 33cl pleins à collecter
+  const collecteNbCasier33Palette = Form.useWatch(
+    "collecte_casier_33_plein_nb_palette",
+    form
+  );
+
+  // Type de palette pour la collecte des casiers 33cl
+  const collecteCasier33PaletteType = Form.useWatch(
+    "collecte_casier_33_plein_palette_type",
+    form
+  );
+
+  // Nombre de casier 33cl pleins à collecter par palette
+  const collecteNbCasier33ParPalette = useMemo(() => {
+    if (collecteNbCasier33Palette > 0) {
+      return new Decimal(collecteNbCasier33Pleins)
+        .dividedBy(collecteNbCasier33Palette)
+        .toDecimalPlaces(0);
+    }
+    return 0;
+  }, [collecteNbCasier33Pleins, collecteNbCasier33Palette]);
+
+  // Nombre de casiers 33cl vides à livrer
+  const livraisonNbCasier33Vides = Form.useWatch(
+    "livraison_nb_casier_33_vide",
+    form
+  );
+
+  // Nombre de palettes pour le conditionnement
+  // des casiers 33cl vides à livrer
+  const livraisonNbCasier33Palette = Form.useWatch(
+    "livraison_casier_33_vide_nb_palette",
+    form
+  );
+
+  // Type de palette pour la livraison des palettes de casier 33cl
+  const livraisonCasier33PaletteType = Form.useWatch(
+    "livraison_casier_33_vide_palette_type",
+    form
+  );
+
+  // Nombre de casier 33cl vides à livrer par palette
+  const livraisonNbCasier33ParPalette = useMemo(() => {
+    if (livraisonNbCasier33Palette > 0) {
+      return new Decimal(livraisonNbCasier33Vides)
+        .dividedBy(livraisonNbCasier33Palette)
+        .toDecimalPlaces(0);
+    }
+    return 0;
+  }, [livraisonNbCasier33Vides, livraisonNbCasier33Palette]);
+
   // Nombre de fûts à collecter
   const collecteNbFuts = Form.useWatch("collecte_nb_fut_vide", form);
 
@@ -197,6 +267,13 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
       initialValues?.livraison_nb_casier_75_vide
     ) {
       setHasCasier(true);
+    }
+
+    if (
+      initialValues?.collecte_nb_casier_33_plein ||
+      initialValues?.livraison_nb_casier_33_vide
+    ) {
+      setHasCasier33(true);
     }
 
     if (
@@ -370,6 +447,115 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             help={
               livraisonNbCasierPalette > 0
                 ? `${livraisonNbCasierPalette} palettes de ${livraisonNbCasierParPalette} casiers`
+                : ""
+            }
+          >
+            <Input
+              type="number"
+              defaultValue={0}
+              style={{ width: 300 }}
+              min={0}
+            />
+          </Form.Item>
+        </Flex>
+
+        <Checkbox
+          checked={hasCasier33}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setHasCasier33(e.target.checked);
+            if (checked === false) {
+              resetCasiers33();
+            }
+          }}
+        >
+          Casiers 33cl
+        </Checkbox>
+
+        <Flex gap="middle" hidden={!hasCasier33}>
+          <Form.Item
+            name="collecte_nb_casier_33_plein"
+            label={
+              <span>
+                <b>Collecte</b> - Nombre de casiers 24x33cl pleins
+              </span>
+            }
+          >
+            <Input
+              type="number"
+              defaultValue={0}
+              style={{ width: 300 }}
+              onChange={() => {
+                handleCollecteChange();
+              }}
+              min={0}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Type de palette"
+            name="collecte_casier_33_plein_palette_type"
+          >
+            <Select
+              options={paletteOptions}
+              style={{ width: 300 }}
+              onChange={(v) => {
+                if (v === null) {
+                  form?.setFieldValue("collecte_casier_33_plein_nb_palette", 0);
+                }
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            name="collecte_casier_33_plein_nb_palette"
+            label="Nombre de palettes"
+            hidden={collecteCasier33PaletteType === null}
+            help={
+              collecteNbCasier33Palette > 0
+                ? `${collecteNbCasier33Palette} palettes de ${collecteNbCasier33ParPalette} casiers`
+                : ""
+            }
+          >
+            <Input
+              type="number"
+              defaultValue={0}
+              style={{ width: 300 }}
+              min={0}
+            />
+          </Form.Item>
+        </Flex>
+
+        <Flex gap="middle" hidden={!hasCasier33}>
+          <Form.Item
+            name="livraison_nb_casier_33_vide"
+            label={
+              <span>
+                <b>Livraison</b> - Nombre de casiers 24x33cl vides
+              </span>
+            }
+          >
+            <Input type="number" defaultValue={0} style={{ width: 300 }} />
+          </Form.Item>
+          <Form.Item
+            label="Type de palette"
+            name="livraison_casier_33_vide_palette_type"
+          >
+            <Select
+              options={paletteOptions}
+              style={{ width: 300 }}
+              onChange={(v) => {
+                if (v === null) {
+                  form?.setFieldValue("livraison_casier_33_vide_nb_palette", 0);
+                }
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            name="livraison_casier_33_vide_nb_palette"
+            label="Nombre de palettes"
+            hidden={livraisonCasier33PaletteType === null}
+            help={
+              livraisonNbCasier33Palette > 0
+                ? `${livraisonNbCasier33Palette} palettes de ${livraisonNbCasier33ParPalette} casiers`
                 : ""
             }
           >

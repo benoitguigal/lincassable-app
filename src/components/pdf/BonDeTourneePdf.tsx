@@ -87,6 +87,21 @@ function conditionnements(collecte: Collecte): string {
   }
 
   if (
+    collecte.collecte_nb_casier_33_plein > 0 &&
+    collecte.collecte_casier_33_plein_nb_palette > 0
+  ) {
+    const nbCasierParPalette = new Decimal(collecte.collecte_nb_casier_33_plein)
+      .dividedBy(collecte.collecte_casier_33_plein_nb_palette)
+      .toDecimalPlaces(0);
+    result +=
+      `[collecte] ${collecte.collecte_casier_33_plein_nb_palette} palettes ` +
+      `${formatPaletteType(
+        collecte.collecte_casier_33_plein_palette_type
+      )} de ${nbCasierParPalette}` +
+      ` casiers 33cl (${collecte.collecte_nb_casier_33_plein})\n`;
+  }
+
+  if (
     collecte.collecte_nb_fut_vide > 0 &&
     collecte.collecte_fut_nb_palette > 0
   ) {
@@ -166,6 +181,8 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
 
   let collecteNbCasierTotal = 0;
   let livraisonNbCasierTotal = 0;
+  let collecteNbCasier33Total = 0;
+  let livraisonNbCasier33Total = 0;
   let collecteNbPaloxTotal = 0;
   let livraisonNbPaloxTotal = 0;
   let collecteNbPaletteTotal = 0;
@@ -176,6 +193,8 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
   collectes.forEach((collecte) => {
     collecteNbCasierTotal += collecte.collecte_nb_casier_75_plein;
     livraisonNbCasierTotal += collecte.livraison_nb_casier_75_vide;
+    collecteNbCasier33Total += collecte.collecte_nb_casier_33_plein;
+    livraisonNbCasier33Total += collecte.livraison_nb_casier_33_vide;
     collecteNbPaloxTotal += collecte.collecte_nb_palox_plein;
     livraisonNbPaloxTotal += collecte.livraison_nb_palox_vide;
     collecteNbPaletteTotal += collecte.collecte_nb_palette_bouteille;
@@ -185,6 +204,7 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
   });
 
   const hasCasiers = collecteNbCasierTotal + livraisonNbCasierTotal > 0;
+  const hasCasiers33 = collecteNbCasier33Total + livraisonNbCasier33Total > 0;
   const hasPaloxs = collecteNbPaloxTotal + livraisonNbPaloxTotal > 0;
   const hasPalettes = collecteNbPaletteTotal + livraisonNbPaletteTotal > 0;
   const hasFuts = collecteNbFutsTotal + livraisonNbFutsTotal > 0;
@@ -192,7 +212,8 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
   const headers = [
     { cell: "", span: 2 },
     { cell: "", span: 3 },
-    ...(hasCasiers ? [{ cell: "Casiers", span: 2 }] : []),
+    ...(hasCasiers ? [{ cell: "Casiers 75cl", span: 2 }] : []),
+    ...(hasCasiers33 ? [{ cell: "Casiers 33cl", span: 2 }] : []),
     ...(hasPaloxs ? [{ cell: "Paloxs", span: 2 }] : []),
     ...(hasPalettes ? [{ cell: "Palettes bouteilles", span: 2 }] : []),
     ...(hasFuts ? [{ cell: "Fûts", span: 2 }] : []),
@@ -216,6 +237,7 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
     { cell: "Nom / Horaires / Contact", span: 2 },
     { cell: "Adresse / Infos", span: 3 },
     ...(hasCasiers ? contenantHeaders : []),
+    ...(hasCasiers33 ? contenantHeaders : []),
     ...(hasPaloxs ? contenantHeaders : []),
     ...(hasPalettes ? contenantHeaders : []),
     ...(hasFuts ? contenantHeaders : []),
@@ -233,6 +255,12 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
       ? [
           { cell: collecteNbCasierTotal, span: 1 },
           { cell: livraisonNbCasierTotal, span: 1 },
+        ]
+      : []),
+    ...(hasCasiers33
+      ? [
+          { cell: collecteNbCasier33Total, span: 1 },
+          { cell: livraisonNbCasier33Total, span: 1 },
         ]
       : []),
     ...(hasPaloxs
@@ -290,6 +318,14 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
       { cell: adresse, span: 3 },
       ...(hasCasiers
         ? [c.collecte_nb_casier_75_plein, c.livraison_nb_casier_75_vide].map(
+            (cell) => ({
+              cell: formatNumber(cell),
+              span: 1,
+            })
+          )
+        : []),
+      ...(hasCasiers33
+        ? [c.collecte_nb_casier_33_plein, c.livraison_nb_casier_33_vide].map(
             (cell) => ({
               cell: formatNumber(cell),
               span: 1,
