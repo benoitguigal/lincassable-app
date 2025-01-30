@@ -218,6 +218,68 @@ export type Database = {
           },
         ]
       }
+      mail_template: {
+        Row: {
+          corps: string
+          created_at: string
+          id: number
+          nom: string
+          sujet: string
+          variables: string[] | null
+        }
+        Insert: {
+          corps: string
+          created_at?: string
+          id?: number
+          nom: string
+          sujet: string
+          variables?: string[] | null
+        }
+        Update: {
+          corps?: string
+          created_at?: string
+          id?: number
+          nom?: string
+          sujet?: string
+          variables?: string[] | null
+        }
+        Relationships: []
+      }
+      mailing: {
+        Row: {
+          created_at: string
+          id: number
+          mail_template_id: number | null
+          point_de_collecte_ids: number[] | null
+          statut: Database["public"]["Enums"]["statut_mailing"]
+          variables: Json | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          mail_template_id?: number | null
+          point_de_collecte_ids?: number[] | null
+          statut: Database["public"]["Enums"]["statut_mailing"]
+          variables?: Json | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          mail_template_id?: number | null
+          point_de_collecte_ids?: number[] | null
+          statut?: Database["public"]["Enums"]["statut_mailing"]
+          variables?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mailing_mail_template_id_fkey"
+            columns: ["mail_template_id"]
+            isOneToOne: false
+            referencedRelation: "mail_template"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       point_de_collecte: {
         Row: {
           adresse: string
@@ -657,6 +719,7 @@ export type Database = {
       palette_type: "Europe" | "VMF"
       point_de_collecte_statut: "archive" | "actif"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
+      statut_mailing: "En attente" | "En cours" | "Envoyé" | "Échec"
       statut_tournee: "En attente de validation" | "Validé"
       type_de_vehicule: "12 T" | "19 T" | "VL" | "velo"
     }

@@ -35,6 +35,10 @@ export type Consigne = Database["public"]["Tables"]["consigne"]["Row"];
 
 export type Prevision = Database["public"]["Tables"]["prevision"]["Row"];
 
+export type Mailing = Database["public"]["Tables"]["mailing"]["Row"];
+
+export type MailTemplate = Database["public"]["Tables"]["mail_template"]["Row"];
+
 export type Identity = {
   id: string;
   email: string;

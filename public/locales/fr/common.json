@@ -155,5 +155,13 @@
       "show": "Afficher collecte",
       "create": "Ajouter une collecte"
     }
+  },
+  "mailing": {
+    "titles": {
+      "list": "Liste des mailings",
+      "create": "Créer un mailing",
+      "edit": "Modifier un mailing",
+      "show": "Afficher un mailing"
+    }
   }
 }

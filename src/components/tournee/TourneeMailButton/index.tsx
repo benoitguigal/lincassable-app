@@ -1,6 +1,6 @@
 import { MailOutlined } from "@ant-design/icons";
 import { Button, Form, Modal } from "antd";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import TourneeMailForm from "./form";
 import TourneeMailPreviewList from "./previewList";
 import { Tournee, ZoneDeCollecte } from "../../../types";
@@ -84,34 +84,36 @@ const TourneeMailButton: React.FC<TourneeMailButtonProps> = ({
         title="Envoyer un e-mail"
         onClick={showModal}
       />
-      <Modal
-        title={
-          <div>
+      {isModalOpen && (
+        <Modal
+          title={
             <div>
-              {zoneDeCollecte?.nom} {tournee.date}
+              <div>
+                {zoneDeCollecte?.nom} {tournee.date}
+              </div>
+              <div>
+                Demande de taux de remplissage par e-mail en amont d'une tournée
+              </div>
             </div>
-            <div>
-              Demande de taux de remplissage par e-mail en amont d'une tournée
-            </div>
-          </div>
-        }
-        open={isModalOpen}
-        okText="Envoyer"
-        confirmLoading={confirmLoading}
-        cancelText="Annuler"
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okButtonProps={{ disabled: !destinataires?.length || !dateLimit }}
-      >
-        <TourneeMailForm form={form} zoneDeCollecte={zoneDeCollecte} />
-        {destinataires?.length > 0 && dateLimit && (
-          <TourneeMailPreviewList
-            pointDeCollecteIds={destinataires ?? []}
-            dateTournee={tournee.date}
-            dateLimit={dateLimit}
-          />
-        )}
-      </Modal>
+          }
+          open={isModalOpen}
+          okText="Envoyer"
+          confirmLoading={confirmLoading}
+          cancelText="Annuler"
+          onOk={handleOk}
+          onCancel={handleCancel}
+          okButtonProps={{ disabled: !destinataires?.length || !dateLimit }}
+        >
+          <TourneeMailForm form={form} zoneDeCollecte={zoneDeCollecte} />
+          {destinataires?.length > 0 && dateLimit && (
+            <TourneeMailPreviewList
+              pointDeCollecteIds={destinataires ?? []}
+              dateTournee={tournee.date}
+              dateLimit={dateLimit}
+            />
+          )}
+        </Modal>
+      )}
     </>
   );
 };
