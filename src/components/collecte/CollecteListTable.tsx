@@ -78,6 +78,7 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
   const showColumns = useMemo(() => {
     const show = {
       casier: false,
+      casier33: false,
       palox: false,
       paletteBouteille: false,
       fut: false,
@@ -89,6 +90,12 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
         collecte.livraison_nb_casier_75_vide
       ) {
         show.casier = true;
+      }
+      if (
+        collecte.collecte_nb_casier_33_plein ||
+        collecte.livraison_nb_casier_33_vide
+      ) {
+        show.casier33 = true;
       }
       if (
         collecte.collecte_nb_palox_plein ||
@@ -226,6 +233,69 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                 title: "À livrer",
                 render: (value: number, record: Collecte) => {
                   const nbPalettes = record.livraison_casier_75_vide_nb_palette;
+                  const nbCasierParPalette = new Decimal(value)
+                    .dividedBy(nbPalettes)
+                    .toFixed(0);
+                  const paletteType = formatPaletteType(
+                    record.livraison_casier_75_vide_palette_type
+                  );
+
+                  return (
+                    <>
+                      <div>{value}</div>
+                      {nbPalettes > 0 && (
+                        <div>
+                          <i>
+                            {nbPalettes} palettes {paletteType} de{" "}
+                            {nbCasierParPalette} casiers
+                          </i>
+                        </div>
+                      )}
+                    </>
+                  );
+                },
+              },
+            ],
+          },
+        ]
+      : []),
+    ...(showColumns.casier33
+      ? [
+          {
+            title: "Casiers 24x33cl",
+            children: [
+              {
+                dataIndex: "collecte_nb_casier_33_plein",
+                title: "À collecter",
+                render: (value: number, record: Collecte) => {
+                  const nbPalettes = record.collecte_casier_33_plein_nb_palette;
+                  const nbCasierParPalette = new Decimal(value)
+                    .dividedBy(nbPalettes)
+                    .toFixed(0);
+                  const paletteType = formatPaletteType(
+                    record.collecte_casier_33_plein_palette_type
+                  );
+
+                  return (
+                    <>
+                      <div>{value}</div>
+                      {nbPalettes > 0 && (
+                        <div>
+                          <i>
+                            {nbPalettes} palettes {paletteType} de{" "}
+                            {nbCasierParPalette} casiers
+                          </i>
+                        </div>
+                      )}
+                    </>
+                  );
+                },
+              },
+              {
+                dataIndex: "livraison_nb_casier_33_vide",
+                title: "À livrer",
+                render: (value: number, record: Collecte) => {
+                  const nbPalettes = record.livraison_casier_33_vide_nb_palette;
                   const nbCasierParPalette = new Decimal(value)
                     .dividedBy(nbPalettes)
                     .toFixed(0);
@@ -416,6 +486,8 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
       summary={(pageData) => {
         let totalLivraisonCasier = 0;
         let totalCollecteCasier = 0;
+        let totalLivraisonCasier33 = 0;
+        let totalCollecteCasier33 = 0;
         let totalLivraisonPalox = 0;
         let totalCollectePalox = 0;
         let totalLivraisonPalette = 0;
@@ -430,6 +502,8 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
           ({
             livraison_nb_casier_75_vide,
             collecte_nb_casier_75_plein,
+            livraison_nb_casier_33_vide,
+            collecte_nb_casier_33_plein,
             livraison_nb_palox_vide,
             collecte_nb_palox_plein,
             livraison_nb_palette_bouteille,
@@ -441,6 +515,8 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
           }) => {
             totalLivraisonCasier += livraison_nb_casier_75_vide;
             totalCollecteCasier += collecte_nb_casier_75_plein;
+            totalLivraisonCasier33 += livraison_nb_casier_33_vide;
+            totalCollecteCasier33 += collecte_nb_casier_33_plein;
             totalLivraisonPalox += livraison_nb_palox_vide;
             totalCollectePalox += collecte_nb_palox_plein;
             totalLivraisonPalette += livraison_nb_palette_bouteille;
@@ -451,6 +527,7 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
             totalLivraisonPaletteVide += livraison_nb_palette_vide;
             totalChargement += chargementCollecte({
               collecte_nb_casier_75_plein,
+              collecte_nb_casier_33_plein,
               collecte_nb_palox_plein,
               collecte_nb_palette_bouteille,
             });
@@ -474,54 +551,64 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                 </Table.Summary.Cell>
               </>
             )}
-            {showColumns.palox && (
+            {showColumns.casier33 && (
               <>
                 <Table.Summary.Cell index={5}>
-                  <b>{totalCollectePalox}</b>
+                  <b>{totalCollecteCasier33}</b>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={6}>
+                  <b>{totalLivraisonCasier33}</b>
+                </Table.Summary.Cell>
+              </>
+            )}
+            {showColumns.palox && (
+              <>
+                <Table.Summary.Cell index={7}>
+                  <b>{totalCollectePalox}</b>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={8}>
                   <b>{totalLivraisonPalox}</b>
                 </Table.Summary.Cell>
               </>
             )}
             {showColumns.paletteBouteille && (
               <>
-                <Table.Summary.Cell index={7}>
+                <Table.Summary.Cell index={9}>
                   <b>{totalCollectePalette}</b>
                 </Table.Summary.Cell>
-                <Table.Summary.Cell index={8}>
+                <Table.Summary.Cell index={10}>
                   <b>{totalLivraisonPalette}</b>
                 </Table.Summary.Cell>
               </>
             )}
             {showColumns.fut && (
               <>
-                <Table.Summary.Cell index={9}>
+                <Table.Summary.Cell index={11}>
                   <b>{totalCollecteFut}</b>
                 </Table.Summary.Cell>
-                <Table.Summary.Cell index={10}>
+                <Table.Summary.Cell index={12}>
                   <b>{totalLivraisonFut}</b>
                 </Table.Summary.Cell>
               </>
             )}
             {showColumns.paletteVide && (
               <>
-                <Table.Summary.Cell index={11}>
+                <Table.Summary.Cell index={13}>
                   <b>{totalCollectePaletteVide}</b>
                 </Table.Summary.Cell>
-                <Table.Summary.Cell index={12}>
+                <Table.Summary.Cell index={14}>
                   <b>{totalLivraisonPaletteVide}</b>
                 </Table.Summary.Cell>
               </>
             )}
-            <Table.Summary.Cell index={13}>
+            <Table.Summary.Cell index={15}>
               <b>
                 {totalChargement}
                 {" kg"}
               </b>
             </Table.Summary.Cell>
             {canEdit && (
-              <Table.Summary.Cell index={14}>
+              <Table.Summary.Cell index={16}>
                 <CollecteCreateButton tournee_id={tournee_id} />
               </Table.Summary.Cell>
             )}

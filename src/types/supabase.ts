@@ -11,7 +11,7 @@ export type Database = {
     Tables: {
       collecte: {
         Row: {
-          collecte_casier_33_plein_nb_palette: number | null
+          collecte_casier_33_plein_nb_palette: number
           collecte_casier_33_plein_palette_type:
             | Database["public"]["Enums"]["palette_type"]
             | null
@@ -24,7 +24,7 @@ export type Database = {
             | Database["public"]["Enums"]["palette_type"]
             | null
           collecte_nb_bouteilles: number
-          collecte_nb_casier_33_plein: number | null
+          collecte_nb_casier_33_plein: number
           collecte_nb_casier_75_plein: number
           collecte_nb_fut_vide: number
           collecte_nb_palette_bouteille: number
@@ -37,7 +37,7 @@ export type Database = {
           cyke_id: string | null
           date: string | null
           id: number
-          livraison_casier_33_vide_nb_palette: number | null
+          livraison_casier_33_vide_nb_palette: number
           livraison_casier_33_vide_palette_type:
             | Database["public"]["Enums"]["palette_type"]
             | null
@@ -49,7 +49,7 @@ export type Database = {
           livraison_fut_palette_type:
             | Database["public"]["Enums"]["palette_type"]
             | null
-          livraison_nb_casier_33_vide: number | null
+          livraison_nb_casier_33_vide: number
           livraison_nb_casier_75_vide: number
           livraison_nb_fut_vide: number
           livraison_nb_palette_bouteille: number
@@ -62,7 +62,7 @@ export type Database = {
           tournee_id: number | null
         }
         Insert: {
-          collecte_casier_33_plein_nb_palette?: number | null
+          collecte_casier_33_plein_nb_palette?: number
           collecte_casier_33_plein_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
             | null
@@ -75,7 +75,7 @@ export type Database = {
             | Database["public"]["Enums"]["palette_type"]
             | null
           collecte_nb_bouteilles?: number
-          collecte_nb_casier_33_plein?: number | null
+          collecte_nb_casier_33_plein?: number
           collecte_nb_casier_75_plein?: number
           collecte_nb_fut_vide?: number
           collecte_nb_palette_bouteille?: number
@@ -88,7 +88,7 @@ export type Database = {
           cyke_id?: string | null
           date?: string | null
           id?: number
-          livraison_casier_33_vide_nb_palette?: number | null
+          livraison_casier_33_vide_nb_palette?: number
           livraison_casier_33_vide_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
             | null
@@ -100,7 +100,7 @@ export type Database = {
           livraison_fut_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
             | null
-          livraison_nb_casier_33_vide?: number | null
+          livraison_nb_casier_33_vide?: number
           livraison_nb_casier_75_vide?: number
           livraison_nb_fut_vide?: number
           livraison_nb_palette_bouteille?: number
@@ -113,7 +113,7 @@ export type Database = {
           tournee_id?: number | null
         }
         Update: {
-          collecte_casier_33_plein_nb_palette?: number | null
+          collecte_casier_33_plein_nb_palette?: number
           collecte_casier_33_plein_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
             | null
@@ -126,7 +126,7 @@ export type Database = {
             | Database["public"]["Enums"]["palette_type"]
             | null
           collecte_nb_bouteilles?: number
-          collecte_nb_casier_33_plein?: number | null
+          collecte_nb_casier_33_plein?: number
           collecte_nb_casier_75_plein?: number
           collecte_nb_fut_vide?: number
           collecte_nb_palette_bouteille?: number
@@ -139,7 +139,7 @@ export type Database = {
           cyke_id?: string | null
           date?: string | null
           id?: number
-          livraison_casier_33_vide_nb_palette?: number | null
+          livraison_casier_33_vide_nb_palette?: number
           livraison_casier_33_vide_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
             | null
@@ -151,7 +151,7 @@ export type Database = {
           livraison_fut_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
             | null
-          livraison_nb_casier_33_vide?: number | null
+          livraison_nb_casier_33_vide?: number
           livraison_nb_casier_75_vide?: number
           livraison_nb_fut_vide?: number
           livraison_nb_palette_bouteille?: number
