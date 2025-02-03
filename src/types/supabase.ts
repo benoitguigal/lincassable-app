@@ -218,6 +218,38 @@ export type Database = {
           },
         ]
       }
+      mail_statut: {
+        Row: {
+          created_at: string
+          email: string
+          id: number
+          mailing_id: number
+          statut: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: number
+          mailing_id: number
+          statut: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: number
+          mailing_id?: number
+          statut?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mail_statut_mailing_id_fkey"
+            columns: ["mailing_id"]
+            isOneToOne: false
+            referencedRelation: "mailing"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mail_template: {
         Row: {
           corps: string

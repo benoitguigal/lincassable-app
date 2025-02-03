@@ -4,17 +4,11 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import axios from "npm:axios";
 import nunjucks from "npm:nunjucks";
+import brevo from "npm:@getbrevo/brevo";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { Database } from "../_shared/types/supabase.ts";
-
-type MessageVersion = {
-  to: { email: string; name: string }[];
-  htmlContent: string;
-  subject: string;
-};
 
 function renderVariables(
   pointDeCollecte: Database["public"]["Tables"]["point_de_collecte"]["Row"]
@@ -40,7 +34,6 @@ Deno.serve(async (req) => {
     const { mailing_id } = await req.json();
 
     const supabaseClient = createClient<Database>(
-      //createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? "",
       // Create client with Auth context of the user that called the function.
@@ -83,16 +76,32 @@ Deno.serve(async (req) => {
       throw pointDeCollecteError;
     }
 
-    const data = {
-      sender: { email: "contact@lincassable.com", name: "L'INCASSABLE" },
-      subject: mailing?.mail_template?.sujet,
-      htmlContent: mailing?.mail_template?.corps,
-      messageVersions: [] as MessageVersion[],
+    const brevoClient = new brevo.TransactionalEmailsApi();
+    const apiKey = brevoClient.authentications["apiKey"];
+    apiKey.apiKey = Deno.env.get("BREVO_API_KEY");
+
+    const sendSmtpEmail = new brevo.SendSmtpEmail();
+
+    sendSmtpEmail.sender = {
+      email: "contact@lincassable.com",
+      name: "L'INCASSABLE",
     };
+    sendSmtpEmail.subject = mailing?.mail_template?.sujet;
+    sendSmtpEmail.htmlContent = mailing?.mail_template?.corps;
+    sendSmtpEmail.tags = [
+      Deno.env.get("BREVO_WEBHOOK_KEY"),
+      String(mailing.id),
+    ];
+    sendSmtpEmail.messageVersions = [];
 
     const mailingVariables = mailing.variables as {
       [key: string]: string;
     };
+
+    const mailStatuses: Pick<
+      Database["public"]["Tables"]["mail_statut"]["Row"],
+      "email" | "mailing_id" | "statut"
+    >[] = [];
 
     for (const pointDeCollecte of pointDeCollecteData ?? []) {
       const htmlContent = nunjucks.renderString(mailing?.mail_template?.corps, {
@@ -100,34 +109,34 @@ Deno.serve(async (req) => {
         ...renderVariables(pointDeCollecte),
       });
 
-      data.messageVersions.push({
+      sendSmtpEmail.messageVersions.push({
         htmlContent,
         subject: mailing.mail_template?.sujet ?? "",
         to: pointDeCollecte.emails.map((email) => ({
-          email,
+          email: email.trim(),
           name: email,
         })),
       });
+
+      for (const email of pointDeCollecte.emails) {
+        mailStatuses.push({
+          email: email.trim(),
+          mailing_id: mailing.id,
+          statut: "waiting",
+        });
+      }
     }
 
-    const response = await axios.post(
-      "https://api.brevo.com/v3/smtp/email",
-      data,
-      {
-        headers: {
-          "api-key": Deno.env.get("BREVO_API_KEY") ?? "",
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
+    const { response } = await brevoClient.sendTransacEmail(sendSmtpEmail);
 
-    if (response.status === 201) {
+    if (response.statusCode === 201) {
       await supabaseClient
         .from("mailing")
         .update({ statut: "Envoyé", date_envoi: new Date().toISOString() })
         .eq("id", mailing_id)
         .select();
+
+      await supabaseClient.from("mail_statut").insert(mailStatuses).select();
     } else {
       await supabaseClient
         .from("mailing")
@@ -136,9 +145,9 @@ Deno.serve(async (req) => {
         .select();
     }
 
-    return new Response(JSON.stringify({ status: response.statusText }), {
+    return new Response(JSON.stringify({ status: response.statusMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: response.status,
+      status: response.statusCode,
     });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {

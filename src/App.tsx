@@ -178,6 +178,7 @@ function App() {
                   { name: "transporteur_users" },
                   { name: "zone_de_collecte" },
                   { name: "mail_template" },
+                  { name: "mail_statut" },
                 ]}
                 options={{
                   syncWithLocation: true,

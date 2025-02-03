@@ -1,5 +1,10 @@
 import { useList, useOne } from "@refinedev/core";
-import { Mailing, MailTemplate, PointDeCollecte } from "../../types";
+import {
+  Mailing,
+  MailStatut,
+  MailTemplate,
+  PointDeCollecte,
+} from "../../types";
 import { useMemo } from "react";
 import { Flex, Spin } from "antd";
 import MailPreview from "./MailPreview";
@@ -39,7 +44,24 @@ const MailingPreview: React.FC<Props> = ({ mailing }) => {
     [pointsDeCollecteData]
   );
 
-  if (mailTemplateLoading || pointDeCollecteLoading) {
+  const { data: mailStatutData, isLoading: mailStatutLoading } =
+    useList<MailStatut>({
+      resource: "mail_statut",
+      pagination: { mode: "off" },
+      filters: [{ field: "mailing_id", operator: "eq", value: mailing.id }],
+    });
+
+  const mailStatusByEmail: { [key: string]: string } = useMemo(() => {
+    return (mailStatutData?.data ?? []).reduce(
+      (acc, statut) => ({
+        ...acc,
+        [statut.email]: statut.statut,
+      }),
+      {}
+    );
+  }, [mailStatutData]);
+
+  if (mailTemplateLoading || pointDeCollecteLoading || mailStatutLoading) {
     return <Spin />;
   }
 
@@ -57,6 +79,7 @@ const MailingPreview: React.FC<Props> = ({ mailing }) => {
               pointDeCollecte={pc}
               mailTemplate={mailTemplateData?.data}
               variables={mailing.variables}
+              statut={mailStatusByEmail[email]}
             />
           ))
         )}

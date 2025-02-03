@@ -1,5 +1,5 @@
 import { MailOutlined } from "@ant-design/icons";
-import { Button, Modal } from "antd";
+import { Alert, Button, Modal } from "antd";
 import { useState } from "react";
 import { Mailing } from "../../types";
 import MailingPreview from "./MailingPreview";
@@ -12,16 +12,19 @@ type Props = {
 const MailingSendButton: React.FC<Props> = ({ mailing }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   const handleCancel = () => {
+    setError(null);
     setIsModalOpen(false);
   };
 
   const handleOk = async () => {
+    setError(null);
     setConfirmLoading(true);
 
     return supabaseClient.functions
@@ -31,11 +34,15 @@ const MailingSendButton: React.FC<Props> = ({ mailing }) => {
         },
       })
       .then((r) => {
-        console.log(JSON.stringify(r.data));
         setConfirmLoading(false);
-        setIsModalOpen(false);
+        if (r.error) {
+          setError("Une erreur s'est produite pendant l'envoi des emails");
+        } else {
+          setIsModalOpen(false);
+        }
       })
       .catch(() => {
+        setError("Une erreur s'est produite pendant l'envoi des emails");
         setConfirmLoading(false);
       });
   };
@@ -56,6 +63,7 @@ const MailingSendButton: React.FC<Props> = ({ mailing }) => {
           confirmLoading={confirmLoading}
         >
           <MailingPreview mailing={mailing} />
+          {error && <Alert type="error" message={error} />}
         </Modal>
       )}
     </>
