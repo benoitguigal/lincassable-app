@@ -1,7 +1,7 @@
 import mail from "./mail.html?raw";
 import nunjucks from "nunjucks";
 import { PointDeCollecte } from "../../../types";
-import { getPointDeCollecteFormulaireUrl } from "../../../utility/urls";
+import { getPointDeCollecteFormulaireRemplissageUrl } from "../../../utility/urls";
 import { formatDate } from "../../../utility/dateFormat";
 
 type RenderMailProps = {
@@ -18,6 +18,6 @@ export function renderMail({
   return nunjucks.renderString(mail, {
     dateTournee: formatDate(dateTournee),
     dateLimit: formatDate(dateLimit),
-    lienFormulaire: getPointDeCollecteFormulaireUrl(pointDeCollecte),
+    lienFormulaire: getPointDeCollecteFormulaireRemplissageUrl(pointDeCollecte),
   });
 }

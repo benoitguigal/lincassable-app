@@ -14,7 +14,7 @@ import LienFormulairePointDeCollecteDownloadLink from "../../components/pdf/Lien
 import ContenantDeCollecteType from "../../components/ContenantDeCollecteType";
 import {
   getPointDeCollecteConsigneFormulaireUrl,
-  getPointDeCollecteFormulaireUrl,
+  getPointDeCollecteFormulaireRemplissageUrl,
 } from "../../utility/urls";
 import PointDeCollecteName from "../../components/pointsDeCollecte/PointDeCollecteName";
 import PointDeCollecteType from "../../components/pointsDeCollecte/PointDeCollecteType";
@@ -35,7 +35,7 @@ const PointDeCollecteShow = () => {
   });
 
   const pointDeCollecteFormulaireUrl = pointDeCollecte
-    ? getPointDeCollecteFormulaireUrl(pointDeCollecte)
+    ? getPointDeCollecteFormulaireRemplissageUrl(pointDeCollecte)
     : null;
 
   const pointDeCollecteConsigneFormulaire2024Url = pointDeCollecte
