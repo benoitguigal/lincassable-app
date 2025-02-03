@@ -21,7 +21,11 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import authProvider from "./authProvider";
 import accessControlProvider from "./accessControlProvider";
 import { supabaseClient } from "./utility";
-import { DashboardOutlined, EuroCircleOutlined } from "@ant-design/icons";
+import {
+  DashboardOutlined,
+  EuroCircleOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import locale from "antd/locale/fr_FR";
 import dayjs from "dayjs";
@@ -49,6 +53,10 @@ import ConsigneCreate from "./pages/consigne/ConsigneCreate";
 import ConsigneCreateSuccess from "./pages/consigne/ConsigneCreateSuccess";
 import CollecteCreate from "./pages/collecte/CollecteCreate";
 import CollecteEdit from "./pages/collecte/CollecteEdit";
+import MailingList from "./pages/mailing/MailingList";
+import MailingCreate from "./pages/mailing/MailingCreate";
+import MailingEdit from "./pages/mailing/MailingEdit";
+import MailingShow from "./pages/mailing/MailingShow";
 
 dayjs.locale("fr");
 
@@ -144,11 +152,6 @@ function App() {
                     },
                   },
                   {
-                    name: "consigne",
-                    list: "/consigne",
-                    meta: { label: "Consigne", icon: <EuroCircleOutlined /> },
-                  },
-                  {
                     name: "collecte",
                     list: "/collecte",
                     create: "/collecte/create",
@@ -158,9 +161,24 @@ function App() {
                       parent: "collecte_menu",
                     },
                   },
+                  {
+                    name: "consigne",
+                    list: "/consigne",
+                    meta: { label: "Consigne", icon: <EuroCircleOutlined /> },
+                  },
+                  {
+                    name: "mailing",
+                    list: "/mailing",
+                    create: "/mailing/create",
+                    edit: "/mailing/edit/:id",
+                    show: "/mailing/show/:id",
+                    meta: { label: "Emails", icon: <MailOutlined /> },
+                  },
                   { name: "transporteur" },
                   { name: "transporteur_users" },
                   { name: "zone_de_collecte" },
+                  { name: "mail_template" },
+                  { name: "mail_statut" },
                 ]}
                 options={{
                   syncWithLocation: true,
@@ -228,6 +246,12 @@ function App() {
                     </Route>
                     <Route path="/consigne">
                       <Route index element={<ConsigneList />} />
+                    </Route>
+                    <Route path="/mailing">
+                      <Route index element={<MailingList />} />
+                      <Route path="create" index element={<MailingCreate />} />
+                      <Route path="edit/:id" element={<MailingEdit />} />
+                      <Route path="show/:id" element={<MailingShow />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>

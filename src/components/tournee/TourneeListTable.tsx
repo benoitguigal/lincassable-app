@@ -16,12 +16,11 @@ import {
   useTable,
   useSelect,
 } from "@refinedev/antd";
-import { BaseOption, CanAccess, LogicalFilter } from "@refinedev/core";
+import { BaseOption, LogicalFilter } from "@refinedev/core";
 import { Select, Space, Table, DatePicker, Flex } from "antd";
 import CollecteEditButton from "../collecte/CollecteEditButton";
 import CollecteCreateButton from "../collecte/CollecteCreateButton";
 import dayjs from "dayjs";
-import TourneeMailButton from "./TourneeMailButton";
 import TourneeStatutTag from "./TourneeStatutTag";
 import BonDeTourneeUpload from "./BonDeTourneeUpload";
 import { typeDeVehiculeOptions } from "../../utility/options";
@@ -281,12 +280,6 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
               <EditButton hideText size="small" recordItemId={record.id} />
               <ShowButton hideText size="small" recordItemId={record.id} />
               <DeleteButton hideText size="small" recordItemId={record.id} />
-              <CanAccess resource="tournee" action="send_mail">
-                <TourneeMailButton
-                  tournee={record}
-                  zoneDeCollecte={record.zone_de_collecte}
-                />
-              </CanAccess>
             </Space>
           )}
         />
