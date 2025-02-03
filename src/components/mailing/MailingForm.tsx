@@ -1,10 +1,14 @@
-import { UseFormReturnType, useSelect } from "@refinedev/antd";
+import {
+  UseFormReturnType,
+  UseModalFormReturnType,
+  useSelect,
+} from "@refinedev/antd";
 import { Mailing, MailTemplate, PointDeCollecte } from "../../types";
 import { DatePicker, Form, Input, Select } from "antd";
 import { useMemo } from "react";
 import dayjs from "dayjs";
 
-type Props = UseFormReturnType<Mailing>;
+type Props = UseFormReturnType<Mailing> | UseModalFormReturnType<Mailing>;
 
 type Variable = { name: string; label: string; type: "date" | "text" };
 
@@ -42,9 +46,21 @@ const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
     [mailtemplatesById, mailTemplateId]
   );
 
+  const { variables, ...initialValues } = formProps?.initialValues ?? {};
+
+  const variablesInitialValues = Object.keys(variables ?? {}).reduce(
+    (acc, name) => {
+      // déduit si la variable est une date
+      const date = dayjs(variables[name]);
+      return { ...acc, [name]: date.isValid() ? date : variables[name] };
+    },
+    {}
+  );
+
   return (
     <Form
       {...formProps}
+      initialValues={{ ...initialValues, ...variablesInitialValues }}
       layout="vertical"
       onFinish={(values) => {
         const { mail_template_id, point_de_collecte_ids } = values as Mailing;
@@ -95,13 +111,6 @@ const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
           <Form.Item name={name} label={label} rules={[{ required: true }]}>
             {type === "date" ? (
               <DatePicker
-                {...(formProps?.initialValues?.variables?.[name]
-                  ? {
-                      defaultValue: dayjs(
-                        formProps?.initialValues?.variables?.[name]
-                      ),
-                    }
-                  : {})}
                 placeholder="Sélectionner une date"
                 style={{ width: 300 }}
               />
