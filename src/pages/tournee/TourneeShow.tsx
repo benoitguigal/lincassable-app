@@ -2,7 +2,7 @@ import { useShow, useOne } from "@refinedev/core";
 import { Show, DateField, TextField, NumberField } from "@refinedev/antd";
 import { Segmented, Typography } from "antd";
 import CollecteListTable from "../../components/collecte/CollecteListTable";
-import { Tournee, Transporteur, ZoneDeCollecte } from "../../types";
+import { Collecte, Tournee, Transporteur, ZoneDeCollecte } from "../../types";
 import { EnvironmentOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import TourneeMap from "../../components/tournee/TourneeMap";
@@ -10,14 +10,18 @@ import BonDeTourneeDownloadLink from "../../components/pdf/BonDeTourneeDownloadL
 import TourneeStatutTag from "../../components/tournee/TourneeStatutTag";
 import BonDeTourneeUpload from "../../components/tournee/BonDeTourneeUpload";
 import { typeDeVehiculeOptions } from "../../utility/options";
+import TourneeMailButton from "../../components/tournee/TourneeMailButton";
 
 const { Title } = Typography;
 
 type View = "display" | "map";
 
 const TourneeShow = () => {
-  const { queryResult } = useShow<Tournee>();
-  const { data, isLoading } = queryResult;
+  const { query } = useShow<Tournee & { collecte: Collecte[] }>({
+    meta: { select: "*,collecte(*)" },
+  });
+
+  const { data, isLoading } = query;
 
   const record = data?.data;
 
@@ -73,6 +77,7 @@ const TourneeShow = () => {
           ]}
           onChange={handleViewChange}
         />,
+        <TourneeMailButton tournee={record} />,
         <BonDeTourneeDownloadLink tournee={record} />,
         props.defaultButtons,
       ]}
