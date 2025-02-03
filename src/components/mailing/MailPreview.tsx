@@ -1,4 +1,4 @@
-import { Card, Tag } from "antd";
+import { Card } from "antd";
 import { MailTemplate, PointDeCollecte } from "../../types";
 import nunjucks from "nunjucks";
 import { Json } from "../../types/supabase";
@@ -32,7 +32,7 @@ const MailPreview: React.FC<Props> = ({
           {email}
           {statut && (
             <span style={{ marginLeft: 5 }}>
-              <MailStatusTag statut={statut as MailStatutEnum} />
+              <MailStatusTag statut={statut as any} />
             </span>
           )}
         </>

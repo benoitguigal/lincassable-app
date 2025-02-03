@@ -86,6 +86,8 @@ const MailingPreview: React.FC<Props> = ({ mailing }) => {
       </Flex>
     );
   }
+
+  return null;
 };
 
 export default MailingPreview;

@@ -1,6 +1,6 @@
 import { Tag } from "antd";
 
-export type MailStatutEnum =
+type MailStatutEnum =
   | "waiting"
   | "request"
   | "click"
