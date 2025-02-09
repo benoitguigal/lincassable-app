@@ -334,9 +334,10 @@ export type Database = {
           nom: string
           setup_date: string | null
           statut: Database["public"]["Enums"]["point_de_collecte_statut"]
-          stock_casiers_75: number | null
+          stock_casiers_33: number
+          stock_casiers_75: number
           stock_contenants: number | null
-          stock_paloxs: number | null
+          stock_paloxs: number
           telephones: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
           zone_de_collecte_id: number | null
@@ -359,9 +360,10 @@ export type Database = {
           nom: string
           setup_date?: string | null
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
-          stock_casiers_75?: number | null
+          stock_casiers_33?: number
+          stock_casiers_75: number
           stock_contenants?: number | null
-          stock_paloxs?: number | null
+          stock_paloxs: number
           telephones?: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
           zone_de_collecte_id?: number | null
@@ -384,9 +386,10 @@ export type Database = {
           nom?: string
           setup_date?: string | null
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
-          stock_casiers_75?: number | null
+          stock_casiers_33?: number
+          stock_casiers_75?: number
           stock_contenants?: number | null
-          stock_paloxs?: number | null
+          stock_paloxs?: number
           telephones?: string[]
           type?: Database["public"]["Enums"]["point_de_collecte_type"]
           zone_de_collecte_id?: number | null
@@ -754,8 +757,10 @@ export type Database = {
         | "mailing.update"
         | "mailing.delete"
         | "mail_template.select"
+        | "mail_statut.select"
+        | "mail_statut.insert"
       app_role: "staff" | "transporteur"
-      contenant_collecte_type: "casier_x12" | "palox"
+      contenant_collecte_type: "casier_x12" | "palox" | "casier_x24"
       palette_type: "Europe" | "VMF"
       point_de_collecte_statut: "archive" | "actif"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"

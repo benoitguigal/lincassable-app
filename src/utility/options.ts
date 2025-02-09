@@ -23,6 +23,7 @@ type ContenantDeCollecteTypeOption = {
 
 export const contenantDeCollecteTypeOptions: ContenantDeCollecteTypeOption[] = [
   { value: "casier_x12", label: "Casier 12x75cl" },
+  { value: "casier_x24", label: "Casier 24x33cl" },
   { value: "palox", label: "Palox" },
 ];
 

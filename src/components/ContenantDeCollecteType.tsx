@@ -15,6 +15,9 @@ const ContenantDeCollecteType: React.FC<ContenantDeCollecteTypeProps> = ({
     case "casier_x12":
       label = "Casier 12x75cl";
       break;
+    case "casier_x24":
+      label = "Casier 24x33cl";
+      break;
     case "palox":
       label = "Palox";
       break;

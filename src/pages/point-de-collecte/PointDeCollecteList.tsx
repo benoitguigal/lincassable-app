@@ -31,6 +31,7 @@ const tableColumnOptions = [
     default: true,
   },
   { value: "stock_casiers_75", label: "Stock casiers 75cl", default: true },
+  { value: "stock_casiers_33", label: "Stock casiers 33cl", default: false },
   { value: "stock_paloxs", label: "Stock paloxs", default: true },
   { value: "horaires", label: "Horaires" },
   { value: "contacts", label: "Contact" },

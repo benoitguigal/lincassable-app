@@ -162,6 +162,9 @@ const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item label="Stock casiers 75cl" name="stock_casiers_75">
         <Input type="number" min={0} />
       </Form.Item>
+      <Form.Item label="Stock casiers 33cl" name="stock_casiers_33">
+        <Input type="number" min={0} />
+      </Form.Item>
       <Form.Item label="Stock paloxs" name="stock_paloxs">
         <Input type="number" min={0} />
       </Form.Item>
