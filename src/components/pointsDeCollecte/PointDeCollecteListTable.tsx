@@ -234,6 +234,11 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
           title="Stock casiers 75cl"
         />
         <Table.Column
+          dataIndex="stock_casiers_33"
+          hidden={!columns.includes("stock_casiers_33")}
+          title="Stock casiers 33cl"
+        />
+        <Table.Column
           dataIndex="contacts"
           hidden={!columns.includes("contacts")}
           title="Contacts"
