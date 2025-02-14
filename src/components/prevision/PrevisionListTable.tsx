@@ -33,9 +33,23 @@ const PrevisionListTable: React.FC = () => {
       mode: "server",
       initial: [{ field: "date_estimation_prochaine_collecte", order: "asc" }],
     },
+    filters: {
+      permanent: [
+        {
+          field: "point_de_collecte.collecte_par_id",
+          operator: "null",
+          value: true,
+        },
+        {
+          field: "point_de_collecte.statut",
+          operator: "eq",
+          value: "actif",
+        },
+      ],
+    },
     meta: {
       select:
-        "*, point_de_collecte(nom,contenant_collecte_type,stock_casiers_75,stock_paloxs)",
+        "*, point_de_collecte!inner(nom,contenant_collecte_type,stock_casiers_75,stock_paloxs,collecte_par_id,statut)",
     },
   });
 
