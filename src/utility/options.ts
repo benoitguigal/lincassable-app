@@ -33,8 +33,14 @@ type StatutTourneeOption = {
 };
 
 export const statutTourneeOptions: StatutTourneeOption[] = [
-  { value: "En attente de validation", label: "En attente de validation" },
-  { value: "Validé", label: "Validé" },
+  { value: "En cours de préparation", label: "En cours de préparation" },
+  {
+    value: "En attente de validation par le transporteur",
+    label: "En attente de validation par le transporteur",
+  },
+  { value: "Validé par le transporteur", label: "Validé par le transporteur" },
+  { value: "Réalisé", label: "Réalisé" },
+  { value: "Clôturé", label: "Clôturé" },
 ];
 
 type TypeDeVehiculeOption = {

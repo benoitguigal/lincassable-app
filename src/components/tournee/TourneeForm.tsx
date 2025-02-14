@@ -83,7 +83,11 @@ const TourneeForm: React.FC<Props> = ({ form, action }) => {
         />
       </Form.Item>
       <Form.Item label="Statut" name={["statut"]}>
-        <Select style={{ width: 300 }} options={statutTourneeOptions} />
+        <Select
+          style={{ width: 300 }}
+          options={statutTourneeOptions}
+          defaultValue={"En cours de préparation"}
+        />
       </Form.Item>
 
       <Form.Item
