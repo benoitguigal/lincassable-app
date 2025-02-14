@@ -98,6 +98,24 @@ Deno.serve(async (req) => {
       [key: string]: string;
     };
 
+    const formattedVariables = mailingVariables
+      ? Object.fromEntries(
+          Object.entries(mailingVariables).map(([key, value]) => {
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (typeof value === "string" && dateRegex.test(value)) {
+              const date = new Date(value);
+              const formattedDate = date.toLocaleDateString("fr-FR", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+              });
+              return [key, formattedDate];
+            }
+            return [key, value];
+          })
+        )
+      : {};
+
     const mailStatuses: Pick<
       Database["public"]["Tables"]["mail_statut"]["Row"],
       "email" | "mailing_id" | "statut"
@@ -105,7 +123,7 @@ Deno.serve(async (req) => {
 
     for (const pointDeCollecte of pointDeCollecteData ?? []) {
       const htmlContent = nunjucks.renderString(mailing?.mail_template?.corps, {
-        ...mailingVariables,
+        ...formattedVariables,
         ...renderVariables(pointDeCollecte),
       });
 

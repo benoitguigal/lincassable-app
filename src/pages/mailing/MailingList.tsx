@@ -12,6 +12,7 @@ import { useList } from "@refinedev/core";
 import { useMemo } from "react";
 import MailingSendButton from "../../components/mailing/MailingSendButton";
 import { formatDate } from "../../utility/dateFormat";
+import MailingRecapButton from "../../components/mailing/MailingRecapButton";
 
 type Record = Mailing & { mail_template: Pick<MailTemplate, "nom"> };
 
@@ -116,7 +117,12 @@ const MailingList: React.FC = () => {
                   recordItemId={record.id}
                   disabled={disabled}
                 />
-                {!disabled && <MailingSendButton mailing={record} />}
+                {record.statut === "En attente" && (
+                  <MailingSendButton mailing={record} />
+                )}
+                {record.statut === "Envoyé" && (
+                  <MailingRecapButton mailing={record} />
+                )}
               </Space>
             );
           }}
