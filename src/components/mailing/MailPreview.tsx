@@ -20,8 +20,26 @@ const MailPreview: React.FC<Props> = ({
   variables,
   statut,
 }) => {
+  const formattedVariables = variables
+    ? Object.fromEntries(
+        Object.entries(variables).map(([key, value]) => {
+          const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+          if (typeof value === "string" && dateRegex.test(value)) {
+            const date = new Date(value);
+            const formattedDate = date.toLocaleDateString("fr-FR", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+            });
+            return [key, formattedDate];
+          }
+          return [key, value];
+        })
+      )
+    : {};
+
   const html = nunjucks.renderString(mailTemplate.corps, {
-    ...(variables as { [key: string]: string }),
+    ...formattedVariables,
     ...renderVariables(pointDeCollecte),
   });
 
