@@ -71,7 +71,15 @@ const PointDeCollecteForm: React.FC<Props> = ({
           ]}
         />
       </Form.Item>
-      <Form.Item label="Type de point de collecte" name="type">
+      <Form.Item
+        label="Type de point de collecte"
+        name="type"
+        rules={[
+          {
+            required: true,
+          },
+        ]}
+      >
         <Select
           options={pointDeCollecteTypeOptions}
           allowClear
@@ -152,6 +160,11 @@ const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item
         label="Type de contenants de collecte"
         name="contenant_collecte_type"
+        rules={[
+          {
+            required: true,
+          },
+        ]}
       >
         <Select
           options={contenantDeCollecteTypeOptions}

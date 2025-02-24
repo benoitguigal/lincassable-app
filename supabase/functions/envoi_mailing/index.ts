@@ -122,26 +122,31 @@ Deno.serve(async (req) => {
     >[] = [];
 
     for (const pointDeCollecte of pointDeCollecteData ?? []) {
-      const htmlContent = nunjucks.renderString(mailing?.mail_template?.corps, {
-        ...formattedVariables,
-        ...renderVariables(pointDeCollecte),
-      });
+      if (pointDeCollecte.emails?.length) {
+        const htmlContent = nunjucks.renderString(
+          mailing?.mail_template?.corps,
+          {
+            ...formattedVariables,
+            ...renderVariables(pointDeCollecte),
+          }
+        );
 
-      sendSmtpEmail.messageVersions.push({
-        htmlContent,
-        subject: mailing.mail_template?.sujet ?? "",
-        to: pointDeCollecte.emails.map((email) => ({
-          email: email.trim(),
-          name: email,
-        })),
-      });
-
-      for (const email of pointDeCollecte.emails) {
-        mailStatuses.push({
-          email: email.trim(),
-          mailing_id: mailing.id,
-          statut: "waiting",
+        sendSmtpEmail.messageVersions.push({
+          htmlContent,
+          subject: mailing.mail_template?.sujet ?? "",
+          to: pointDeCollecte.emails.map((email) => ({
+            email: email.trim(),
+            name: email,
+          })),
         });
+
+        for (const email of pointDeCollecte.emails) {
+          mailStatuses.push({
+            email: email.trim(),
+            mailing_id: mailing.id,
+            statut: "waiting",
+          });
+        }
       }
     }
 
