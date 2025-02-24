@@ -6,7 +6,7 @@ import {
   PointDeCollecte,
 } from "../../types";
 import { useMemo } from "react";
-import { Flex, Spin } from "antd";
+import { Alert, Flex, Spin } from "antd";
 import MailPreview from "./MailPreview";
 
 type Props = {
@@ -72,6 +72,14 @@ const MailingPreview: React.FC<Props> = ({ mailing }) => {
         gap={10}
         style={{ marginTop: 10, maxHeight: 500, overflow: "scroll" }}
       >
+        {pointsDeCollecteList
+          .filter((pc) => pc.emails.length === 0)
+          .map((pc) => (
+            <Alert
+              message={`Aucune adresse email n'est renseignée pour le point de collecte ${pc.nom}`}
+              type="error"
+            />
+          ))}
         {pointsDeCollecteList.flatMap((pc) =>
           pc.emails.map((email) => (
             <MailPreview
