@@ -71,7 +71,22 @@ const DemandeDeCollecteList: React.FC<IResourceComponentsProps> = () => {
         <Table.Column
           dataIndex="point_de_collecte_id"
           title="Stock de contenants (en base)"
-          render={(value) => pointDeCollecteById[value]?.stock_contenants}
+          render={(value) => {
+            const pointDeCollecte = pointDeCollecteById[value];
+            if (pointDeCollecte) {
+              switch (pointDeCollecte.contenant_collecte_type) {
+                case "casier_x12":
+                  return pointDeCollecte.stock_casiers_75;
+                case "palox":
+                  return pointDeCollecte.stock_paloxs;
+                case "casier_x24":
+                  return pointDeCollecte.stock_casiers_33;
+                default:
+                  return "";
+              }
+            }
+            return "";
+          }}
         />
         <Table.Column
           dataIndex="remplissage_palox"
