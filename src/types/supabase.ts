@@ -764,8 +764,8 @@ export type Database = {
       statut_mailing: "En attente" | "En cours" | "Envoyé" | "Échec"
       statut_tournee:
         | "En cours de préparation"
-        | "En attente de validation par le transporteur"
-        | "Validé par le transporteur"
+        | "En attente de validation"
+        | "Validé"
         | "Réalisé"
         | "Clôturé"
       type_de_vehicule: "12 T" | "19 T" | "VL" | "velo"

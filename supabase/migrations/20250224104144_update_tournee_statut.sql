@@ -7,8 +7,8 @@ alter type "public"."statut_tournee" rename to "statut_tournee__old_version_to_b
 
 create type "public"."statut_tournee" as enum (
   'En cours de préparation',
-  'En attente de validation par le transporteur',
-  'Validé par le transporteur',
+  'En attente de validation',
+  'Validé',
   'Réalisé',
   'Clôturé'
 );

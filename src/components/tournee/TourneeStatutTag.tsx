@@ -12,10 +12,10 @@ const TourneeStatutTag: React.FC<StatutTourneeTag> = ({ value }) => {
     case "En cours de préparation":
       color = "navy";
       break;
-    case "En attente de validation par le transporteur":
+    case "En attente de validation":
       color = "sandybrown";
       break;
-    case "Validé par le transporteur":
+    case "Validé":
       color = "seagreen";
       break;
     case "Réalisé":
