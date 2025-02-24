@@ -96,6 +96,14 @@ const PrevisionListTable: React.FC = () => {
         dataIndex="nb_bouteilles_avant_derniere_collecte"
         title="# bouteilles collectées avant dernière collecte"
       />
+      <Table.Column<Record>
+        dataIndex="date_dernier_formulaire_remplissage"
+        title="Date dernier formulaire rempli"
+      />
+      <Table.Column<Record>
+        dataIndex="nb_bouteilles_dernier_formulaire_remplissage"
+        title="# bouteilles dernier formulaire rempli"
+      />
     </Table>
   );
 };

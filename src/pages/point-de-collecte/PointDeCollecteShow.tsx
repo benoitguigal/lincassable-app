@@ -115,6 +115,8 @@ const PointDeCollecteShow = () => {
       {pointDeCollecte && pointDeCollecteConsigneFormulaire2024Url && (
         <UrlField value={pointDeCollecteConsigneFormulaire2024Url} />
       )}
+      <Title level={5}>Inclus dans les prévisions de collecte</Title>
+      <TextField value={pointDeCollecte?.previsible ? "Oui" : "Non"} />
 
       <Title level={5}>Informations compl.</Title>
       <TextField value={pointDeCollecte?.info} />

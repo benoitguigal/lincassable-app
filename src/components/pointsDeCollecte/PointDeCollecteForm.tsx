@@ -189,6 +189,17 @@ const PointDeCollecteForm: React.FC<Props> = ({
           ]}
         />
       </Form.Item>
+      <Form.Item
+        label="Inclure dans les prévisions de collecte"
+        name="previsible"
+      >
+        <Select
+          options={[
+            { value: true, label: "Oui" },
+            { value: false, label: "Non" },
+          ]}
+        />
+      </Form.Item>
       <Form.Item label="Informations complémentaires" name="info">
         <Input />
       </Form.Item>
