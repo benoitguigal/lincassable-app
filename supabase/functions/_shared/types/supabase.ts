@@ -332,6 +332,7 @@ export type Database = {
           latitude: number | null
           longitude: number | null
           nom: string
+          previsible: boolean
           setup_date: string | null
           statut: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33: number
@@ -357,6 +358,7 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           nom: string
+          previsible?: boolean
           setup_date?: string | null
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33?: number
@@ -382,6 +384,7 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           nom?: string
+          previsible?: boolean
           setup_date?: string | null
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33?: number
