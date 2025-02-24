@@ -30,12 +30,30 @@ export const contenantDeCollecteTypeOptions: ContenantDeCollecteTypeOption[] = [
 type StatutTourneeOption = {
   value: StatutTourneeEnum;
   label: string;
+  disabled?: boolean;
 };
 
 export const statutTourneeOptions: StatutTourneeOption[] = [
-  { value: "En attente de validation", label: "En attente de validation" },
+  { value: "En cours de préparation", label: "En cours de préparation" },
+  {
+    value: "En attente de validation",
+    label: "En attente de validation",
+  },
   { value: "Validé", label: "Validé" },
+  { value: "Réalisé", label: "Réalisé" },
+  { value: "Clôturé", label: "Clôturé" },
 ];
+
+export const statutTourneeOptionsTransporteur = statutTourneeOptions.map(
+  (o) => {
+    // le transporteur n'a pas accès à tous les statuts
+    const forbiddenStatuses = ["En cours de préparation", "Clôturé"];
+    if (forbiddenStatuses.includes(o.value)) {
+      return { ...o, disabled: true };
+    }
+    return o;
+  }
+);
 
 type TypeDeVehiculeOption = {
   value: TypeDeVehiculeEnum;

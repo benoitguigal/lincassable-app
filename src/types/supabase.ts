@@ -336,7 +336,6 @@ export type Database = {
           statut: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33: number
           stock_casiers_75: number
-          stock_contenants: number | null
           stock_paloxs: number
           telephones: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
@@ -362,7 +361,6 @@ export type Database = {
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33?: number
           stock_casiers_75: number
-          stock_contenants?: number | null
           stock_paloxs: number
           telephones?: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
@@ -388,7 +386,6 @@ export type Database = {
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33?: number
           stock_casiers_75?: number
-          stock_contenants?: number | null
           stock_paloxs?: number
           telephones?: string[]
           type?: Database["public"]["Enums"]["point_de_collecte_type"]
@@ -765,7 +762,12 @@ export type Database = {
       point_de_collecte_statut: "archive" | "actif"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
       statut_mailing: "En attente" | "En cours" | "Envoyé" | "Échec"
-      statut_tournee: "En attente de validation" | "Validé"
+      statut_tournee:
+        | "En cours de préparation"
+        | "En attente de validation"
+        | "Validé"
+        | "Réalisé"
+        | "Clôturé"
       type_de_vehicule: "12 T" | "19 T" | "VL" | "velo"
     }
     CompositeTypes: {

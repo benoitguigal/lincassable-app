@@ -23,7 +23,10 @@ import CollecteCreateButton from "../collecte/CollecteCreateButton";
 import dayjs from "dayjs";
 import TourneeStatutTag from "./TourneeStatutTag";
 import BonDeTourneeUpload from "./BonDeTourneeUpload";
-import { typeDeVehiculeOptions } from "../../utility/options";
+import {
+  statutTourneeOptions,
+  typeDeVehiculeOptions,
+} from "../../utility/options";
 import { useMemo } from "react";
 
 const { RangePicker } = DatePicker;
@@ -64,6 +67,11 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
                 field: "transporteur_id",
                 operator: "eq",
                 value: user.transporteurId,
+              },
+              {
+                field: "statut",
+                operator: "ne",
+                value: "En cours de préparation",
               },
             ],
           }
@@ -125,6 +133,17 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
     }
     return null;
   }, [filters, transporteurById]);
+
+  const statutFilter = useMemo(() => {
+    const filter = filters.find((f) => (f as LogicalFilter).field === "statut");
+    if (filter) {
+      return {
+        value: filter.value,
+        label: filter.value,
+      };
+    }
+    return null;
+  }, [filters]);
 
   return (
     <>
@@ -191,6 +210,23 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
                 filters.filter(
                   (f) => (f as LogicalFilter).field !== "transporteur_id"
                 ),
+                "replace"
+              );
+            }
+          }}
+        />
+        <Select
+          options={statutTourneeOptions}
+          style={{ width: "300px" }}
+          placeholder="Statut"
+          allowClear
+          value={statutFilter}
+          onChange={(value) => {
+            if (value) {
+              setFilters([{ field: "statut", operator: "eq", value }], "merge");
+            } else {
+              setFilters(
+                filters.filter((f) => (f as LogicalFilter).field !== "statut"),
                 "replace"
               );
             }

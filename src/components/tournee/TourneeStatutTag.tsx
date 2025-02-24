@@ -6,7 +6,26 @@ type StatutTourneeTag = {
 };
 
 const TourneeStatutTag: React.FC<StatutTourneeTag> = ({ value }) => {
-  const color = value === "En attente de validation" ? "orange" : "green";
+  let color = "";
+
+  switch (value) {
+    case "En cours de préparation":
+      color = "navy";
+      break;
+    case "En attente de validation":
+      color = "sandybrown";
+      break;
+    case "Validé":
+      color = "seagreen";
+      break;
+    case "Réalisé":
+      color = "olive";
+      break;
+    case "Clôturé":
+      color = "brown";
+      break;
+  }
+
   return <Tag color={color}>{value}</Tag>;
 };
 
