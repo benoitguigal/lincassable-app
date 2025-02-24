@@ -33,3 +33,11 @@ set
   statut = 'Clôturé'
 where
   "bon_de_tournee" is not null;
+
+update
+  "public"."tournee"
+set
+  statut = 'Réalisé'
+where
+  "bon_de_tournee" is null
+  and "date" < current_date;

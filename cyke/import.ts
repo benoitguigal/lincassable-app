@@ -137,7 +137,7 @@ async function readCsv(path: string) {
       point_de_massification_id: 316,
       transporteur_id: 3, // Agile en Ville
       zone_de_collecte_id: 1, // Marseille Centre
-      statut: "Validé",
+      statut: "Clôturé",
       prix,
       type_de_vehicule: "velo",
     };

@@ -336,7 +336,6 @@ export type Database = {
           statut: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33: number
           stock_casiers_75: number
-          stock_contenants: number | null
           stock_paloxs: number
           telephones: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
@@ -362,7 +361,6 @@ export type Database = {
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33?: number
           stock_casiers_75: number
-          stock_contenants?: number | null
           stock_paloxs: number
           telephones?: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
@@ -388,7 +386,6 @@ export type Database = {
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33?: number
           stock_casiers_75?: number
-          stock_contenants?: number | null
           stock_paloxs?: number
           telephones?: string[]
           type?: Database["public"]["Enums"]["point_de_collecte_type"]

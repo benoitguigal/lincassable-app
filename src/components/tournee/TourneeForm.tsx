@@ -10,6 +10,7 @@ import { UseFormProps, UseFormReturnType, useSelect } from "@refinedev/antd";
 import CollecteListTable from "../collecte/CollecteListTable";
 import {
   statutTourneeOptions,
+  statutTourneeOptionsTransporteur,
   typeDeVehiculeOptions,
 } from "../../utility/options";
 import { usePermissions } from "@refinedev/core";
@@ -85,7 +86,9 @@ const TourneeForm: React.FC<Props> = ({ form, action }) => {
       <Form.Item label="Statut" name={["statut"]}>
         <Select
           style={{ width: 300 }}
-          options={statutTourneeOptions}
+          options={
+            isStaff ? statutTourneeOptions : statutTourneeOptionsTransporteur
+          }
           defaultValue={"En cours de préparation"}
         />
       </Form.Item>

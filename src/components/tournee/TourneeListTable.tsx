@@ -68,6 +68,11 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
                 operator: "eq",
                 value: user.transporteurId,
               },
+              {
+                field: "statut",
+                operator: "ne",
+                value: "En cours de préparation",
+              },
             ],
           }
         : {}),

@@ -30,6 +30,7 @@ export const contenantDeCollecteTypeOptions: ContenantDeCollecteTypeOption[] = [
 type StatutTourneeOption = {
   value: StatutTourneeEnum;
   label: string;
+  disabled?: boolean;
 };
 
 export const statutTourneeOptions: StatutTourneeOption[] = [
@@ -42,6 +43,17 @@ export const statutTourneeOptions: StatutTourneeOption[] = [
   { value: "Réalisé", label: "Réalisé" },
   { value: "Clôturé", label: "Clôturé" },
 ];
+
+export const statutTourneeOptionsTransporteur = statutTourneeOptions.map(
+  (o) => {
+    // le transporteur n'a pas accès à tous les statuts
+    const forbiddenStatuses = ["En cours de préparation", "Clôturé"];
+    if (forbiddenStatuses.includes(o.value)) {
+      return { ...o, disabled: true };
+    }
+    return o;
+  }
+);
 
 type TypeDeVehiculeOption = {
   value: TypeDeVehiculeEnum;
