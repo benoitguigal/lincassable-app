@@ -19,7 +19,8 @@ Deno.serve(async (req) => {
   if (tags.length !== 2 || tags[0] !== Deno.env.get("BREVO_WEBHOOK_KEY")) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       headers: { "Content-Type": "application/json" },
-      status: 401,
+      // Envoie quand même un code de statut 200 pour éviter des retry
+      status: 200,
     });
   }
 
@@ -44,6 +45,7 @@ Deno.serve(async (req) => {
 
     return new Response(JSON.stringify(data), {
       headers: { "Content-Type": "application/json" },
+      status: 200,
     });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
