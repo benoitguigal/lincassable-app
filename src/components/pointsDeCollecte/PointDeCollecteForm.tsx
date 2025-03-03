@@ -91,11 +91,14 @@ const PointDeCollecteForm: React.FC<Props> = ({
         name="collecte_par_id"
         help="À renseigner pour les points de collecte secondaires"
         style={{ marginBottom: "2em" }}
+        // INC-68 - lorsqu'on clear ce champ sur un point de collecte existant,
+        // on envoie `undefined` ce qui ne permet pas d'enlever la valeur existante.
+        normalize={(value) => value ?? null}
       >
         <Select
-          allowClear={true}
           placeholder=""
           {...pointDeCollecteSelectProps}
+          allowClear={true}
         />
       </Form.Item>
       <Form.Item
