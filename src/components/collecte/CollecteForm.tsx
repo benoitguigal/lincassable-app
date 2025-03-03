@@ -315,6 +315,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           {...tourneeSelectProps}
           style={{ width: 300 }}
           placeholder="Choisir une tournée"
+          allowClear={true}
         />
       </Form.Item>
       {!hasTournee && (

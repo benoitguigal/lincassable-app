@@ -1,6 +1,7 @@
 import { Tag } from "antd";
 
 type MailStatutEnum =
+  | "created"
   | "waiting"
   | "request"
   | "click"
@@ -27,6 +28,10 @@ const MailStatusTag: React.FC<Props> = ({ statut }) => {
   let label = "";
 
   switch (statut) {
+    case "created":
+      color = "yellow";
+      label = "Created";
+      break;
     case "waiting":
       color = "gray";
       label = "Waiting";

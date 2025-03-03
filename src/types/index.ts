@@ -39,7 +39,7 @@ export type Mailing = Database["public"]["Tables"]["mailing"]["Row"];
 
 export type MailTemplate = Database["public"]["Tables"]["mail_template"]["Row"];
 
-export type MailStatut = Database["public"]["Tables"]["mail_statut"]["Row"];
+export type Mail = Database["public"]["Tables"]["mail"]["Row"];
 
 export type Identity = {
   id: string;

@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     );
 
     const { data, error } = await supabaseClient
-      .from("mail_statut")
+      .from("mail")
       .update({ statut: event })
       .eq("mailing_id", mailing_id)
       .eq("email", email)

@@ -4,25 +4,10 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import nunjucks from "npm:nunjucks";
 import brevo from "npm:@getbrevo/brevo";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { Database } from "../_shared/types/supabase.ts";
-
-function renderVariables(
-  pointDeCollecte: Database["public"]["Tables"]["point_de_collecte"]["Row"]
-) {
-  return {
-    lienFormulaireRemplissage:
-      `${Deno.env.get("UI_HOST")}/point-de-collecte/taux-de-remplissage/${
-        pointDeCollecte.id
-      }?` +
-      `nom=${encodeURIComponent(pointDeCollecte.nom)}&contenant_collecte=${
-        pointDeCollecte.contenant_collecte_type
-      }`,
-  };
-}
 
 Deno.serve(async (req) => {
   // permet de faire des requêtes depuis le navigateur
@@ -66,14 +51,13 @@ Deno.serve(async (req) => {
 
     const mailing = mailingData[0];
 
-    const { data: pointDeCollecteData, error: pointDeCollecteError } =
-      await supabaseClient
-        .from("point_de_collecte")
-        .select("*")
-        .in("id", mailing?.point_de_collecte_ids ?? []);
+    const { data: mailsData, error: mailsError } = await supabaseClient
+      .from("mail")
+      .select("*")
+      .eq("mailing_id", mailing.id);
 
-    if (pointDeCollecteError) {
-      throw pointDeCollecteError;
+    if (mailsError) {
+      throw mailsError;
     }
 
     const brevoClient = new brevo.TransactionalEmailsApi();
@@ -94,60 +78,12 @@ Deno.serve(async (req) => {
     ];
     sendSmtpEmail.messageVersions = [];
 
-    const mailingVariables = mailing.variables as {
-      [key: string]: string;
-    };
-
-    const formattedVariables = mailingVariables
-      ? Object.fromEntries(
-          Object.entries(mailingVariables).map(([key, value]) => {
-            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-            if (typeof value === "string" && dateRegex.test(value)) {
-              const date = new Date(value);
-              const formattedDate = date.toLocaleDateString("fr-FR", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              });
-              return [key, formattedDate];
-            }
-            return [key, value];
-          })
-        )
-      : {};
-
-    const mailStatuses: Pick<
-      Database["public"]["Tables"]["mail_statut"]["Row"],
-      "email" | "mailing_id" | "statut"
-    >[] = [];
-
-    for (const pointDeCollecte of pointDeCollecteData ?? []) {
-      if (pointDeCollecte.emails?.length) {
-        const htmlContent = nunjucks.renderString(
-          mailing?.mail_template?.corps,
-          {
-            ...formattedVariables,
-            ...renderVariables(pointDeCollecte),
-          }
-        );
-
-        sendSmtpEmail.messageVersions.push({
-          htmlContent,
-          subject: mailing.mail_template?.sujet ?? "",
-          to: pointDeCollecte.emails.map((email) => ({
-            email: email.trim(),
-            name: email,
-          })),
-        });
-
-        for (const email of pointDeCollecte.emails) {
-          mailStatuses.push({
-            email: email.trim(),
-            mailing_id: mailing.id,
-            statut: "waiting",
-          });
-        }
-      }
+    for (const mail of mailsData ?? []) {
+      sendSmtpEmail.messageVersions.push({
+        htmlContent: mail.corps ?? "",
+        subject: mail.sujet ?? "",
+        to: [{ email: mail.to }],
+      });
     }
 
     const { response } = await brevoClient.sendTransacEmail(sendSmtpEmail);
@@ -159,7 +95,12 @@ Deno.serve(async (req) => {
         .eq("id", mailing_id)
         .select();
 
-      await supabaseClient.from("mail_statut").insert(mailStatuses).select();
+      await supabaseClient
+        .from("mail")
+        .update({ statut: "waiting" })
+        .eq("mailing_id", mailing_id)
+        .eq("statut", "created")
+        .select();
     } else {
       await supabaseClient
         .from("mailing")
