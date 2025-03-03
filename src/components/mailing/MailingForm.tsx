@@ -10,7 +10,11 @@ import dayjs from "dayjs";
 
 type Props = UseFormReturnType<Mailing> | UseModalFormReturnType<Mailing>;
 
-type Variable = { name: string; label: string; type: "date" | "text" };
+type Variable = {
+  name: string;
+  label: string;
+  type: "date" | "text" | "number";
+};
 
 const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
   const { selectProps: mailTemplateSelectProps, query } =
@@ -28,6 +32,13 @@ const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
       optionLabel: "nom",
       optionValue: "id",
     });
+
+  const { selectProps: tourneeSelectProps } = useSelect<PointDeCollecte>({
+    pagination: { mode: "off" },
+    resource: "tournee",
+    optionLabel: "id",
+    optionValue: "id",
+  });
 
   const mailTemplateId = Form.useWatch("mail_template_id", form);
 
@@ -50,12 +61,38 @@ const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
 
   const variablesInitialValues = Object.keys(variables ?? {}).reduce(
     (acc, name) => {
-      // déduit si la variable est une date
-      const date = dayjs(variables[name]);
-      return { ...acc, [name]: date.isValid() ? date : variables[name] };
+      if (typeof variables[name] === "string") {
+        // déduit si la variable est une date
+        const date = dayjs(variables[name]);
+        return { ...acc, [name]: date.isValid() ? date : variables[name] };
+      }
+      return { ...acc, [name]: variables[name] };
     },
     {}
   );
+
+  const variableInput = (variable: Variable) => {
+    if (variable.type === "date") {
+      return (
+        <DatePicker
+          placeholder="Sélectionner une date"
+          style={{ width: 300 }}
+        />
+      );
+    }
+
+    if (variable.name === "tournee_id") {
+      return (
+        <Select
+          {...tourneeSelectProps}
+          style={{ width: 300 }}
+          placeholder="Identifiant de la tournee"
+        />
+      );
+    }
+
+    return <Input style={{ width: 300 }} />;
+  };
 
   return (
     <Form
@@ -106,20 +143,15 @@ const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
           placeholder="Point de collecte"
         />
       </Form.Item>
-      {((mailTemplate?.variables ?? []) as Variable[]).map(
-        ({ name, label, type }) => (
-          <Form.Item name={name} label={label} rules={[{ required: true }]}>
-            {type === "date" ? (
-              <DatePicker
-                placeholder="Sélectionner une date"
-                style={{ width: 300 }}
-              />
-            ) : (
-              <Input style={{ width: 300 }} />
-            )}
-          </Form.Item>
-        )
-      )}
+      {((mailTemplate?.variables ?? []) as Variable[]).map((variable) => (
+        <Form.Item
+          name={variable.name}
+          label={variable.label}
+          rules={[{ required: true }]}
+        >
+          {variableInput(variable)}
+        </Form.Item>
+      ))}
     </Form>
   );
 };

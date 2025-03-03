@@ -4,7 +4,6 @@ import { Button, Modal } from "antd";
 import { Collecte, Mailing, Tournee } from "../../types";
 import { CanAccess } from "@refinedev/core";
 import MailingForm from "../mailing/MailingForm";
-import dayjs from "dayjs";
 
 type Props = { tournee?: Tournee & { collecte: Collecte[] } };
 
@@ -41,7 +40,7 @@ const TourneeMailButton: React.FC<Props> = ({ tournee }) => {
                     (c) => c.point_de_collecte_id
                   ),
                   variables: {
-                    dateTournee: dayjs(tournee?.date).format("YYYY-MM-DD"),
+                    tournee_id: tournee?.id,
                   },
                 },
               }}

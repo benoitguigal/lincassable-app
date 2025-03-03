@@ -9,7 +9,7 @@ const MailingCreate: React.FC<IResourceComponentsProps> = () => {
   return (
     <Create
       title="Créer un mailing"
-      saveButtonProps={{ ...form.saveButtonProps, title: "toto" }}
+      saveButtonProps={form.saveButtonProps}
       breadcrumb={false}
     >
       <MailingForm {...form} />

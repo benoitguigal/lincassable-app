@@ -218,29 +218,45 @@ export type Database = {
           },
         ]
       }
-      mail_statut: {
+      mail: {
         Row: {
+          corps: string | null
           created_at: string
-          email: string
           id: number
           mailing_id: number
+          point_de_collecte_id: number | null
           statut: string
+          sujet: string | null
+          to: string
         }
         Insert: {
+          corps?: string | null
           created_at?: string
-          email: string
           id?: number
           mailing_id: number
+          point_de_collecte_id?: number | null
           statut: string
+          sujet?: string | null
+          to: string
         }
         Update: {
+          corps?: string | null
           created_at?: string
-          email?: string
           id?: number
           mailing_id?: number
+          point_de_collecte_id?: number | null
           statut?: string
+          sujet?: string | null
+          to?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "mail_point_de_collecte_id_fkey"
+            columns: ["point_de_collecte_id"]
+            isOneToOne: false
+            referencedRelation: "point_de_collecte"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "mail_statut_mailing_id_fkey"
             columns: ["mailing_id"]
