@@ -3,9 +3,8 @@
 // This enables autocomplete, go to definition, etc.
 
 // Setup type definitions for built-in Supabase Runtime APIs
-import { createClient } from "jsr:@supabase/supabase-js@2";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { Database } from "../_shared/types/supabase.ts";
+import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 
 type BrevoEvent = {
   event: string;
@@ -27,16 +26,11 @@ Deno.serve(async (req) => {
   try {
     const mailing_id = Number(tags[1]);
 
-    const supabaseClient = createClient<Database>(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
-
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabaseAdmin
       .from("mail")
       .update({ statut: event })
       .eq("mailing_id", mailing_id)
-      .eq("email", email)
+      .eq("to", email)
       .select();
 
     if (error) {
@@ -48,6 +42,7 @@ Deno.serve(async (req) => {
       status: 200,
     });
   } catch (error) {
+    console.log(error);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { "Content-Type": "application/json" },
       status: 500,
