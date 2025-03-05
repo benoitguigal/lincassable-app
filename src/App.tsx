@@ -46,8 +46,6 @@ import CollecteList from "./pages/collecte/CollecteList";
 import Header from "./components/Header";
 import LincassableTitle from "./components/LincassableTitle";
 import { BouteilleIconSvg } from "./components/icons";
-
-import "dayjs/locale/fr";
 import ConsigneList from "./pages/consigne/ConsigneList";
 import ConsigneCreate from "./pages/consigne/ConsigneCreate";
 import ConsigneCreateSuccess from "./pages/consigne/ConsigneCreateSuccess";
@@ -58,6 +56,9 @@ import MailingCreate from "./pages/mailing/MailingCreate";
 import MailingEdit from "./pages/mailing/MailingEdit";
 import MailingShow from "./pages/mailing/MailingShow";
 
+import "dayjs/locale/fr";
+import MailTemplateList from "./pages/mail-template/MailTemplateList";
+import MailTemplateEdit from "./pages/mail-template/MailTemplateEdit";
 dayjs.locale("fr");
 
 function App() {
@@ -167,12 +168,33 @@ function App() {
                     meta: { label: "Consigne", icon: <EuroCircleOutlined /> },
                   },
                   {
+                    name: "mail_menu",
+                    meta: {
+                      label: "Emails",
+                      icon: <MailOutlined />,
+                    },
+                  },
+                  {
+                    name: "mail_template",
+                    list: "/templates",
+                    create: "/templates/create",
+                    edit: "/templates/edit/:id",
+                    show: "/templates/show/:id",
+                    meta: {
+                      label: "Gabarits",
+                      parent: "mail_menu",
+                    },
+                  },
+                  {
                     name: "mailing",
                     list: "/mailing",
                     create: "/mailing/create",
                     edit: "/mailing/edit/:id",
                     show: "/mailing/show/:id",
-                    meta: { label: "Emails", icon: <MailOutlined /> },
+                    meta: {
+                      label: "Envois",
+                      parent: "mail_menu",
+                    },
                   },
                   { name: "transporteur" },
                   { name: "transporteur_users" },
@@ -252,6 +274,10 @@ function App() {
                       <Route path="create" index element={<MailingCreate />} />
                       <Route path="edit/:id" element={<MailingEdit />} />
                       <Route path="show/:id" element={<MailingShow />} />
+                    </Route>
+                    <Route path="/templates">
+                      <Route index element={<MailTemplateList />} />
+                      <Route path="edit/:id" element={<MailTemplateEdit />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
