@@ -160,3 +160,7 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 [functions.brevo_webhook]
 
 verify_jwt = false
+
+[functions.cyke_webhook]
+
+verify_jwt = false
