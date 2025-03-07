@@ -71,48 +71,59 @@ function formatPaletteType(type: string | null) {
 function conditionnements(collecte: Collecte): string {
   let result = "";
 
-  if (
-    collecte.collecte_nb_casier_75_plein > 0 &&
-    collecte.collecte_casier_75_plein_nb_palette > 0
-  ) {
-    const nbCasierParPalette = new Decimal(collecte.collecte_nb_casier_75_plein)
-      .dividedBy(collecte.collecte_casier_75_plein_nb_palette)
-      .toDecimalPlaces(0);
-    result +=
-      `[collecte] ${collecte.collecte_casier_75_plein_nb_palette} palettes ` +
-      `${formatPaletteType(
-        collecte.collecte_casier_75_plein_palette_type
-      )} de ${nbCasierParPalette}` +
-      ` casiers 75cl (${collecte.collecte_nb_casier_75_plein})\n`;
+  if (collecte.collecte_nb_casier_75_plein > 0) {
+    if (collecte.collecte_casier_75_plein_nb_palette > 0) {
+      const nbCasierParPalette = new Decimal(
+        collecte.collecte_nb_casier_75_plein
+      )
+        .dividedBy(collecte.collecte_casier_75_plein_nb_palette)
+        .toDecimalPlaces(0);
+      result +=
+        `[collecte] ${collecte.collecte_casier_75_plein_nb_palette} palettes ` +
+        `${formatPaletteType(
+          collecte.collecte_casier_75_plein_palette_type
+        )} de ${nbCasierParPalette}` +
+        ` casiers 75cl (${collecte.collecte_nb_casier_75_plein})\n`;
+    } else {
+      result += `[collecte] ${collecte.collecte_nb_casier_75_plein} casiers 75cl\n`;
+    }
   }
 
-  if (
-    collecte.collecte_nb_casier_33_plein > 0 &&
-    collecte.collecte_casier_33_plein_nb_palette > 0
-  ) {
-    const nbCasierParPalette = new Decimal(collecte.collecte_nb_casier_33_plein)
-      .dividedBy(collecte.collecte_casier_33_plein_nb_palette)
-      .toDecimalPlaces(0);
-    result +=
-      `[collecte] ${collecte.collecte_casier_33_plein_nb_palette} palettes ` +
-      `${formatPaletteType(
-        collecte.collecte_casier_33_plein_palette_type
-      )} de ${nbCasierParPalette}` +
-      ` casiers 33cl (${collecte.collecte_nb_casier_33_plein})\n`;
+  if (collecte.collecte_nb_casier_33_plein > 0) {
+    if (collecte.collecte_casier_33_plein_nb_palette > 0) {
+      const nbCasierParPalette = new Decimal(
+        collecte.collecte_nb_casier_33_plein
+      )
+        .dividedBy(collecte.collecte_casier_33_plein_nb_palette)
+        .toDecimalPlaces(0);
+      result +=
+        `[collecte] ${collecte.collecte_casier_33_plein_nb_palette} palettes ` +
+        `${formatPaletteType(
+          collecte.collecte_casier_33_plein_palette_type
+        )} de ${nbCasierParPalette}` +
+        ` casiers 33cl (${collecte.collecte_nb_casier_33_plein})\n`;
+    } else {
+      result += `[collecte] ${collecte.collecte_nb_casier_33_plein} casiers 33cl\n`;
+    }
   }
 
-  if (
-    collecte.collecte_nb_fut_vide > 0 &&
-    collecte.collecte_fut_nb_palette > 0
-  ) {
-    const nbFutsParPalette = new Decimal(collecte.collecte_nb_fut_vide)
-      .dividedBy(collecte.collecte_fut_nb_palette)
-      .toDecimalPlaces(0);
-    result +=
-      `[collecte] ${
-        collecte.collecte_fut_nb_palette
-      } palettes ${formatPaletteType(collecte.collecte_fut_palette_type)}` +
-      ` de ${nbFutsParPalette} fûts (${collecte.collecte_nb_fut_vide})\n`;
+  if (collecte.collecte_nb_fut_vide > 0) {
+    if (collecte.collecte_fut_nb_palette > 0) {
+      const nbFutsParPalette = new Decimal(collecte.collecte_nb_fut_vide)
+        .dividedBy(collecte.collecte_fut_nb_palette)
+        .toDecimalPlaces(0);
+      result +=
+        `[collecte] ${
+          collecte.collecte_fut_nb_palette
+        } palettes ${formatPaletteType(collecte.collecte_fut_palette_type)}` +
+        ` de ${nbFutsParPalette} fûts (${collecte.collecte_nb_fut_vide})\n`;
+    } else {
+      result += `[collecte] ${collecte.collecte_nb_fut_vide} fûts\n`;
+    }
+  }
+
+  if (collecte.collecte_nb_palox_plein) {
+    result += `[collecte] ${collecte.collecte_nb_palox_plein} paloxs\n`;
   }
 
   if (collecte.collecte_nb_palette_vide > 0) {
@@ -123,48 +134,59 @@ function conditionnements(collecte: Collecte): string {
       )} vides\n`;
   }
 
-  if (
-    collecte.livraison_nb_casier_75_vide > 0 &&
-    collecte.livraison_casier_75_vide_nb_palette > 0
-  ) {
-    const nbCasierParPalette = new Decimal(collecte.livraison_nb_casier_75_vide)
-      .dividedBy(collecte.livraison_casier_75_vide_nb_palette)
-      .toDecimalPlaces(0);
-    result +=
-      `[livraison] ${collecte.livraison_casier_75_vide_nb_palette} palettes ` +
-      `${formatPaletteType(
-        collecte.livraison_casier_75_vide_palette_type
-      )} de ${nbCasierParPalette}` +
-      ` casiers 75cl (${collecte.livraison_nb_casier_75_vide})\n`;
+  if (collecte.livraison_nb_casier_75_vide > 0) {
+    if (collecte.livraison_casier_75_vide_nb_palette) {
+      const nbCasierParPalette = new Decimal(
+        collecte.livraison_nb_casier_75_vide
+      )
+        .dividedBy(collecte.livraison_casier_75_vide_nb_palette)
+        .toDecimalPlaces(0);
+      result +=
+        `[livraison] ${collecte.livraison_casier_75_vide_nb_palette} palettes ` +
+        `${formatPaletteType(
+          collecte.livraison_casier_75_vide_palette_type
+        )} de ${nbCasierParPalette}` +
+        ` casiers 75cl (${collecte.livraison_nb_casier_75_vide})\n`;
+    } else {
+      result += `[livraison] ${collecte.livraison_nb_casier_75_vide} casiers 75cl\n`;
+    }
   }
 
-  if (
-    collecte.livraison_nb_casier_33_vide > 0 &&
-    collecte.livraison_casier_33_vide_nb_palette > 0
-  ) {
-    const nbCasierParPalette = new Decimal(collecte.livraison_nb_casier_33_vide)
-      .dividedBy(collecte.livraison_casier_33_vide_nb_palette)
-      .toDecimalPlaces(0);
-    result +=
-      `[livraison] ${collecte.livraison_casier_33_vide_nb_palette} palettes ` +
-      `${formatPaletteType(
-        collecte.livraison_casier_33_vide_palette_type
-      )} de ${nbCasierParPalette}` +
-      ` casiers 33cl (${collecte.livraison_nb_casier_33_vide})\n`;
+  if (collecte.livraison_nb_casier_33_vide > 0) {
+    if (collecte.livraison_casier_33_vide_nb_palette > 0) {
+      const nbCasierParPalette = new Decimal(
+        collecte.livraison_nb_casier_33_vide
+      )
+        .dividedBy(collecte.livraison_casier_33_vide_nb_palette)
+        .toDecimalPlaces(0);
+      result +=
+        `[livraison] ${collecte.livraison_casier_33_vide_nb_palette} palettes ` +
+        `${formatPaletteType(
+          collecte.livraison_casier_33_vide_palette_type
+        )} de ${nbCasierParPalette}` +
+        ` casiers 33cl (${collecte.livraison_nb_casier_33_vide})\n`;
+    } else {
+      result += `[livraison] ${collecte.livraison_nb_casier_33_vide} casiers 33cl\n`;
+    }
   }
 
-  if (
-    collecte.livraison_nb_fut_vide > 0 &&
-    collecte.livraison_fut_nb_palette > 0
-  ) {
-    const nbFutsParPalette = new Decimal(collecte.livraison_nb_fut_vide)
-      .dividedBy(collecte.livraison_fut_nb_palette)
-      .toDecimalPlaces(0);
-    result +=
-      `[livraison] ${
-        collecte.livraison_fut_nb_palette
-      } palettes ${formatPaletteType(collecte.livraison_fut_palette_type)}` +
-      ` de ${nbFutsParPalette} fûts (${collecte.livraison_nb_fut_vide})\n`;
+  if (collecte.livraison_nb_fut_vide > 0) {
+    if (collecte.livraison_fut_nb_palette > 0) {
+      const nbFutsParPalette = new Decimal(collecte.livraison_nb_fut_vide)
+        .dividedBy(collecte.livraison_fut_nb_palette)
+        .toDecimalPlaces(0);
+      result +=
+        `[livraison] ${
+          collecte.livraison_fut_nb_palette
+        } palettes ${formatPaletteType(collecte.livraison_fut_palette_type)}` +
+        ` de ${nbFutsParPalette} fûts (${collecte.livraison_nb_fut_vide})\n`;
+    } else {
+      result += `[livraison] ${collecte.livraison_nb_fut_vide} fûts\n`;
+    }
+  }
+
+  if (collecte.livraison_nb_palox_vide) {
+    result += `[livraison] ${collecte.livraison_nb_palox_vide} paloxs\n`;
   }
 
   if (collecte.livraison_nb_palette_vide > 0) {
@@ -257,7 +279,7 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
     ...(hasPalettes ? contenantHeaders : []),
     ...(hasFuts ? contenantHeaders : []),
     {
-      cell: "Conditionnement",
+      cell: "Chargement",
       span: 3,
     },
     { cell: "Signature / tampon - Observations", span: 2 },
