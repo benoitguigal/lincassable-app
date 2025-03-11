@@ -142,7 +142,7 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify(updated), {
         headers: { "Content-Type": "application/json" },
       });
-    } else if (type === "INSERT") {
+    } else if (type === "INSERT" && !record.cyke_id) {
       const collecte = await getFullCollecte(record);
       const cykeConnexion = collecte?.tournee?.transporteur?.cyke_connexion;
       if (cykeConnexion) {
