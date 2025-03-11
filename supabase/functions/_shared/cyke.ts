@@ -25,6 +25,19 @@ export type CykeDelivery = {
   packages: CykePackage[];
 };
 
+export type CykeWebhookPayload = {
+  event_type:
+    | "delivery_saved"
+    | "delivery_scheduled"
+    | "delivery_picked_up"
+    | "delivery_delivered"
+    | "delivery_cancelled"
+    | "delivery_failed";
+  payload: {
+    delivery: { id: string; dropoff: { tracking_url: string } };
+  };
+};
+
 const CYKE_URL = "https://www.cyke.io";
 
 const authHeaders = {
