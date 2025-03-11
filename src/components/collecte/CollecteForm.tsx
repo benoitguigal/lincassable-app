@@ -1,5 +1,13 @@
 import { UseModalFormReturnType, useSelect } from "@refinedev/antd";
-import { Checkbox, DatePicker, Flex, Form, Input, Select } from "antd";
+import {
+  Checkbox,
+  DatePicker,
+  Flex,
+  Form,
+  Input,
+  Select,
+  TimePicker,
+} from "antd";
 import { Collecte, PointDeCollecte, Tournee } from "../../types";
 import { useEffect, useMemo, useState } from "react";
 import Decimal from "decimal.js";
@@ -318,6 +326,22 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           allowClear={true}
         />
       </Form.Item>
+      <Form.Item
+        name="point_de_collecte_id"
+        label="Point de collecte"
+        rules={[
+          {
+            required: true,
+          },
+        ]}
+      >
+        <Select
+          placeholder="Choisir un point de collecte"
+          style={{ width: 300 }}
+          {...selectProps}
+        />
+      </Form.Item>
+
       {!hasTournee && (
         <Form.Item
           name="date"
@@ -335,21 +359,45 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
         </Form.Item>
       )}
 
-      <Form.Item
-        name="point_de_collecte_id"
-        label="Point de collecte"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Select
-          placeholder="Choisir un point de collecte"
-          style={{ width: 300 }}
-          {...selectProps}
-        />
-      </Form.Item>
+      <Flex gap={10}>
+        <Form.Item
+          name="creneau_horaire_debut"
+          label="Créneau horaire (début)"
+          getValueProps={(value) => ({
+            value: value ? dayjs(value, "HH:mm:ss") : undefined,
+          })}
+          getValueFromEvent={(event) =>
+            dayjs.isDayjs(event) ? event.format("HH:mm:ss") : event
+          }
+        >
+          <TimePicker
+            showSecond={false}
+            showNow={false}
+            minuteStep={30}
+            size="middle"
+            style={{ width: 300 }}
+          />
+        </Form.Item>
+        <Form.Item
+          name="creneau_horaire_fin"
+          label="Créneau horaire (fin)"
+          getValueProps={(value) => ({
+            value: value ? dayjs(value, "HH:mm:ss") : undefined,
+          })}
+          getValueFromEvent={(event) =>
+            dayjs.isDayjs(event) ? event.format("HH:mm:ss") : event
+          }
+        >
+          <TimePicker
+            showSecond={false}
+            showNow={false}
+            minuteStep={30}
+            size="middle"
+            style={{ width: 300 }}
+          />
+        </Form.Item>
+      </Flex>
+
       <Flex vertical gap="middle">
         <Checkbox
           checked={hasCasier}

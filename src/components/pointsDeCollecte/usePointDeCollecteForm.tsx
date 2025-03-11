@@ -45,6 +45,10 @@ export const usePointDeCollecteForm = ({ action }: Props) => {
     if (longitude && latitude && setFieldValue) {
       setFieldValue("longitude", longitude);
       setFieldValue("latitude", latitude);
+      setFieldValue("adresse_numero", f.properties.housenumber);
+      setFieldValue("adresse_rue", f.properties.street);
+      setFieldValue("adresse_ville", f.properties.city);
+      setFieldValue("adresse_code_postal", f.properties.postcode);
       setLatLng({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
     }
   }
