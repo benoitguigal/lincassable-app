@@ -4,24 +4,13 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
-import { createClient } from "jsr:@supabase/supabase-js@2";
-import { WebhookClient } from "npm:discord.js";
-
-const webhookId = Deno.env.get("DISCORD_WEBHOOK_ID");
-const webhookToken = Deno.env.get("DISCORD_WEBHOOK_TOKEN");
-const supabaseUrl = Deno.env.get("SUPABASE_URL");
-const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+import supabaseAdmin from "../_shared/supabaseAdmin.ts";
+import discordClient from "../_shared/discord.ts";
 
 Deno.serve(async (req) => {
   const { record, old_record } = await req.json();
 
-  const supabaseClient = createClient(
-    supabaseUrl ?? "",
-    supabaseServiceRoleKey ?? ""
-  );
-
-  const { data: tournees } = await supabaseClient
+  const { data: tournees } = await supabaseAdmin
     .from("tournee")
     .select("*")
     .eq("id", record.id);
@@ -29,12 +18,12 @@ Deno.serve(async (req) => {
   if (tournees?.length) {
     const tournee = tournees[0];
 
-    const { data: zoneDeCollectes } = await supabaseClient
+    const { data: zoneDeCollectes } = await supabaseAdmin
       .from("zone_de_collecte")
       .select("*")
       .eq("id", tournees?.[0].zone_de_collecte_id);
 
-    const { data: transporteurs } = await supabaseClient
+    const { data: transporteurs } = await supabaseAdmin
       .from("transporteur")
       .select("*")
       .eq("id", tournees?.[0].transporteur_id);
@@ -67,12 +56,7 @@ Deno.serve(async (req) => {
             `\nAncien prix : ${old_record.prix} - Nouveau prix : ${record.prix}`;
         }
 
-        const webhookClient = new WebhookClient({
-          id: webhookId,
-          token: webhookToken,
-        });
-
-        await webhookClient.send({
+        await discordClient.send({
           content: msg,
         });
       }
