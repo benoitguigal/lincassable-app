@@ -4,34 +4,19 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
-import { WebhookClient } from "npm:discord.js";
-
-const webhookId = Deno.env.get("DISCORD_WEBHOOK_ID");
-const webhookToken = Deno.env.get("DISCORD_WEBHOOK_TOKEN");
-const supabaseUrl = Deno.env.get("SUPABASE_URL");
-const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+import supabaseAdmin from "../_shared/supabaseAdmin.ts";
+import discordClient from "../_shared/discord.ts";
 
 Deno.serve(async (req) => {
   const { record } = await req.json();
 
-  const supabaseClient = createClient(
-    supabaseUrl ?? "",
-    supabaseServiceRoleKey
-  );
-
-  const { data: pointsDeCollecte } = await supabaseClient
+  const { data: pointsDeCollecte } = await supabaseAdmin
     .from("point_de_collecte")
     .select("nom")
     .eq("id", record.point_de_collecte_id);
 
   if (pointsDeCollecte?.length) {
-    const webhookClient = new WebhookClient({
-      id: webhookId,
-      token: webhookToken,
-    });
-
-    await webhookClient.send({
+    await discordClient.send({
       content: `Taux de remplissage renseigné par ${pointsDeCollecte[0].nom}`,
     });
 

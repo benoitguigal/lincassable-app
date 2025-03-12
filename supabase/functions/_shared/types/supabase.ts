@@ -34,6 +34,8 @@ export type Database = {
             | Database["public"]["Enums"]["palette_type"]
             | null
           created_at: string
+          creneau_horaire_debut: string | null
+          creneau_horaire_fin: string | null
           cyke_id: string | null
           date: string | null
           id: number
@@ -85,6 +87,8 @@ export type Database = {
             | Database["public"]["Enums"]["palette_type"]
             | null
           created_at?: string
+          creneau_horaire_debut?: string | null
+          creneau_horaire_fin?: string | null
           cyke_id?: string | null
           date?: string | null
           id?: number
@@ -136,6 +140,8 @@ export type Database = {
             | Database["public"]["Enums"]["palette_type"]
             | null
           created_at?: string
+          creneau_horaire_debut?: string | null
+          creneau_horaire_fin?: string | null
           cyke_id?: string | null
           date?: string | null
           id?: number
@@ -334,6 +340,10 @@ export type Database = {
       point_de_collecte: {
         Row: {
           adresse: string
+          adresse_code_postal: string | null
+          adresse_numero: string | null
+          adresse_rue: string | null
+          adresse_ville: string | null
           collecte_par_id: number | null
           consigne: boolean
           contacts: string[]
@@ -360,6 +370,10 @@ export type Database = {
         }
         Insert: {
           adresse: string
+          adresse_code_postal?: string | null
+          adresse_numero?: string | null
+          adresse_rue?: string | null
+          adresse_ville?: string | null
           collecte_par_id?: number | null
           consigne?: boolean
           contacts?: string[]
@@ -386,6 +400,10 @@ export type Database = {
         }
         Update: {
           adresse?: string
+          adresse_code_postal?: string | null
+          adresse_numero?: string | null
+          adresse_rue?: string | null
+          adresse_ville?: string | null
           collecte_par_id?: number | null
           consigne?: boolean
           contacts?: string[]
@@ -606,18 +624,21 @@ export type Database = {
       transporteur: {
         Row: {
           created_at: string
+          cyke_connexion: boolean
           entrepot_id: number | null
           id: number
           nom: string
         }
         Insert: {
           created_at?: string
+          cyke_connexion?: boolean
           entrepot_id?: number | null
           id?: number
           nom: string
         }
         Update: {
           created_at?: string
+          cyke_connexion?: boolean
           entrepot_id?: number | null
           id?: number
           nom?: string

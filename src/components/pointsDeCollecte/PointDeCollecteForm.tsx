@@ -130,6 +130,18 @@ const PointDeCollecteForm: React.FC<Props> = ({
           onChange={(e) => handleLongitudeChange(e.target.value)}
         />
       </Form.Item>
+      <Form.Item label="Adresse numéro" name="adresse_numero" hidden>
+        <Input />
+      </Form.Item>
+      <Form.Item label="Adresse rue" name="adresse_rue" hidden>
+        <Input />
+      </Form.Item>
+      <Form.Item label="Adresse code postal" name="adresse_code_postal" hidden>
+        <Input />
+      </Form.Item>
+      <Form.Item label="Adresse ville" name="adresse_ville" hidden>
+        <Input />
+      </Form.Item>
 
       {latLng && latLng.lat && latLng.lng && (
         <PointDeCollecteMap
