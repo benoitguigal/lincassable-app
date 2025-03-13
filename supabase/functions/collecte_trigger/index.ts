@@ -129,42 +129,42 @@ Deno.serve(async (req) => {
   try {
     if (type === "DELETE" && old_record.cyke_id) {
       // Annule la livraison cyke
-      const canceled = await cykeClient.delivery.cancel(old_record.cyke_id);
-      return new Response(JSON.stringify(canceled), {
-        headers: { "Content-Type": "application/json" },
-      });
+      await cykeClient.delivery.cancel(old_record.cyke_id);
     } else if (type === "UPDATE" && record.cyke_id) {
       const collecte = await getFullCollecte(record);
       // Met à jour les informations de la collecte
       const data = getDelivery(collecte);
       // Met à jour la livraison cyke
-      const updated = await cykeClient.delivery.update(record.cyke_id, data);
-      return new Response(JSON.stringify(updated), {
-        headers: { "Content-Type": "application/json" },
-      });
+      await cykeClient.delivery.update(record.cyke_id, data);
     } else if (type === "INSERT" && !record.cyke_id) {
       const collecte = await getFullCollecte(record);
       const cykeConnexion = collecte?.tournee?.transporteur?.cyke_connexion;
-      if (cykeConnexion) {
+      if (cykeConnexion && !record.cyke_id) {
         // Crée une livraison Cyke par API
         const data = getDelivery(collecte);
         const created = await cykeClient.delivery.create(data);
         const { id } = created;
 
         // Ajoute l'identifiant de la livraison Cyke à la collecte L'INCASSABLE
-        const { data: collecteUpdateData, error: collecteUpdateError } =
-          await supabaseAdmin
-            .from("collecte")
-            .update({ cyke_id: id })
-            .eq("id", record.id);
+        const { error: collecteUpdateError } = await supabaseAdmin
+          .from("collecte")
+          .update({ cyke_id: id })
+          .eq("id", record.id);
 
         if (collecteUpdateError) {
           throw collecteUpdateError;
         }
+      }
 
-        return new Response(JSON.stringify(collecteUpdateData), {
-          headers: { "Content-Type": "application/json" },
-        });
+      if (collecte.tournee?.date) {
+        // Utilise la date de la tournée pour renseigner la date de la collecte
+        const { error } = await supabaseAdmin
+          .from("collecte")
+          .update({ date: collecte.tournee.date })
+          .eq("id", record.id);
+        if (error) {
+          throw error;
+        }
       }
     }
 

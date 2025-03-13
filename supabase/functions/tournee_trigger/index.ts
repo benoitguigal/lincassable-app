@@ -6,9 +6,20 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 import discordClient from "../_shared/discord.ts";
+import { Database } from "../_shared/types/supabase.ts";
+
+type Tournee = Database["public"]["Tables"]["tournee"]["Row"];
+
+type UpdatePayload = {
+  type: "UPDATE";
+  table: string;
+  schema: string;
+  record: Tournee;
+  old_record: Tournee;
+};
 
 Deno.serve(async (req) => {
-  const { record, old_record } = await req.json();
+  const { type, record, old_record } = (await req.json()) as UpdatePayload;
 
   try {
     const { data: tournees } = await supabaseAdmin
@@ -19,38 +30,53 @@ Deno.serve(async (req) => {
     if (tournees?.length) {
       const tournee = tournees[0];
 
-      const zoneDeCollecte = tournee.zone_de_collecte;
-      const transporteur = tournee.transporteur;
+      if (type === "UPDATE") {
+        const zoneDeCollecte = tournee.zone_de_collecte;
+        const transporteur = tournee.transporteur;
 
-      const dateIsModified = record.date !== old_record.date;
-      const statutIsModified = record.statut !== old_record.statut;
-      const prixIsModified = record.prix !== old_record.prix;
+        const dateIsModified = record.date !== old_record.date;
+        const statutIsModified = record.statut !== old_record.statut;
+        const prixIsModified = record.prix !== old_record.prix;
 
-      if (dateIsModified || statutIsModified || prixIsModified) {
-        let msg = `La tournée ${zoneDeCollecte?.nom} du ${tournee.date} par le transporteur ${transporteur?.nom} a été modifiée`;
         if (dateIsModified) {
-          msg =
-            msg +
-            `\nAncienne date : ${old_record.date} - Nouvelle date : ${record.date}`;
+          // modifie la date des collectes correspondantes
+          const { error } = await supabaseAdmin
+            .from("collecte")
+            .update({ date: record.date })
+            .eq("tournee_id", record.id);
+          if (error) {
+            throw error;
+          }
         }
 
-        if (statutIsModified) {
-          msg =
-            msg +
-            `\nAncien statut : ${old_record.statut} - Nouveau statut : ${record.statut}`;
+        // Envoie une notification sur Discord pour notifier que la
+        // tournée a été modifiée
+        if (dateIsModified || statutIsModified || prixIsModified) {
+          let msg = `La tournée ${zoneDeCollecte?.nom} du ${tournee.date} par le transporteur ${transporteur?.nom} a été modifiée`;
+          if (dateIsModified) {
+            msg =
+              msg +
+              `\nAncienne date : ${old_record.date} - Nouvelle date : ${record.date}`;
+          }
+
+          if (statutIsModified) {
+            msg =
+              msg +
+              `\nAncien statut : ${old_record.statut} - Nouveau statut : ${record.statut}`;
+          }
+
+          if (prixIsModified) {
+            msg =
+              msg +
+              `\nAncien prix : ${old_record.prix} - Nouveau prix : ${record.prix}`;
+          }
+
+          discordClient.edit({ channel: "outil-tournee" });
+
+          await discordClient.send({
+            content: msg,
+          });
         }
-
-        if (prixIsModified) {
-          msg =
-            msg +
-            `\nAncien prix : ${old_record.prix} - Nouveau prix : ${record.prix}`;
-        }
-
-        discordClient.edit({ channel: "outil-tournee" });
-
-        await discordClient.send({
-          content: msg,
-        });
       }
     }
     return new Response(
