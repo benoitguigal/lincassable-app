@@ -11,15 +11,17 @@ import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 function getEventLabel(eventType: CykeWebhookPayload["event_type"]) {
   switch (eventType) {
     case "delivery_saved":
-      return "Crée";
+      return "Enregistré";
     case "delivery_scheduled":
       return "Programmé";
     case "delivery_picked_up":
-      return "Picked Up";
+      return "Enlevé";
     case "delivery_cancelled":
       return "Annulé";
     case "delivery_failed":
       return "Échec";
+    case "delivery_delivered":
+      return "Livré";
     default:
       return "Statut inconnu";
   }
@@ -39,7 +41,7 @@ Deno.serve(async (req) => {
   try {
     const { data: collecteData, error: collecteError } = await supabaseAdmin
       .from("collecte")
-      .select("*,tournee(*)")
+      .select("*,tournee(*),point_de_collecte(*)")
       .eq("cyke_id", payload.delivery.id);
 
     if (collecteError) {
@@ -48,17 +50,17 @@ Deno.serve(async (req) => {
 
     const collecte = collecteData[0];
 
-    let discordMsg = `Une collecte Agilenville vient de changer de statut : ${getEventLabel(
-      event_type
-    )}`;
+    let discordMsg = `La collecte Agilenville chez ${
+      collecte.point_de_collecte?.nom ?? ""
+    } vient de changer de statut : ${getEventLabel(event_type)}`;
 
     discordMsg += `\nURL de la livraison sur Cyke : https://www.cyke.io/deliveries/${payload.delivery.id}`;
-
-    discordMsg += `\nURL de suivi : ${payload.delivery.dropoff.tracking_url}`;
 
     if (collecte && collecte.tournee_id) {
       discordMsg += `\nTournée L'INCASSABLE correspondante : https://app.lincassable.com/tournee/show/${collecte.tournee_id}`;
     }
+
+    discordClient.edit({ channel: "outil-cyke" });
 
     await discordClient.send({
       content: discordMsg,
