@@ -5,11 +5,11 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
-import discordClient from "../_shared/discord.ts";
 import {
   InsertPayload,
   RemplissageContenants,
 } from "../_shared/types/index.ts";
+import { webhooks } from "../_shared/discord.ts";
 
 Deno.serve(async (req) => {
   const { record } = (await req.json()) as InsertPayload<RemplissageContenants>;
@@ -41,9 +41,7 @@ Deno.serve(async (req) => {
         msg += `\nPalox rempli à ${record.remplissage_palox}%`;
       }
 
-      discordClient.edit({ channel: "outil-formulaire" });
-
-      await discordClient.send({
+      await webhooks.remplissage.send({
         content: msg,
       });
     }

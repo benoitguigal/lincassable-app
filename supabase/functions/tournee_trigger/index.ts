@@ -5,8 +5,8 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
-import discordClient from "../_shared/discord.ts";
 import { Tournee, UpdatePayload } from "../_shared/types/index.ts";
+import { webhooks } from "../_shared/discord.ts";
 
 Deno.serve(async (req) => {
   const { type, record, old_record } =
@@ -62,9 +62,7 @@ Deno.serve(async (req) => {
               `\nAncien prix : ${old_record.prix} - Nouveau prix : ${record.prix}`;
           }
 
-          discordClient.edit({ channel: "outil-tournee" });
-
-          await discordClient.send({
+          await webhooks.tournee.send({
             content: msg,
           });
         }

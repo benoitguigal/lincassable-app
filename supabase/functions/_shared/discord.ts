@@ -1,11 +1,16 @@
 import { WebhookClient } from "npm:discord.js";
 
-const webhookId = Deno.env.get("DISCORD_WEBHOOK_ID");
-const webhookToken = Deno.env.get("DISCORD_WEBHOOK_TOKEN");
-
-const discordClient = new WebhookClient({
-  id: webhookId ?? "",
-  token: webhookToken ?? "",
-});
-
-export default discordClient;
+export const webhooks = {
+  remplissage: new WebhookClient({
+    id: Deno.env.get("DISCORD_REMPLISSAGE_WEBHOOK_ID") ?? "",
+    token: Deno.env.get("DISCORD_REMPLISSAGE_WEBHOOK_TOKEN") ?? "",
+  }),
+  tournee: new WebhookClient({
+    id: Deno.env.get("DISCORD_TOURNEE_WEBHOOK_ID") ?? "",
+    token: Deno.env.get("DISCORD_TOURNEE_WEBHOOK_TOKEN") ?? "",
+  }),
+  cyke: new WebhookClient({
+    id: Deno.env.get("DISCORD_CYKE_WEBHOOK_ID") ?? "",
+    token: Deno.env.get("DISCORD_CYKE_WEBHOOK_TOKEN") ?? "",
+  }),
+};

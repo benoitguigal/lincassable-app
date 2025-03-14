@@ -4,9 +4,9 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import discordClient from "../_shared/discord.ts";
 import { CykeWebhookPayload } from "../_shared/cyke.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
+import { webhooks } from "../_shared/discord.ts";
 
 function getEventLabel(eventType: CykeWebhookPayload["event_type"]) {
   switch (eventType) {
@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
     const collecte = collecteData[0];
 
     let discordMsg = `La collecte Agilenville chez ${
-      collecte.point_de_collecte?.nom ?? ""
+      collecte?.point_de_collecte?.nom ?? "Inconnu"
     } vient de changer de statut : ${getEventLabel(event_type)}`;
 
     discordMsg += `\nURL de la livraison sur Cyke : https://www.cyke.io/deliveries/${payload.delivery.id}`;
@@ -60,9 +60,7 @@ Deno.serve(async (req) => {
       discordMsg += `\nTournée L'INCASSABLE correspondante : https://app.lincassable.com/tournee/show/${collecte.tournee_id}`;
     }
 
-    discordClient.edit({ channel: "outil-cyke" });
-
-    await discordClient.send({
+    await webhooks.cyke.send({
       content: discordMsg,
     });
 
