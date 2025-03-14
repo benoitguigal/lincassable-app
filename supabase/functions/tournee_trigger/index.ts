@@ -6,20 +6,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 import discordClient from "../_shared/discord.ts";
-import { Database } from "../_shared/types/supabase.ts";
-
-type Tournee = Database["public"]["Tables"]["tournee"]["Row"];
-
-type UpdatePayload = {
-  type: "UPDATE";
-  table: string;
-  schema: string;
-  record: Tournee;
-  old_record: Tournee;
-};
+import { Tournee, UpdatePayload } from "../_shared/types/index.ts";
 
 Deno.serve(async (req) => {
-  const { type, record, old_record } = (await req.json()) as UpdatePayload;
+  const { type, record, old_record } =
+    (await req.json()) as UpdatePayload<Tournee>;
 
   try {
     const { data: tournees } = await supabaseAdmin

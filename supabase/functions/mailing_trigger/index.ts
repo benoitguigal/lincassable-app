@@ -5,29 +5,16 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import nunjucks from "npm:nunjucks";
-import { Database } from "../_shared/types/supabase.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
-
-type Mailing = Database["public"]["Tables"]["mailing"]["Row"];
-type MailInsert = Database["public"]["Tables"]["mail"]["Insert"];
-type PointDeCollecte = Database["public"]["Tables"]["point_de_collecte"]["Row"];
-type Tournee = Database["public"]["Tables"]["tournee"]["Row"];
-type Collecte = Database["public"]["Tables"]["collecte"]["Row"];
-
-type InsertPayload = {
-  type: "INSERT";
-  table: string;
-  schema: string;
-  record: Mailing;
-  old_record: null;
-};
-type UpdatePayload = {
-  type: "UPDATE";
-  table: string;
-  schema: string;
-  record: Mailing;
-  old_record: Mailing;
-};
+import {
+  Collecte,
+  InsertPayload,
+  Mailing,
+  MailInsert,
+  PointDeCollecte,
+  Tournee,
+  UpdatePayload,
+} from "../_shared/types/index.ts";
 
 type GetVariablesOpts = {
   mailing: Mailing;
@@ -110,7 +97,9 @@ async function getVariables({ mailing, pointDeCollecte }: GetVariablesOpts) {
 
 Deno.serve(async (req) => {
   // Database trigger
-  const { type, record } = (await req.json()) as InsertPayload | UpdatePayload;
+  const { type, record } = (await req.json()) as
+    | InsertPayload<Mailing>
+    | UpdatePayload<Mailing>;
 
   try {
     if (record.statut == "En attente") {

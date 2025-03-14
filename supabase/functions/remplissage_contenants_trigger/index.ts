@@ -6,21 +6,13 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 import discordClient from "../_shared/discord.ts";
-import { Database } from "../_shared/types/supabase.ts";
-
-type RemplissageContenants =
-  Database["public"]["Tables"]["remplissage_contenants"]["Row"];
-
-type InsertPayload = {
-  type: "INSERT";
-  table: string;
-  schema: string;
-  record: RemplissageContenants;
-  old_record: null;
-};
+import {
+  InsertPayload,
+  RemplissageContenants,
+} from "../_shared/types/index.ts";
 
 Deno.serve(async (req) => {
-  const { record } = (await req.json()) as InsertPayload;
+  const { record } = (await req.json()) as InsertPayload<RemplissageContenants>;
 
   try {
     const { data: pointsDeCollecte, error } = await supabaseAdmin
