@@ -4,7 +4,6 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { Database } from "../_shared/types/supabase.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 import cykeClient, {
   CykeDelivery,
@@ -12,31 +11,13 @@ import cykeClient, {
   CykePlace,
 } from "../_shared/cyke.ts";
 import moment from "npm:moment-timezone";
-
-type Collecte = Database["public"]["Tables"]["collecte"]["Row"];
-type PointDeCollecte = Database["public"]["Tables"]["point_de_collecte"]["Row"];
-
-type InsertPayload = {
-  type: "INSERT";
-  table: string;
-  schema: string;
-  record: Collecte;
-  old_record: null;
-};
-type UpdatePayload = {
-  type: "UPDATE";
-  table: string;
-  schema: string;
-  record: Collecte;
-  old_record: Collecte;
-};
-type DeletePayload = {
-  type: "DELETE";
-  table: string;
-  schema: string;
-  record: null;
-  old_record: Collecte;
-};
+import {
+  Collecte,
+  DeletePayload,
+  InsertPayload,
+  PointDeCollecte,
+  UpdatePayload,
+} from "../_shared/types/index.ts";
 
 const casier: Pick<CykePackage, "name" | "volume_dm3" | "weight_kg"> = {
   name: "Caisses à bouteille (max 16)",
@@ -119,52 +100,55 @@ function getDelivery(
   return delivery;
 }
 
+// Active ou désactive la synchronisation avec cyke
+const cykeSync = Deno.env.get("CYKE_SYNC") === "true";
+
 Deno.serve(async (req) => {
   // Database trigger
   const { type, record, old_record } = (await req.json()) as
-    | InsertPayload
-    | UpdatePayload
-    | DeletePayload;
+    | InsertPayload<Collecte>
+    | UpdatePayload<Collecte>
+    | DeletePayload<Collecte>;
 
   try {
-    if (type === "DELETE" && old_record.cyke_id) {
+    if (type === "DELETE" && old_record.cyke_id && cykeSync) {
       // Annule la livraison cyke
-      const canceled = await cykeClient.delivery.cancel(old_record.cyke_id);
-      return new Response(JSON.stringify(canceled), {
-        headers: { "Content-Type": "application/json" },
-      });
-    } else if (type === "UPDATE" && record.cyke_id) {
+      await cykeClient.delivery.cancel(old_record.cyke_id);
+    } else if (type === "UPDATE" && record.cyke_id && cykeSync) {
       const collecte = await getFullCollecte(record);
       // Met à jour les informations de la collecte
       const data = getDelivery(collecte);
       // Met à jour la livraison cyke
-      const updated = await cykeClient.delivery.update(record.cyke_id, data);
-      return new Response(JSON.stringify(updated), {
-        headers: { "Content-Type": "application/json" },
-      });
+      await cykeClient.delivery.update(record.cyke_id, data);
     } else if (type === "INSERT" && !record.cyke_id) {
       const collecte = await getFullCollecte(record);
       const cykeConnexion = collecte?.tournee?.transporteur?.cyke_connexion;
-      if (cykeConnexion) {
+      if (cykeConnexion && cykeSync && !record.cyke_id) {
         // Crée une livraison Cyke par API
         const data = getDelivery(collecte);
         const created = await cykeClient.delivery.create(data);
         const { id } = created;
 
         // Ajoute l'identifiant de la livraison Cyke à la collecte L'INCASSABLE
-        const { data: collecteUpdateData, error: collecteUpdateError } =
-          await supabaseAdmin
-            .from("collecte")
-            .update({ cyke_id: id })
-            .eq("id", record.id);
+        const { error: collecteUpdateError } = await supabaseAdmin
+          .from("collecte")
+          .update({ cyke_id: id })
+          .eq("id", record.id);
 
         if (collecteUpdateError) {
           throw collecteUpdateError;
         }
+      }
 
-        return new Response(JSON.stringify(collecteUpdateData), {
-          headers: { "Content-Type": "application/json" },
-        });
+      if (collecte.tournee?.date) {
+        // Utilise la date de la tournée pour renseigner la date de la collecte
+        const { error } = await supabaseAdmin
+          .from("collecte")
+          .update({ date: collecte.tournee.date })
+          .eq("id", record.id);
+        if (error) {
+          throw error;
+        }
       }
     }
 

@@ -4,9 +4,9 @@
 // This enables autocomplete, go to definition, etc.
 
 // Setup type definitions for built-in Supabase Runtime APIs
-import { createClient } from "jsr:@supabase/supabase-js@2";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { Database } from "../_shared/types/supabase.ts";
+import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 
 type Prevision = Database["public"]["Tables"]["prevision"]["Insert"];
 
@@ -18,17 +18,12 @@ const formatDate = (date: Date) => {
 };
 
 Deno.serve(async () => {
-  const supabaseClient = createClient<Database>(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-  );
-
   try {
     const previsions: Prevision[] = [];
 
     // Récupère l'ensemble des points de collecte
     const { data: pointsDeCollecte, error: pointsDeCollecteError } =
-      await supabaseClient
+      await supabaseAdmin
         .from("point_de_collecte")
         .select("*")
         .eq("previsible", true)
@@ -41,7 +36,7 @@ Deno.serve(async () => {
 
     // Pour chaque point de collecte, récupère les deux dernières collectes
     for (const pointDeCollecte of pointsDeCollecte) {
-      const { data: collectes, error: collecteError } = await supabaseClient
+      const { data: collectes, error: collecteError } = await supabaseAdmin
         .from("collecte")
         .select("*")
         .eq("point_de_collecte_id", pointDeCollecte.id)
@@ -54,7 +49,7 @@ Deno.serve(async () => {
       }
 
       const { data: remplissageData, error: remplissageError } =
-        await supabaseClient
+        await supabaseAdmin
           .from("remplissage_contenants")
           .select("*")
           .eq("point_de_collecte_id", pointDeCollecte.id)
@@ -159,7 +154,7 @@ Deno.serve(async () => {
     }
 
     if (previsions.length) {
-      const { error: deletePrevisionsError } = await supabaseClient
+      const { error: deletePrevisionsError } = await supabaseAdmin
         .from("prevision")
         .delete()
         .gt("id", 0); // all rows
@@ -168,7 +163,7 @@ Deno.serve(async () => {
         throw deletePrevisionsError;
       }
 
-      const { error: insertPrevisionsError } = await supabaseClient
+      const { error: insertPrevisionsError } = await supabaseAdmin
         .from("prevision")
         .insert(previsions)
         .select();

@@ -164,3 +164,8 @@ verify_jwt = false
 [functions.cyke_webhook]
 
 verify_jwt = false
+
+# See https://github.com/supabase/cli/issues/1190#issuecomment-2627930901
+[db.vault]
+supabase_url = "env(VAULT_SUPABASE_URL)"
+supabase_api_key = "env(VAULT_SUPABASE_API_KEY)"

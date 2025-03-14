@@ -5,9 +5,8 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import brevo from "npm:@getbrevo/brevo";
-import { createClient } from "jsr:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
-import { Database } from "../_shared/types/supabase.ts";
+import supabaseClient from "../_shared/supabaseClient.ts";
 
 Deno.serve(async (req) => {
   // permet de faire des requêtes depuis le navigateur
@@ -18,29 +17,23 @@ Deno.serve(async (req) => {
   try {
     const { mailing_id } = await req.json();
 
-    const supabaseClient = createClient<Database>(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      // Create client with Auth context of the user that called the function.
-      // This way your row-level-security (RLS) policies are applied.
-      {
-        global: {
-          headers: { Authorization: req.headers.get("Authorization")! },
-        },
-      }
-    );
+    const authorization = req.headers.get("Authorization") ?? "";
+
+    const supabase = supabaseClient({
+      authorization,
+    });
 
     // First get the token from the Authorization header
-    const token = req.headers.get("Authorization").replace("Bearer ", "");
+    const token = authorization.replace("Bearer ", "");
 
     // Now we can get the session or user object
-    const { error: authError } = await supabaseClient.auth.getUser(token);
+    const { error: authError } = await supabase.auth.getUser(token);
 
     if (authError) {
       throw authError;
     }
 
-    const { data: mailingData, error: mailingError } = await supabaseClient
+    const { data: mailingData, error: mailingError } = await supabase
       .from("mailing")
       .select("*,mail_template(*)")
       .eq("id", mailing_id);
@@ -51,7 +44,7 @@ Deno.serve(async (req) => {
 
     const mailing = mailingData[0];
 
-    const { data: mailsData, error: mailsError } = await supabaseClient
+    const { data: mailsData, error: mailsError } = await supabase
       .from("mail")
       .select("*")
       .eq("mailing_id", mailing.id);
@@ -73,7 +66,7 @@ Deno.serve(async (req) => {
     sendSmtpEmail.subject = mailing?.mail_template?.sujet;
     sendSmtpEmail.htmlContent = mailing?.mail_template?.corps;
     sendSmtpEmail.tags = [
-      Deno.env.get("BREVO_WEBHOOK_KEY"),
+      Deno.env.get("BREVO_WEBHOOK_KEY") ?? "",
       String(mailing.id),
     ];
     sendSmtpEmail.messageVersions = [];
@@ -89,20 +82,20 @@ Deno.serve(async (req) => {
     const { response } = await brevoClient.sendTransacEmail(sendSmtpEmail);
 
     if (response.statusCode === 201) {
-      await supabaseClient
+      await supabase
         .from("mailing")
         .update({ statut: "Envoyé", date_envoi: new Date().toISOString() })
         .eq("id", mailing_id)
         .select();
 
-      await supabaseClient
+      await supabase
         .from("mail")
         .update({ statut: "waiting" })
         .eq("mailing_id", mailing_id)
         .eq("statut", "created")
         .select();
     } else {
-      await supabaseClient
+      await supabase
         .from("mailing")
         .update({ statut: "Échec", date_envoi: new Date().toISOString() })
         .eq("id", mailing_id)
