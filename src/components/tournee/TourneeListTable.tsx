@@ -193,45 +193,54 @@ const TourneeListTable: React.FC<TourneeListTableProps> = ({ user }) => {
             }
           }}
         />
-        <Select
-          {...transporteurSelectProps}
-          style={{ width: "250px" }}
-          allowClear
-          placeholder="Transporteur"
-          value={transporteurFilter}
-          onChange={(value) => {
-            if (value) {
-              setFilters(
-                [{ field: "transporteur_id", operator: "eq", value }],
-                "merge"
-              );
-            } else {
-              setFilters(
-                filters.filter(
-                  (f) => (f as LogicalFilter).field !== "transporteur_id"
-                ),
-                "replace"
-              );
-            }
-          }}
-        />
-        <Select
-          options={statutTourneeOptions}
-          style={{ width: "300px" }}
-          placeholder="Statut"
-          allowClear
-          value={statutFilter}
-          onChange={(value) => {
-            if (value) {
-              setFilters([{ field: "statut", operator: "eq", value }], "merge");
-            } else {
-              setFilters(
-                filters.filter((f) => (f as LogicalFilter).field !== "statut"),
-                "replace"
-              );
-            }
-          }}
-        />
+        {!isTransporteur && (
+          <Select
+            {...transporteurSelectProps}
+            style={{ width: "250px" }}
+            allowClear
+            placeholder="Transporteur"
+            value={transporteurFilter}
+            onChange={(value) => {
+              if (value) {
+                setFilters(
+                  [{ field: "transporteur_id", operator: "eq", value }],
+                  "merge"
+                );
+              } else {
+                setFilters(
+                  filters.filter(
+                    (f) => (f as LogicalFilter).field !== "transporteur_id"
+                  ),
+                  "replace"
+                );
+              }
+            }}
+          />
+        )}
+        {!isTransporteur && (
+          <Select
+            options={statutTourneeOptions}
+            style={{ width: "300px" }}
+            placeholder="Statut"
+            allowClear
+            value={statutFilter}
+            onChange={(value) => {
+              if (value) {
+                setFilters(
+                  [{ field: "statut", operator: "eq", value }],
+                  "merge"
+                );
+              } else {
+                setFilters(
+                  filters.filter(
+                    (f) => (f as LogicalFilter).field !== "statut"
+                  ),
+                  "replace"
+                );
+              }
+            }}
+          />
+        )}
       </Flex>
       <Table {...tableProps} size="small" rowKey="id">
         <Table.Column
