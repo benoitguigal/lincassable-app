@@ -16,7 +16,6 @@ import dayjs from "dayjs";
 type Props = Pick<UseModalFormReturnType<Collecte>, "formProps">;
 
 const paletteOptions = [
-  { value: null, label: "-" },
   { value: "Europe", label: "Palette Europe - 80*120" },
   { value: "VMF", label: "Palette VMF - 100*120" },
 ];
@@ -125,7 +124,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
   // Nombre de casier pleins à collecter par palette
   const collecteNbCasierParPalette = useMemo(() => {
-    if (collecteNbCasierPalette > 0) {
+    if (collecteNbCasierPleins && collecteNbCasierPalette) {
       return new Decimal(collecteNbCasierPleins)
         .dividedBy(collecteNbCasierPalette)
         .toDecimalPlaces(0);
@@ -154,7 +153,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
   // Nombre de casier vides à livrer par palette
   const livraisonNbCasierParPalette = useMemo(() => {
-    if (livraisonNbCasierPalette > 0) {
+    if (livraisonNbCasierVides && livraisonNbCasierPalette) {
       return new Decimal(livraisonNbCasierVides)
         .dividedBy(livraisonNbCasierPalette)
         .toDecimalPlaces(0);
@@ -183,7 +182,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
   // Nombre de casier 33cl pleins à collecter par palette
   const collecteNbCasier33ParPalette = useMemo(() => {
-    if (collecteNbCasier33Palette > 0) {
+    if (collecteNbCasier33Pleins && collecteNbCasier33Palette) {
       return new Decimal(collecteNbCasier33Pleins)
         .dividedBy(collecteNbCasier33Palette)
         .toDecimalPlaces(0);
@@ -212,7 +211,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
   // Nombre de casier 33cl vides à livrer par palette
   const livraisonNbCasier33ParPalette = useMemo(() => {
-    if (livraisonNbCasier33Palette > 0) {
+    if (livraisonNbCasier33Vides && livraisonNbCasier33Palette) {
       return new Decimal(livraisonNbCasier33Vides)
         .dividedBy(livraisonNbCasier33Palette)
         .toDecimalPlaces(0);
@@ -235,7 +234,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
   // Nombre de fûts à collecter par palette
   const collecteNbFutsParPalette = useMemo(() => {
-    if (collecteFutNbPalettes > 0) {
+    if (collecteNbFuts && collecteFutNbPalettes) {
       return new Decimal(collecteNbFuts)
         .dividedBy(collecteFutNbPalettes)
         .toDecimalPlaces(0);
@@ -261,7 +260,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
   // Nombre de fûts à collecter par palette
   const livraisonNbFutsParPalette = useMemo(() => {
-    if (livraisonFutNbPalettes > 0) {
+    if (livraisonNbFuts && livraisonFutNbPalettes) {
       return new Decimal(livraisonNbFuts)
         .dividedBy(livraisonFutNbPalettes)
         .toDecimalPlaces(0);
@@ -310,6 +309,10 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
       setHasPaletteVide(true);
     }
   }, [initialValues]);
+
+  const creneauHoraireDisabledHours = [
+    0, 1, 2, 3, 4, 5, 6, 7, 19, 20, 21, 22, 23,
+  ];
 
   return (
     <Form {...formProps} layout="vertical" style={{ marginTop: "1em" }}>
@@ -373,7 +376,11 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           <TimePicker
             showSecond={false}
             showNow={false}
+            needConfirm={false}
             minuteStep={30}
+            disabledTime={() => ({
+              disabledHours: () => creneauHoraireDisabledHours,
+            })}
             size="middle"
             style={{ width: 300 }}
           />
@@ -391,14 +398,18 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           <TimePicker
             showSecond={false}
             showNow={false}
+            needConfirm={false}
             minuteStep={30}
+            disabledTime={() => ({
+              disabledHours: () => creneauHoraireDisabledHours,
+            })}
             size="middle"
             style={{ width: 300 }}
           />
         </Form.Item>
       </Flex>
 
-      <Flex vertical gap="middle">
+      <Flex vertical gap="middle" align="flex-start">
         <Checkbox
           checked={hasCasier}
           onChange={(e) => {
@@ -438,8 +449,9 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             <Select
               options={paletteOptions}
               style={{ width: 300 }}
+              allowClear={true}
               onChange={(v) => {
-                if (v === null) {
+                if (!v) {
                   form?.setFieldValue("collecte_casier_75_plein_nb_palette", 0);
                 }
               }}
@@ -448,7 +460,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           <Form.Item
             name="collecte_casier_75_plein_nb_palette"
             label="Nombre de palettes"
-            hidden={collecteCasierPaletteType === null}
+            hidden={!collecteCasierPaletteType}
             help={
               collecteNbCasierPalette > 0
                 ? `${collecteNbCasierPalette} palettes de ${collecteNbCasierParPalette} casiers`
@@ -481,9 +493,10 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           >
             <Select
               options={paletteOptions}
+              allowClear={true}
               style={{ width: 300 }}
               onChange={(v) => {
-                if (v === null) {
+                if (!v) {
                   form?.setFieldValue("livraison_casier_75_vide_nb_palette", 0);
                 }
               }}
@@ -492,7 +505,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           <Form.Item
             name="livraison_casier_75_vide_nb_palette"
             label="Nombre de palettes"
-            hidden={livraisonCasierPaletteType === null}
+            hidden={!livraisonCasierPaletteType}
             help={
               livraisonNbCasierPalette > 0
                 ? `${livraisonNbCasierPalette} palettes de ${livraisonNbCasierParPalette} casiers`
@@ -546,9 +559,10 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           >
             <Select
               options={paletteOptions}
+              allowClear={true}
               style={{ width: 300 }}
               onChange={(v) => {
-                if (v === null) {
+                if (!v) {
                   form?.setFieldValue("collecte_casier_33_plein_nb_palette", 0);
                 }
               }}
@@ -557,7 +571,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           <Form.Item
             name="collecte_casier_33_plein_nb_palette"
             label="Nombre de palettes"
-            hidden={collecteCasier33PaletteType === null}
+            hidden={!collecteCasier33PaletteType}
             help={
               collecteNbCasier33Palette > 0
                 ? `${collecteNbCasier33Palette} palettes de ${collecteNbCasier33ParPalette} casiers`
@@ -590,9 +604,10 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           >
             <Select
               options={paletteOptions}
+              allowClear={true}
               style={{ width: 300 }}
               onChange={(v) => {
-                if (v === null) {
+                if (!v) {
                   form?.setFieldValue("livraison_casier_33_vide_nb_palette", 0);
                 }
               }}
@@ -601,7 +616,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           <Form.Item
             name="livraison_casier_33_vide_nb_palette"
             label="Nombre de palettes"
-            hidden={livraisonCasier33PaletteType === null}
+            hidden={!livraisonCasier33PaletteType}
             help={
               livraisonNbCasier33Palette > 0
                 ? `${livraisonNbCasier33Palette} palettes de ${livraisonNbCasier33ParPalette} casiers`
@@ -742,8 +757,9 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           <Form.Item label="Type de palette" name="collecte_fut_palette_type">
             <Select
               options={paletteOptions}
+              allowClear={true}
               onChange={(v) => {
-                if (v === null) {
+                if (!v) {
                   form?.setFieldValue("collecte_fut_nb_palette", 0);
                 }
               }}
@@ -753,7 +769,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           <Form.Item
             name="collecte_fut_nb_palette"
             label="Nombre de palettes"
-            hidden={collecteFutsPaletteType === null}
+            hidden={!collecteFutsPaletteType}
             help={
               collecteFutNbPalettes > 0
                 ? `${collecteFutNbPalettes} palettes de ${collecteNbFutsParPalette} fûts`
@@ -787,8 +803,9 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           <Form.Item label="Type de palette" name="livraison_fut_palette_type">
             <Select
               options={paletteOptions}
+              allowClear={true}
               onChange={(v) => {
-                if (v === null) {
+                if (!v) {
                   form?.setFieldValue("livraison_fut_nb_palette", 0);
                 }
               }}
@@ -798,7 +815,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           <Form.Item
             name="livraison_fut_nb_palette"
             label="Nombre de palettes"
-            hidden={livraisonFutsPaletteType === null}
+            hidden={!livraisonFutsPaletteType}
             help={
               livraisonFutNbPalettes > 0
                 ? `${livraisonFutNbPalettes} palettes de ${livraisonNbFutsParPalette} fûts`
@@ -844,7 +861,11 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             />
           </Form.Item>
           <Form.Item label="Type de palette" name="collecte_palette_vide_type">
-            <Select options={paletteOptions} style={{ width: 300 }} />
+            <Select
+              options={paletteOptions}
+              allowClear={true}
+              style={{ width: 300 }}
+            />
           </Form.Item>
         </Flex>
 
@@ -865,7 +886,11 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             />
           </Form.Item>
           <Form.Item label="Type de palette" name="livraison_palette_vide_type">
-            <Select options={paletteOptions} style={{ width: 300 }} />
+            <Select
+              options={paletteOptions}
+              allowClear={true}
+              style={{ width: 300 }}
+            />
           </Form.Item>
         </Flex>
 
