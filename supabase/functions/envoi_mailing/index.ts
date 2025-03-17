@@ -5,20 +5,15 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import brevo from "npm:@getbrevo/brevo";
-import { corsHeaders } from "../_shared/cors.ts";
 import supabaseClient from "../_shared/supabaseClient.ts";
+import { handle } from "../_shared/helpers.ts";
 
-Deno.serve(async (req) => {
-  // permet de faire des requêtes depuis le navigateur
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
+type Payload = { mailing_id: string };
 
-  try {
-    const { mailing_id } = await req.json();
-
-    const authorization = req.headers.get("Authorization") ?? "";
-
+Deno.serve(
+  handle<Payload>(async (payload, headers) => {
+    const { mailing_id } = payload;
+    const authorization = headers.get("Authorization") ?? "";
     const supabase = supabaseClient({
       authorization,
     });
@@ -101,18 +96,8 @@ Deno.serve(async (req) => {
         .eq("id", mailing_id)
         .select();
     }
-
-    return new Response(JSON.stringify({ status: response.statusMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: response.statusCode,
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
-});
+  }, true)
+);
 
 /* To invoke locally:
 

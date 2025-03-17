@@ -5,6 +5,7 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
+import { handle } from "../_shared/helpers.ts";
 
 type BrevoEvent = {
   event: string;
@@ -12,43 +13,25 @@ type BrevoEvent = {
   tags: string[];
 };
 
-Deno.serve(async (req) => {
-  const { event, email, tags }: BrevoEvent = await req.json();
-
-  if (tags.length !== 2 || tags[0] !== Deno.env.get("BREVO_WEBHOOK_KEY")) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      headers: { "Content-Type": "application/json" },
-      // Envoie quand même un code de statut 200 pour éviter des retry
-      status: 200,
-    });
-  }
-
-  try {
+Deno.serve(
+  handle<BrevoEvent>(async (payload) => {
+    const { event, email, tags }: BrevoEvent = payload;
+    if (tags.length !== 2 || tags[0] !== Deno.env.get("BREVO_WEBHOOK_KEY")) {
+      return { status: "Forbidden" };
+    }
     const mailing_id = Number(tags[1]);
-
     const { data, error } = await supabaseAdmin
       .from("mail")
       .update({ statut: event })
       .eq("mailing_id", mailing_id)
       .eq("to", email)
       .select();
-
     if (error) {
       throw error;
     }
-
-    return new Response(JSON.stringify(data), {
-      headers: { "Content-Type": "application/json" },
-      status: 200,
-    });
-  } catch (error) {
-    console.log(error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
-});
+    return data;
+  })
+);
 
 /* To invoke locally:
 

@@ -18,6 +18,7 @@ import {
   PointDeCollecte,
   UpdatePayload,
 } from "../_shared/types/index.ts";
+import { handle } from "../_shared/helpers.ts";
 
 const casier: Pick<CykePackage, "name" | "volume_dm3" | "weight_kg"> = {
   name: "Caisses à bouteille (max 16)",
@@ -103,14 +104,14 @@ function getDelivery(
 // Active ou désactive la synchronisation avec cyke
 const cykeSync = Deno.env.get("CYKE_SYNC") === "true";
 
-Deno.serve(async (req) => {
-  // Database trigger
-  const { type, record, old_record } = (await req.json()) as
-    | InsertPayload<Collecte>
-    | UpdatePayload<Collecte>
-    | DeletePayload<Collecte>;
+type Payload =
+  | InsertPayload<Collecte>
+  | UpdatePayload<Collecte>
+  | DeletePayload<Collecte>;
 
-  try {
+Deno.serve(
+  handle<Payload>(async (payload) => {
+    const { type, old_record, record } = payload;
     if (type === "DELETE" && old_record.cyke_id && cykeSync) {
       // Annule la livraison cyke
       await cykeClient.delivery.cancel(old_record.cyke_id);
@@ -139,7 +140,6 @@ Deno.serve(async (req) => {
           throw collecteUpdateError;
         }
       }
-
       if (collecte.tournee?.date) {
         // Utilise la date de la tournée pour renseigner la date de la collecte
         const { error } = await supabaseAdmin
@@ -151,18 +151,8 @@ Deno.serve(async (req) => {
         }
       }
     }
-
-    return new Response(JSON.stringify({ status: "ok" }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.log(error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
-});
+  })
+);
 
 /* To invoke locally:
 
