@@ -1,13 +1,19 @@
 import { corsHeaders } from "./cors.ts";
+import * as Sentry from "npm:@sentry/deno";
+
+Sentry.init({
+  dsn: Deno.env.get("SENTRY_DSN"),
+  tracesSampleRate: 1.0,
+});
 
 /**
  * Wrapper autour des instructions qui s'exécutent dans les "edge functions".
  * - récupère le payload depuis la requête
- * - gère les erreurs
+ * - gère les erreurs et notifie Sentry
  * - gère les headers cors (en cas de requête depuis un navigateur)
  */
 export function handle<T>(
-  fn: (payload: T, headers) => Promise<any>,
+  fn: (payload: T, headers: Headers) => Promise<any>,
   cors = false
 ): Deno.ServeHandler {
   return async (req) => {
@@ -28,6 +34,7 @@ export function handle<T>(
       });
     } catch (error) {
       console.log(error);
+      Sentry.captureException(error);
       return new Response(JSON.stringify({ error: error.message }), {
         headers: {
           "Content-Type": "application/json",
