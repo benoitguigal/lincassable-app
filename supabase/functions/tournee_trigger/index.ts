@@ -7,12 +7,11 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 import { Tournee, UpdatePayload } from "../_shared/types/index.ts";
 import { webhooks } from "../_shared/discord.ts";
+import { handle } from "../_shared/helpers.ts";
 
-Deno.serve(async (req) => {
-  const { type, record, old_record } =
-    (await req.json()) as UpdatePayload<Tournee>;
-
-  try {
+Deno.serve(
+  handle<UpdatePayload<Tournee>>(async (payload) => {
+    const { type, record, old_record } = payload;
     const { data: tournees } = await supabaseAdmin
       .from("tournee")
       .select("*,zone_de_collecte(*),transporteur(*)")
@@ -68,22 +67,8 @@ Deno.serve(async (req) => {
         }
       }
     }
-    return new Response(
-      JSON.stringify({
-        status: `OK`,
-      }),
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  } catch (error) {
-    console.log(error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
-});
+  })
+);
 
 /* To invoke locally:
 

@@ -310,9 +310,13 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     }
   }, [initialValues]);
 
-  const creneauHoraireDisabledHours = [
-    0, 1, 2, 3, 4, 5, 6, 7, 19, 20, 21, 22, 23,
-  ];
+  const creneauDisableTime = {
+    disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 19, 20, 21, 22, 23],
+    disabledMinutes: (selectedHour: number) => {
+      console.log(selectedHour);
+      return selectedHour === 18 ? [30] : [];
+    },
+  };
 
   return (
     <Form {...formProps} layout="vertical" style={{ marginTop: "1em" }}>
@@ -378,9 +382,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             showNow={false}
             needConfirm={false}
             minuteStep={30}
-            disabledTime={() => ({
-              disabledHours: () => creneauHoraireDisabledHours,
-            })}
+            disabledTime={() => creneauDisableTime}
             size="middle"
             style={{ width: 300 }}
           />
@@ -400,9 +402,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             showNow={false}
             needConfirm={false}
             minuteStep={30}
-            disabledTime={() => ({
-              disabledHours: () => creneauHoraireDisabledHours,
-            })}
+            disabledTime={() => creneauDisableTime}
             size="middle"
             style={{ width: 300 }}
           />

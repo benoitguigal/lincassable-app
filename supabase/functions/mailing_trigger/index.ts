@@ -15,6 +15,7 @@ import {
   Tournee,
   UpdatePayload,
 } from "../_shared/types/index.ts";
+import { handle } from "../_shared/helpers.ts";
 
 type GetVariablesOpts = {
   mailing: Mailing;
@@ -95,13 +96,11 @@ async function getVariables({ mailing, pointDeCollecte }: GetVariablesOpts) {
   };
 }
 
-Deno.serve(async (req) => {
-  // Database trigger
-  const { type, record } = (await req.json()) as
-    | InsertPayload<Mailing>
-    | UpdatePayload<Mailing>;
+type Payload = InsertPayload<Mailing> | UpdatePayload<Mailing>;
 
-  try {
+Deno.serve(
+  handle<Payload>(async (payload) => {
+    const { type, record } = payload;
     if (record.statut == "En attente") {
       const { data: mailTemplateData, error: mailTemplateError } =
         await supabaseAdmin
@@ -157,22 +156,10 @@ Deno.serve(async (req) => {
         throw error;
       }
 
-      return new Response(JSON.stringify(data), {
-        headers: { "Content-Type": "application/json" },
-      });
+      return data;
     }
-
-    return new Response(JSON.stringify({ skip: true }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.log(error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
-});
+  })
+);
 
 /* To invoke locally:
 

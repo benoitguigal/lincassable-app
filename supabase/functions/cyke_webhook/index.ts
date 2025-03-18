@@ -7,6 +7,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { CykeWebhookPayload } from "../_shared/cyke.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 import { webhooks } from "../_shared/discord.ts";
+import { handle } from "../_shared/helpers.ts";
 
 function getEventLabel(eventType: CykeWebhookPayload["event_type"]) {
   switch (eventType) {
@@ -27,18 +28,13 @@ function getEventLabel(eventType: CykeWebhookPayload["event_type"]) {
   }
 }
 
-Deno.serve(async (req) => {
-  const { event_type, payload } = (await req.json()) as CykeWebhookPayload;
-  const cykeToken = req.headers.get("X-Cyke-Token");
-
-  if (cykeToken !== Deno.env.get("CYKE_WEBHOOK_TOKEN")) {
-    return new Response(JSON.stringify({ status: "forbidden" }), {
-      headers: { "Content-Type": "application/json" },
-      status: 401,
-    });
-  }
-
-  try {
+Deno.serve(
+  handle<CykeWebhookPayload>(async (data, headers) => {
+    const { event_type, payload } = data as CykeWebhookPayload;
+    const cykeToken = headers.get("X-Cyke-Token");
+    if (cykeToken !== Deno.env.get("CYKE_WEBHOOK_TOKEN")) {
+      return { status: "Forbidden" };
+    }
     const { data: collecteData, error: collecteError } = await supabaseAdmin
       .from("collecte")
       .select("*,tournee(*),point_de_collecte(*)")
@@ -85,18 +81,8 @@ Deno.serve(async (req) => {
         throw deleteCollecteError;
       }
     }
-  } catch (error) {
-    console.log(error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
-
-  return new Response(JSON.stringify({ status: "ok" }), {
-    headers: { "Content-Type": "application/json" },
-  });
-});
+  })
+);
 
 /* To invoke locally:
 

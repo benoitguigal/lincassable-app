@@ -7,6 +7,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { Database } from "../_shared/types/supabase.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
+import { handle } from "../_shared/helpers.ts";
 
 type Prevision = Database["public"]["Tables"]["prevision"]["Insert"];
 
@@ -17,8 +18,8 @@ const formatDate = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
-Deno.serve(async () => {
-  try {
+Deno.serve(
+  handle(async () => {
     const previsions: Prevision[] = [];
 
     // Récupère l'ensemble des points de collecte
@@ -173,17 +174,9 @@ Deno.serve(async () => {
       }
     }
 
-    return new Response(JSON.stringify(previsions), {
-      headers: { "Content-Type": "application/json" },
-      status: 200,
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
-});
+    return previsions;
+  })
+);
 
 /* To invoke locally:
 

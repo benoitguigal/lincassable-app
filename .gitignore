@@ -34,3 +34,5 @@ cyke/.env
 cyke/mapping.json
 
 src/script/
+# Sentry Config File
+.env.sentry-build-plugin

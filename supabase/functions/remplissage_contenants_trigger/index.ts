@@ -10,11 +10,11 @@ import {
   RemplissageContenants,
 } from "../_shared/types/index.ts";
 import { webhooks } from "../_shared/discord.ts";
+import { handle } from "../_shared/helpers.ts";
 
-Deno.serve(async (req) => {
-  const { record } = (await req.json()) as InsertPayload<RemplissageContenants>;
-
-  try {
+Deno.serve(
+  handle<InsertPayload<RemplissageContenants>>(async (payload) => {
+    const { record } = payload;
     const { data: pointsDeCollecte, error } = await supabaseAdmin
       .from("point_de_collecte")
       .select("nom")
@@ -45,22 +45,8 @@ Deno.serve(async (req) => {
         content: msg,
       });
     }
-    return new Response(
-      JSON.stringify({
-        status: `OK`,
-      }),
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  } catch (error) {
-    console.log(error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
-});
+  })
+);
 
 /* To invoke locally:
 
