@@ -16,6 +16,7 @@
     "@refinedev/react-router-v6": "4.6.0",
     "@refinedev/supabase": "5.9.4",
     "@sentry/react": "^9.6.0",
+    "@sentry/vite-plugin": "^3.2.2",
     "antd": "^5.0.5",
     "date-fns": "^3.6.0",
     "decimal.js": "^10.4.3",
