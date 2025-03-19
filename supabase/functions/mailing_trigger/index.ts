@@ -36,7 +36,7 @@ function formatDate(dateStr: string | null) {
 
 // Récupère les variables à injecter dans le template
 async function getVariables({ mailing, pointDeCollecte }: GetVariablesOpts) {
-  const { tournee_id, ...variables } = mailing.variables as {
+  const { tournee_id, ...variables } = (mailing.variables ?? {}) as {
     [key: string]: string | number;
   };
 

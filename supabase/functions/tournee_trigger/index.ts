@@ -3,7 +3,7 @@
 // This enables autocomplete, go to definition, etc.
 
 // Setup type definitions for built-in Supabase Runtime APIs
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import "npm:@supabase/functions-js/edge-runtime.d.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 import { Tournee, UpdatePayload } from "../_shared/types/index.ts";
 import { webhooks } from "../_shared/discord.ts";
