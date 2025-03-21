@@ -1,1 +1,0 @@
-npx tsx --env-file=cyke/.env cyke/import.ts
