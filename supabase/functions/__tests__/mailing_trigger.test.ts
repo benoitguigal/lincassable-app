@@ -1,5 +1,5 @@
 import { expect } from "jsr:@std/expect";
-import { describe, beforeAll, afterEach, it } from "jsr:@std/testing/bdd";
+import { describe, it, beforeEach } from "jsr:@std/testing/bdd";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { Database } from "../_shared/types/supabase.ts";
 import { waitFor } from "./helpers.ts";
@@ -10,11 +10,7 @@ const supabaseAdmin = createClient<Database>(
 );
 
 describe("envoi_mailing", () => {
-  beforeAll(async () => {
-    await supabaseAdmin.rpc("truncate_tables");
-  });
-
-  afterEach(async () => {
+  beforeEach(async () => {
     await supabaseAdmin.rpc("truncate_tables");
   });
 
