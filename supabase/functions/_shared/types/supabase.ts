@@ -674,13 +674,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "transporter_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "transporteur_users_transporteur_id_fkey"
             columns: ["transporteur_id"]
             isOneToOne: false
@@ -705,15 +698,7 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"] | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       zone_de_collecte: {
         Row: {
@@ -760,6 +745,17 @@ export type Database = {
           event: Json
         }
         Returns: Json
+      }
+      truncate_tables: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      update_vault_secret: {
+        Args: {
+          secret_name: string
+          secret_value: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
@@ -900,5 +896,20 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 

@@ -1,0 +1,46 @@
+
+name: Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  edge-functions-tests:
+    runs-on: ubuntu-latest
+    name: Edge functions tests
+    strategy:
+      fail-fast: false
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up Supabase cli
+      uses: supabase/setup-cli@v1
+      with:
+        version: latest
+    - name: Set up Deno
+      uses: denoland/setup-deno@v2
+      with:
+        deno-version: v2.x
+    - name: Start supabase
+      run: supabase start
+    - name: Set up vault secrets
+      working-directory: ./supabase
+      run: |
+        echo VAULT_SUPABASE_URL="http://172.17.0.1:54321" >> .env.local
+        supabase status -o env | grep ANON_KEY | sed 's/^ANON_KEY=/VAULT_SUPABASE_API_KEY=/' >> .env.local
+    - name: Reset supabase db to take into account valut secrets
+      run: supabase db reset
+    - name: Start edges functions
+      run: supabase functions serve >> /tmp/supabase-functions.log &
+    - name: Install tests dependencies
+      working-directory: ./supabase
+      run: deno install
+    - name: Print supabase config as env file for deno tests
+      working-directory: ./supabase
+      run: supabase status -o env | grep -E 'API_URL|ANON_KEY|SERVICE_ROLE_KEY' >> .env
+    - name: Run the tests
+      working-directory: ./supabase
+      run: deno test --allow-all --env-file=.env
+
