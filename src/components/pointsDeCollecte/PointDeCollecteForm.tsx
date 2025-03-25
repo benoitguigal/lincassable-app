@@ -189,29 +189,29 @@ const PointDeCollecteForm: React.FC<Props> = ({
       </Form.Item>
       <Form.Item
         label="Stock casiers 75cl"
-        tooltip="Stock total incluant le stock en rotation"
+        tooltip="Stock total incluant le stock tampon"
         name="stock_casiers_75"
       >
         <Input type="number" min={0} />
       </Form.Item>
       <Form.Item
-        label="Stock casiers 75cl en rotation"
-        tooltip="Ce stock est exclu dans le calcul de la capacité du point de collecte (pour les prévisions par exemple)"
-        name="stock_casiers_75_rotation"
+        label="Stock tampon de casiers 75cl"
+        tooltip="Stock utilisé pour les rotations internes au sein du point de collecte"
+        name="stock_casiers_75_tampon"
       >
         <Input type="number" min={0} />
       </Form.Item>
       <Form.Item
         label="Stock casiers 33cl"
-        tooltip="Stock total incluant le stock en rotation"
+        tooltip="Stock total incluant le stock tampon"
         name="stock_casiers_33"
       >
         <Input type="number" min={0} />
       </Form.Item>
       <Form.Item
-        label="Stock casiers 33cl en rotation"
-        tooltip="Ce stock est exclu dans le calcul de la capacité du point de collecte (pour les prévisions par exemple)"
-        name="stock_casiers_33_rotation"
+        label="Stock tampon casiers 33cl"
+        tooltip="Stock utilisé pour les rotations internes au sein du point de collecte"
+        name="stock_casiers_33_tampon"
       >
         <Input type="number" min={0} />
       </Form.Item>

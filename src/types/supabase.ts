@@ -362,9 +362,9 @@ export type Database = {
           setup_date: string | null
           statut: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33: number
-          stock_casiers_33_rotation: number
+          stock_casiers_33_tampon: number
           stock_casiers_75: number
-          stock_casiers_75_rotation: number
+          stock_casiers_75_tampon: number
           stock_paloxs: number
           telephones: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
@@ -394,9 +394,9 @@ export type Database = {
           setup_date?: string | null
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33?: number
-          stock_casiers_33_rotation?: number
+          stock_casiers_33_tampon?: number
           stock_casiers_75?: number
-          stock_casiers_75_rotation?: number
+          stock_casiers_75_tampon?: number
           stock_paloxs?: number
           telephones?: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
@@ -426,9 +426,9 @@ export type Database = {
           setup_date?: string | null
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33?: number
-          stock_casiers_33_rotation?: number
+          stock_casiers_33_tampon?: number
           stock_casiers_75?: number
-          stock_casiers_75_rotation?: number
+          stock_casiers_75_tampon?: number
           stock_paloxs?: number
           telephones?: string[]
           type?: Database["public"]["Enums"]["point_de_collecte_type"]
