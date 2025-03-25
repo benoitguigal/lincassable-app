@@ -362,7 +362,9 @@ export type Database = {
           setup_date: string | null
           statut: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33: number
+          stock_casiers_33_rotation: number
           stock_casiers_75: number
+          stock_casiers_75_rotation: number
           stock_paloxs: number
           telephones: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
@@ -392,8 +394,10 @@ export type Database = {
           setup_date?: string | null
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33?: number
-          stock_casiers_75: number
-          stock_paloxs: number
+          stock_casiers_33_rotation?: number
+          stock_casiers_75?: number
+          stock_casiers_75_rotation?: number
+          stock_paloxs?: number
           telephones?: string[]
           type: Database["public"]["Enums"]["point_de_collecte_type"]
           zone_de_collecte_id?: number | null
@@ -422,7 +426,9 @@ export type Database = {
           setup_date?: string | null
           statut?: Database["public"]["Enums"]["point_de_collecte_statut"]
           stock_casiers_33?: number
+          stock_casiers_33_rotation?: number
           stock_casiers_75?: number
+          stock_casiers_75_rotation?: number
           stock_paloxs?: number
           telephones?: string[]
           type?: Database["public"]["Enums"]["point_de_collecte_type"]
@@ -748,13 +754,6 @@ export type Database = {
       }
       truncate_tables: {
         Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      update_vault_secret: {
-        Args: {
-          secret_name: string
-          secret_value: string
-        }
         Returns: undefined
       }
     }
