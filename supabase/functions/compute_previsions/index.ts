@@ -64,7 +64,9 @@ Deno.serve(
       const capacite =
         pointDeCollecte.contenant_collecte_type === "palox"
           ? 550
-          : 12 * pointDeCollecte.stock_casiers_75;
+          : 12 *
+            (pointDeCollecte.stock_casiers_75 -
+              pointDeCollecte.stock_casiers_75_tampon);
 
       const prevision: Prevision = {
         point_de_collecte_id: pointDeCollecte.id,
