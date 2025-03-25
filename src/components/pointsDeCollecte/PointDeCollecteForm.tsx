@@ -187,10 +187,32 @@ const PointDeCollecteForm: React.FC<Props> = ({
           placeholder="Type de contenant"
         />
       </Form.Item>
-      <Form.Item label="Stock casiers 75cl" name="stock_casiers_75">
+      <Form.Item
+        label="Stock casiers 75cl"
+        tooltip="Stock total incluant le stock tampon"
+        name="stock_casiers_75"
+      >
         <Input type="number" min={0} />
       </Form.Item>
-      <Form.Item label="Stock casiers 33cl" name="stock_casiers_33">
+      <Form.Item
+        label="Stock tampon de casiers 75cl"
+        tooltip="Stock utilisé pour les rotations internes au sein du point de collecte"
+        name="stock_casiers_75_tampon"
+      >
+        <Input type="number" min={0} />
+      </Form.Item>
+      <Form.Item
+        label="Stock casiers 33cl"
+        tooltip="Stock total incluant le stock tampon"
+        name="stock_casiers_33"
+      >
+        <Input type="number" min={0} />
+      </Form.Item>
+      <Form.Item
+        label="Stock tampon casiers 33cl"
+        tooltip="Stock utilisé pour les rotations internes au sein du point de collecte"
+        name="stock_casiers_33_tampon"
+      >
         <Input type="number" min={0} />
       </Form.Item>
       <Form.Item label="Stock paloxs" name="stock_paloxs">
