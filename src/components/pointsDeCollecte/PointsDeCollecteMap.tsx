@@ -65,8 +65,11 @@ const PointsDeCollecteMap: React.FC<PointsDeCollecteMapProps> = ({
 
     for (const pointDeCollecte of pointsDeCollecte) {
       if (pointDeCollecte.latitude && pointDeCollecte.longitude) {
+        const showPointDeCollecteUrl = `${
+          import.meta.env.VITE_HOST
+        }/point-de-collecte/show/${pointDeCollecte.id}`;
         const popupContent =
-          `<div><b>${pointDeCollecte.nom}</b></div>` +
+          `<a href="${showPointDeCollecteUrl}"><b>${pointDeCollecte.nom}</b></a>` +
           `<div>${pointDeCollecte.adresse}</div>`;
         const popup = new Popup().setHTML(popupContent);
         const marker = new Marker({
