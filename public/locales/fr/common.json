@@ -163,5 +163,12 @@
       "edit": "Modifier un mailing",
       "show": "Afficher un mailing"
     }
+  },
+  "inventaire": {
+    "titles": {
+      "list": "Liste des inventaires",
+      "create": "Ajouter un inventaire de stock",
+      "edit": "Modifier un inventaire de stock"
+    }
   }
 }

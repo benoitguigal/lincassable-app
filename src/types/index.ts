@@ -41,6 +41,8 @@ export type MailTemplate = Database["public"]["Tables"]["mail_template"]["Row"];
 
 export type Mail = Database["public"]["Tables"]["mail"]["Row"];
 
+export type Inventaire = Database["public"]["Tables"]["inventaire"]["Row"];
+
 export type Identity = {
   id: string;
   email: string;

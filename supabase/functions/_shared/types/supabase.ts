@@ -224,6 +224,44 @@ export type Database = {
           },
         ]
       }
+      inventaire: {
+        Row: {
+          created_at: string
+          date: string
+          id: number
+          point_de_collecte_id: number
+          stock_casiers_33: number | null
+          stock_casiers_75: number | null
+          stock_paloxs: number | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: number
+          point_de_collecte_id: number
+          stock_casiers_33?: number | null
+          stock_casiers_75?: number | null
+          stock_paloxs?: number | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: number
+          point_de_collecte_id?: number
+          stock_casiers_33?: number | null
+          stock_casiers_75?: number | null
+          stock_paloxs?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventaire_point_de_collecte_id_fkey"
+            columns: ["point_de_collecte_id"]
+            isOneToOne: false
+            referencedRelation: "point_de_collecte"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mail: {
         Row: {
           corps: string | null
@@ -795,6 +833,10 @@ export type Database = {
         | "mail_template.update"
         | "mail_template.insert"
         | "mail_template.delete"
+        | "inventaire.select"
+        | "inventaire.update"
+        | "inventaire.delete"
+        | "inventaire.insert"
       app_role: "staff" | "transporteur"
       contenant_collecte_type: "casier_x12" | "palox" | "casier_x24"
       palette_type: "Europe" | "VMF"

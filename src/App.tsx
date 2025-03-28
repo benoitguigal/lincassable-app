@@ -22,10 +22,12 @@ import authProvider from "./authProvider";
 import accessControlProvider from "./accessControlProvider";
 import { supabaseClient } from "./utility";
 import {
-  DashboardOutlined,
+  BarChartOutlined,
   EuroCircleOutlined,
   MailOutlined,
+  TruckOutlined,
 } from "@ant-design/icons";
+import { LiaWarehouseSolid } from "react-icons/lia";
 import { useTranslation } from "react-i18next";
 import locale from "antd/locale/fr_FR";
 import dayjs from "dayjs";
@@ -45,7 +47,6 @@ import PrevisionList from "./pages/PrevisionList";
 import CollecteList from "./pages/collecte/CollecteList";
 import Header from "./components/Header";
 import LincassableTitle from "./components/LincassableTitle";
-import { BouteilleIconSvg } from "./components/icons";
 import ConsigneList from "./pages/consigne/ConsigneList";
 import ConsigneCreate from "./pages/consigne/ConsigneCreate";
 import ConsigneCreateSuccess from "./pages/consigne/ConsigneCreateSuccess";
@@ -59,6 +60,9 @@ import MailingShow from "./pages/mailing/MailingShow";
 import "dayjs/locale/fr";
 import MailTemplateList from "./pages/mail-template/MailTemplateList";
 import MailTemplateEdit from "./pages/mail-template/MailTemplateEdit";
+import InventaireList from "./pages/inventaire/InventaireList";
+import InventaireCreate from "./pages/inventaire/InventaireCreate";
+import InventaireEdit from "./pages/inventaire/InventaireEdit";
 dayjs.locale("fr");
 
 function App() {
@@ -105,14 +109,14 @@ function App() {
                     list: "/",
                     meta: {
                       label: "Tableau de bord",
-                      icon: <DashboardOutlined />,
+                      icon: <BarChartOutlined />,
                     },
                   },
                   {
                     name: "collecte_menu",
                     meta: {
                       label: "Collecte",
-                      icon: BouteilleIconSvg({}),
+                      icon: <TruckOutlined />,
                     },
                   },
                   {
@@ -161,6 +165,20 @@ function App() {
                       label: "Collectes",
                       parent: "collecte_menu",
                     },
+                  },
+                  {
+                    name: "stock_menu",
+                    meta: {
+                      label: "Stock",
+                      icon: <LiaWarehouseSolid />,
+                    },
+                  },
+                  {
+                    name: "inventaire",
+                    list: "inventaire",
+                    create: "inventaire/create",
+                    edit: "inventaire/edit/:id",
+                    meta: { parent: "stock_menu" },
                   },
                   {
                     name: "consigne",
@@ -265,6 +283,11 @@ function App() {
                       <Route index element={<CollecteList />} />
                       <Route path="create" index element={<CollecteCreate />} />
                       <Route path="edit/:id" element={<CollecteEdit />} />
+                    </Route>
+                    <Route path="/inventaire">
+                      <Route index element={<InventaireList />} />
+                      <Route path="create" element={<InventaireCreate />} />
+                      <Route path="edit/:id" element={<InventaireEdit />} />
                     </Route>
                     <Route path="/consigne">
                       <Route index element={<ConsigneList />} />
