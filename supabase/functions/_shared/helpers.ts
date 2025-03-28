@@ -1,3 +1,4 @@
+import { isAxiosError } from "npm:axios";
 import { corsHeaders } from "./cors.ts";
 import * as Sentry from "npm:@sentry/deno";
 
@@ -33,15 +34,38 @@ export function handle<T>(
         },
       });
     } catch (error) {
-      console.log(error);
       Sentry.captureException(error);
-      return new Response(JSON.stringify({ error: error.message }), {
-        headers: {
-          "Content-Type": "application/json",
-          ...(cors ? corsHeaders : {}),
-        },
-        status: 500,
-      });
+      if (isAxiosError(error)) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error", error.message);
+        }
+      } else if (error instanceof Error) {
+        console.log(error.message);
+      }
+      return new Response(
+        JSON.stringify({
+          error:
+            error instanceof Error ? error.message : "Something went wrong",
+        }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            ...(cors ? corsHeaders : {}),
+          },
+          status: 500,
+        }
+      );
     }
   };
 }
