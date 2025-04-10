@@ -1,6 +1,7 @@
 import {
   ContenantDeCollecteTypeEnum,
   PointDeCollecteTypeEnum,
+  StatutPaloxEnum,
   StatutTourneeEnum,
   TypeDeVehiculeEnum,
 } from "../types";
@@ -65,4 +66,16 @@ export const typeDeVehiculeOptions: TypeDeVehiculeOption[] = [
   { value: "VL", label: "VL" },
   { value: "12 T", label: "12 T" },
   { value: "19 T", label: "19 T" },
+];
+
+type StatutPaloxOption = {
+  value: StatutPaloxEnum;
+  label: string;
+};
+
+export const statutPaloxOptions: StatutPaloxOption[] = [
+  { value: "En stock", label: "En stock" },
+  { value: "Tri", label: "Tri" },
+  { value: "Point de collecte", label: "Collecte" },
+  { value: "Lavage", label: "Lavage" },
 ];

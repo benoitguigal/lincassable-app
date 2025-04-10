@@ -63,6 +63,9 @@ import MailTemplateEdit from "./pages/mail-template/MailTemplateEdit";
 import InventaireList from "./pages/inventaire/InventaireList";
 import InventaireCreate from "./pages/inventaire/InventaireCreate";
 import InventaireEdit from "./pages/inventaire/InventaireEdit";
+import PaloxList from "./pages/palox/PaloxList";
+import PaloxCreate from "./pages/palox/PaloxCreate";
+import PaloxEdit from "./pages/palox/PaloxEdit";
 dayjs.locale("fr");
 
 function App() {
@@ -181,6 +184,13 @@ function App() {
                     meta: { parent: "stock_menu" },
                   },
                   {
+                    name: "palox",
+                    list: "palox",
+                    create: "palox/create",
+                    edit: "palox/edit/:id",
+                    meta: { parent: "stock_menu", label: "Paloxs" },
+                  },
+                  {
                     name: "consigne",
                     list: "/consigne",
                     meta: { label: "Consigne", icon: <EuroCircleOutlined /> },
@@ -288,6 +298,11 @@ function App() {
                       <Route index element={<InventaireList />} />
                       <Route path="create" element={<InventaireCreate />} />
                       <Route path="edit/:id" element={<InventaireEdit />} />
+                    </Route>
+                    <Route path="/palox">
+                      <Route index element={<PaloxList />} />
+                      <Route path="create" element={<PaloxCreate />} />
+                      <Route path="edit/:id" element={<PaloxEdit />} />
                     </Route>
                     <Route path="/consigne">
                       <Route index element={<ConsigneList />} />

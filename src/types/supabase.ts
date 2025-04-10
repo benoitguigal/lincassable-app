@@ -375,6 +375,38 @@ export type Database = {
           },
         ]
       }
+      palox: {
+        Row: {
+          created_at: string
+          id: number
+          numero: string
+          point_de_collecte_id: number | null
+          statut: Database["public"]["Enums"]["statut_palox"] | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          numero: string
+          point_de_collecte_id?: number | null
+          statut?: Database["public"]["Enums"]["statut_palox"] | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          numero?: string
+          point_de_collecte_id?: number | null
+          statut?: Database["public"]["Enums"]["statut_palox"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "palox_point_de_collecte_id_fkey"
+            columns: ["point_de_collecte_id"]
+            isOneToOne: false
+            referencedRelation: "point_de_collecte"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       point_de_collecte: {
         Row: {
           adresse: string
@@ -837,12 +869,17 @@ export type Database = {
         | "inventaire.update"
         | "inventaire.delete"
         | "inventaire.insert"
+        | "palox.select"
+        | "palox.update"
+        | "palox.delete"
+        | "palox.insert"
       app_role: "staff" | "transporteur"
       contenant_collecte_type: "casier_x12" | "palox" | "casier_x24"
       palette_type: "Europe" | "VMF"
       point_de_collecte_statut: "archive" | "actif"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
       statut_mailing: "En attente" | "En cours" | "Envoyé" | "Échec"
+      statut_palox: "En stock" | "Tri" | "Lavage" | "Point de collecte"
       statut_tournee:
         | "En cours de préparation"
         | "En attente de validation"

@@ -170,5 +170,12 @@
       "create": "Ajouter un inventaire de stock",
       "edit": "Modifier un inventaire de stock"
     }
+  },
+  "palox": {
+    "titles": {
+      "list": "Liste des paloxs",
+      "create": "Ajouter un palox",
+      "edit": "Modifier un palox"
+    }
   }
 }

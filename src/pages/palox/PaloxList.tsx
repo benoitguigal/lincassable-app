@@ -6,24 +6,24 @@ import {
   List,
   useTable,
 } from "@refinedev/antd";
-import { Inventaire, PointDeCollecte } from "../../types";
 import { IResourceComponentsProps, useExport } from "@refinedev/core";
+import { Palox, PointDeCollecte } from "../../types";
 import { Space, Table } from "antd";
-import { formatDateTime } from "../../utility/dateFormat";
+import StatutPalox from "../../components/palox/StatutPalox";
 
-const select = "*,point_de_collecte(id,nom)";
-
-type Record = Inventaire & {
+type Record = Palox & {
   point_de_collecte: Pick<PointDeCollecte, "id" | "nom">;
 };
 
-const InventaireList: React.FC<IResourceComponentsProps> = () => {
+const select = "*,point_de_collecte(id,nom)";
+
+const PaloxList: React.FC<IResourceComponentsProps> = () => {
   const { tableProps } = useTable<Record>({
     syncWithLocation: true,
     pagination: { pageSize: 20, mode: "server" },
     sorters: {
       mode: "server",
-      initial: [{ field: "date", order: "desc" }],
+      initial: [{ field: "numero", order: "asc" }],
     },
     meta: { select },
   });
@@ -31,7 +31,7 @@ const InventaireList: React.FC<IResourceComponentsProps> = () => {
   const { isLoading, triggerExport } = useExport<Record>({
     mapData: (record: Record) => ({
       ...record,
-      point_de_collecte: record.point_de_collecte.nom,
+      point_de_collecte: record.point_de_collecte?.nom ?? "",
     }),
     meta: {
       select,
@@ -51,24 +51,24 @@ const InventaireList: React.FC<IResourceComponentsProps> = () => {
           Exporter
         </ExportButton>,
         <CreateButton {...props.createButtonProps}>
-          Ajouter un inventaire de stock
+          Ajouter un palox
         </CreateButton>,
       ]}
     >
       <Table {...tableProps} size="small" rowKey="id">
+        <Table.Column dataIndex="numero" title="Numéro" />
         <Table.Column
-          dataIndex="date"
-          title="Date"
-          render={(d) => formatDateTime(d)}
+          dataIndex="statut"
+          title="Statut"
+          render={(statut) => <StatutPalox value={statut} />}
         />
         <Table.Column
           dataIndex="point_de_collecte"
-          title="Point de collecte"
-          render={(pc: PointDeCollecte) => pc.nom}
+          title="Localisation"
+          render={(pc: PointDeCollecte) => pc?.nom ?? ""}
         />
-        <Table.Column dataIndex="stock_casiers_75" title="Stock casiers 75" />
-        <Table.Column dataIndex="stock_casiers_33" title="Stock casiers 33" />
-        <Table.Column dataIndex="stock_paloxs" title="Stock paloxs" />
+        <Table.Column dataIndex="model" title="Modèle" />
+        <Table.Column dataIndex="format_tri" title="Format tri" />
         <Table.Column
           title="Actions"
           dataIndex="actions"
@@ -84,4 +84,4 @@ const InventaireList: React.FC<IResourceComponentsProps> = () => {
   );
 };
 
-export default InventaireList;
+export default PaloxList;

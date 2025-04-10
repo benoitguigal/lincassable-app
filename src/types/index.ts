@@ -13,6 +13,8 @@ export type StatutTourneeEnum = Database["public"]["Enums"]["statut_tournee"];
 export type TypeDeVehiculeEnum =
   Database["public"]["Enums"]["type_de_vehicule"];
 
+export type StatutPaloxEnum = Database["public"]["Enums"]["statut_palox"];
+
 export type PointDeCollecte =
   Database["public"]["Tables"]["point_de_collecte"]["Row"];
 
@@ -42,6 +44,8 @@ export type MailTemplate = Database["public"]["Tables"]["mail_template"]["Row"];
 export type Mail = Database["public"]["Tables"]["mail"]["Row"];
 
 export type Inventaire = Database["public"]["Tables"]["inventaire"]["Row"];
+
+export type Palox = Database["public"]["Tables"]["palox"]["Row"];
 
 export type Identity = {
   id: string;

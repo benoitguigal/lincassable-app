@@ -54,7 +54,9 @@ create table "public"."palox" (
     "created_at" timestamp with time zone not null default now(),
     "numero" text not null,
     "point_de_collecte_id" bigint,
-    "statut" statut_palox
+    "statut" statut_palox,
+    "model" text null,
+    "format_tri" text null,
 );
 
 alter table
