@@ -25,6 +25,10 @@ Ré-applique les migrations et le seed.
 
 `npx supabase functions serve`
 
+## Faire tourner ls tests 
+
+`cd supabase`
+`deno test --allow-all  --env-file=.env.test`
 
 ## Refine
 
