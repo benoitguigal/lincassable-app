@@ -224,6 +224,44 @@ export type Database = {
           },
         ]
       }
+      inventaire: {
+        Row: {
+          created_at: string
+          date: string
+          id: number
+          point_de_collecte_id: number
+          stock_casiers_33: number | null
+          stock_casiers_75: number | null
+          stock_paloxs: number | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: number
+          point_de_collecte_id: number
+          stock_casiers_33?: number | null
+          stock_casiers_75?: number | null
+          stock_paloxs?: number | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: number
+          point_de_collecte_id?: number
+          stock_casiers_33?: number | null
+          stock_casiers_75?: number | null
+          stock_paloxs?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventaire_point_de_collecte_id_fkey"
+            columns: ["point_de_collecte_id"]
+            isOneToOne: false
+            referencedRelation: "point_de_collecte"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mail: {
         Row: {
           corps: string | null
@@ -333,6 +371,38 @@ export type Database = {
             columns: ["mail_template_id"]
             isOneToOne: false
             referencedRelation: "mail_template"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      palox: {
+        Row: {
+          created_at: string
+          id: number
+          numero: string
+          point_de_collecte_id: number | null
+          statut: Database["public"]["Enums"]["statut_palox"] | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          numero: string
+          point_de_collecte_id?: number | null
+          statut?: Database["public"]["Enums"]["statut_palox"] | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          numero?: string
+          point_de_collecte_id?: number | null
+          statut?: Database["public"]["Enums"]["statut_palox"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "palox_point_de_collecte_id_fkey"
+            columns: ["point_de_collecte_id"]
+            isOneToOne: false
+            referencedRelation: "point_de_collecte"
             referencedColumns: ["id"]
           },
         ]
@@ -795,12 +865,21 @@ export type Database = {
         | "mail_template.update"
         | "mail_template.insert"
         | "mail_template.delete"
+        | "inventaire.select"
+        | "inventaire.update"
+        | "inventaire.delete"
+        | "inventaire.insert"
+        | "palox.select"
+        | "palox.update"
+        | "palox.delete"
+        | "palox.insert"
       app_role: "staff" | "transporteur"
       contenant_collecte_type: "casier_x12" | "palox" | "casier_x24"
       palette_type: "Europe" | "VMF"
       point_de_collecte_statut: "archive" | "actif"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
       statut_mailing: "En attente" | "En cours" | "Envoyé" | "Échec"
+      statut_palox: "En stock" | "Tri" | "Lavage" | "Point de collecte"
       statut_tournee:
         | "En cours de préparation"
         | "En attente de validation"
