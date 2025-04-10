@@ -56,7 +56,7 @@ create table "public"."palox" (
     "point_de_collecte_id" bigint,
     "statut" statut_palox,
     "model" text null,
-    "format_tri" text null,
+    "format_tri" text null
 );
 
 alter table
