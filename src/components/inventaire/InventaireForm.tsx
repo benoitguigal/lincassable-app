@@ -54,8 +54,9 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
       <Form.Item
         name="stock_casiers_75"
         label="Stock casiers 75cl"
+        initialValue={0}
         style={{ width: 300 }}
-        rules={[positiveRule]}
+        rules={[positiveRule, { required: true }]}
         getValueFromEvent={(event) => {
           const value = event.target.value;
           return value === "" ? null : value;
@@ -66,8 +67,9 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
       <Form.Item
         name="stock_casiers_33"
         label="Stock casiers 33cl"
+        initialValue={0}
         style={{ width: 300 }}
-        rules={[positiveRule]}
+        rules={[positiveRule, { required: true }]}
         getValueFromEvent={(event) => {
           const value = event.target.value;
           return value === "" ? null : value;
@@ -77,9 +79,10 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
       </Form.Item>
       <Form.Item
         name="stock_paloxs"
+        initialValue={0}
         label="Stock paloxs"
         style={{ width: 300 }}
-        rules={[positiveRule]}
+        rules={[positiveRule, { required: true }]}
         getValueFromEvent={(event) => {
           const value = event.target.value;
           return value === "" ? null : value;
