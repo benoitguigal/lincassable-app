@@ -230,27 +230,27 @@ export type Database = {
           date: string
           id: number
           point_de_collecte_id: number
-          stock_casiers_33: number | null
-          stock_casiers_75: number | null
-          stock_paloxs: number | null
+          stock_casiers_33: number
+          stock_casiers_75: number
+          stock_paloxs: number
         }
         Insert: {
           created_at?: string
           date: string
           id?: number
           point_de_collecte_id: number
-          stock_casiers_33?: number | null
-          stock_casiers_75?: number | null
-          stock_paloxs?: number | null
+          stock_casiers_33?: number
+          stock_casiers_75?: number
+          stock_paloxs?: number
         }
         Update: {
           created_at?: string
           date?: string
           id?: number
           point_de_collecte_id?: number
-          stock_casiers_33?: number | null
-          stock_casiers_75?: number | null
-          stock_paloxs?: number | null
+          stock_casiers_33?: number
+          stock_casiers_75?: number
+          stock_paloxs?: number
         }
         Relationships: [
           {
@@ -378,21 +378,27 @@ export type Database = {
       palox: {
         Row: {
           created_at: string
+          format_tri: string | null
           id: number
+          model: string | null
           numero: string
           point_de_collecte_id: number | null
           statut: Database["public"]["Enums"]["statut_palox"] | null
         }
         Insert: {
           created_at?: string
+          format_tri?: string | null
           id?: number
+          model?: string | null
           numero: string
           point_de_collecte_id?: number | null
           statut?: Database["public"]["Enums"]["statut_palox"] | null
         }
         Update: {
           created_at?: string
+          format_tri?: string | null
           id?: number
+          model?: string | null
           numero?: string
           point_de_collecte_id?: number | null
           statut?: Database["public"]["Enums"]["statut_palox"] | null

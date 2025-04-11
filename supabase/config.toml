@@ -169,3 +169,26 @@ verify_jwt = false
 [db.vault]
 supabase_url = "env(VAULT_SUPABASE_URL)"
 supabase_api_key = "env(VAULT_SUPABASE_API_KEY)"
+
+
+[functions.compute_stocks]
+enabled = true
+verify_jwt = true
+import_map = "./functions/compute_stocks/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/compute_stocks/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/compute_stocks/*.html" ]
+
+[functions.inventaire_trigger]
+enabled = true
+verify_jwt = true
+import_map = "./functions/inventaire_trigger/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/inventaire_trigger/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/inventaire_trigger/*.html" ]
