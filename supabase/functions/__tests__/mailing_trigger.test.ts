@@ -20,7 +20,7 @@ describe("envoi_mailing", () => {
         .from("mail_template")
         .insert({
           corps:
-            "Bonjour {{point_de_collecte.nom}}, merci de nous communiquer" +
+            "Bonjour {{pointDeCollecte.nom}}, merci de nous communiquer" +
             " votre taux de remplissage avant le {{dateLimit}}",
           sujet: "Demande taux de remplissage",
           nom: "demande-taux-remplissage",
@@ -42,7 +42,7 @@ describe("envoi_mailing", () => {
       await supabaseAdmin
         .from("point_de_collecte")
         .insert({
-          nom: "Bureau L'INCASSABLE",
+          nom: "Bureau INCASSABLE",
           adresse: "134 Boulevard Longchamp, 13001 Marseille, France",
           type: "Massification",
           setup_date: "2024-09-20",
@@ -83,7 +83,7 @@ describe("envoi_mailing", () => {
         to: "benoit@lincassable.com",
         statut: "created",
         corps:
-          "Bonjour , merci de nous communiquer votre taux de remplissage avant le mercredi 26 février",
+          "Bonjour Bureau INCASSABLE, merci de nous communiquer votre taux de remplissage avant le mercredi 26 février",
         sujet: "Demande taux de remplissage",
         mailing_id: mailing.id,
         point_de_collecte_id: pointDeCollecteId,
