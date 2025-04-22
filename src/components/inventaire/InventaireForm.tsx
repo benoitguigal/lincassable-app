@@ -1,17 +1,10 @@
 import { UseFormReturnType, useSelect } from "@refinedev/antd";
 import { Inventaire, PointDeCollecte } from "../../types";
-import { DatePicker, Form, Input, Select } from "antd";
+import { Alert, DatePicker, Form, Input, InputNumber, Select } from "antd";
 import dayjs from "dayjs";
-import { Rule } from "antd/es/form";
+import { positiveRule } from "../../utility/validation";
 
 type Props = UseFormReturnType<Inventaire>;
-
-const positiveRule: Rule = {
-  validator: (_, value) =>
-    value >= 0
-      ? Promise.resolve()
-      : Promise.reject(new Error("Doit être positif")),
-};
 
 const InventaireForm: React.FC<Props> = ({ formProps }) => {
   const { selectProps: pointDeCollecteSelectProps } =
@@ -54,40 +47,39 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
       <Form.Item
         name="stock_casiers_75"
         label="Stock casiers 75cl"
+        initialValue={0}
         style={{ width: 300 }}
-        rules={[positiveRule]}
-        getValueFromEvent={(event) => {
-          const value = event.target.value;
-          return value === "" ? null : value;
-        }}
+        rules={[positiveRule, { required: true }]}
       >
-        <Input type="number" allowClear={true} min={0} />
+        <InputNumber min={0} />
       </Form.Item>
       <Form.Item
         name="stock_casiers_33"
         label="Stock casiers 33cl"
+        initialValue={0}
         style={{ width: 300 }}
-        rules={[positiveRule]}
-        getValueFromEvent={(event) => {
-          const value = event.target.value;
-          return value === "" ? null : value;
-        }}
+        rules={[positiveRule, { required: true }]}
       >
-        <Input type="number" allowClear={true} min={0} />
+        <InputNumber min={0} />
       </Form.Item>
       <Form.Item
         name="stock_paloxs"
+        initialValue={0}
         label="Stock paloxs"
         style={{ width: 300 }}
-        rules={[positiveRule]}
-        getValueFromEvent={(event) => {
-          const value = event.target.value;
-          return value === "" ? null : value;
-        }}
+        rules={[positiveRule, { required: true }]}
       >
-        <Input type="number" allowClear={true} min={0} />
+        <InputNumber min={0} />
       </Form.Item>
-      <Form.Item name="numero_paloxs"></Form.Item>
+      <Alert
+        type="info"
+        message={
+          "Une fois l'inventaire de stock renseigné," +
+          " les stocks des contenants se calculent automatiquement" +
+          " à partir des collectes qui ont lieu après la date" +
+          " de l'inventaire"
+        }
+      />
     </Form>
   );
 };

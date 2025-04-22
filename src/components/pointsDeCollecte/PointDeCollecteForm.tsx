@@ -1,4 +1,4 @@
-import { AutoComplete, Form, Input, Select } from "antd";
+import { AutoComplete, Form, Input, InputNumber, Select } from "antd";
 import {
   contenantDeCollecteTypeOptions,
   pointDeCollecteTypeOptions,
@@ -9,6 +9,7 @@ import { UseFormReturnType, useSelect } from "@refinedev/antd";
 import { PointDeCollecte, ZoneDeCollecte } from "../../types";
 import PointDeCollecteMap from "./PointDeCollecteMap";
 import FormListItem from "../FormListItem";
+import { positiveRule } from "../../utility/validation";
 
 type Props = UseFormReturnType<PointDeCollecte> & {
   latLng: Partial<LatLng> | null;
@@ -189,34 +190,43 @@ const PointDeCollecteForm: React.FC<Props> = ({
       </Form.Item>
       <Form.Item
         label="Stock casiers 75cl"
-        tooltip="Stock total incluant le stock tampon"
+        rules={[positiveRule]}
+        tooltip="Stock total incluant le stock tampon, calculé automatiquement à partir des inventaires de stock et des collectes"
         name="stock_casiers_75"
       >
-        <Input type="number" min={0} />
+        <InputNumber min={0} disabled={true} />
       </Form.Item>
       <Form.Item
         label="Stock tampon de casiers 75cl"
+        rules={[positiveRule]}
         tooltip="Stock utilisé pour les rotations internes au sein du point de collecte"
         name="stock_casiers_75_tampon"
       >
-        <Input type="number" min={0} />
+        <InputNumber min={0} />
       </Form.Item>
       <Form.Item
         label="Stock casiers 33cl"
-        tooltip="Stock total incluant le stock tampon"
+        rules={[positiveRule]}
+        tooltip="Stock total incluant le stock tampon, calculé automatiquement à partir des inventaires de stock et des collectes"
         name="stock_casiers_33"
       >
-        <Input type="number" min={0} />
+        <InputNumber min={0} disabled={true} />
       </Form.Item>
       <Form.Item
         label="Stock tampon casiers 33cl"
+        rules={[positiveRule]}
         tooltip="Stock utilisé pour les rotations internes au sein du point de collecte"
         name="stock_casiers_33_tampon"
       >
-        <Input type="number" min={0} />
+        <InputNumber min={0} />
       </Form.Item>
-      <Form.Item label="Stock paloxs" name="stock_paloxs">
-        <Input type="number" min={0} />
+      <Form.Item
+        label="Stock paloxs"
+        rules={[positiveRule]}
+        name="stock_paloxs"
+        tooltip="Calculé automatiquement à partir des inventaires de stock et des collectes"
+      >
+        <InputNumber min={0} disabled={true} />
       </Form.Item>
       <Form.Item label="Pratiques la consigne" name="consigne">
         <Select

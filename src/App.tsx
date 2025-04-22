@@ -56,8 +56,6 @@ import MailingList from "./pages/mailing/MailingList";
 import MailingCreate from "./pages/mailing/MailingCreate";
 import MailingEdit from "./pages/mailing/MailingEdit";
 import MailingShow from "./pages/mailing/MailingShow";
-
-import "dayjs/locale/fr";
 import MailTemplateList from "./pages/mail-template/MailTemplateList";
 import MailTemplateEdit from "./pages/mail-template/MailTemplateEdit";
 import InventaireList from "./pages/inventaire/InventaireList";
@@ -66,6 +64,9 @@ import InventaireEdit from "./pages/inventaire/InventaireEdit";
 import PaloxList from "./pages/palox/PaloxList";
 import PaloxCreate from "./pages/palox/PaloxCreate";
 import PaloxEdit from "./pages/palox/PaloxEdit";
+import MouvementsParPoint from "./pages/MouvementsParPoint";
+import "dayjs/locale/fr";
+
 dayjs.locale("fr");
 
 function App() {
@@ -184,6 +185,11 @@ function App() {
                     meta: { parent: "stock_menu" },
                   },
                   {
+                    name: "mouvement",
+                    list: "mouvement",
+                    meta: { label: "Mouvements", parent: "stock_menu" },
+                  },
+                  {
                     name: "palox",
                     list: "palox",
                     create: "palox/create",
@@ -293,6 +299,9 @@ function App() {
                       <Route index element={<CollecteList />} />
                       <Route path="create" index element={<CollecteCreate />} />
                       <Route path="edit/:id" element={<CollecteEdit />} />
+                    </Route>
+                    <Route path="/mouvement">
+                      <Route index element={<MouvementsParPoint />} />
                     </Route>
                     <Route path="/inventaire">
                       <Route index element={<InventaireList />} />

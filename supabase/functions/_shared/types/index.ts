@@ -9,6 +9,8 @@ export type Tournee = Database["public"]["Tables"]["tournee"]["Row"];
 export type RemplissageContenants =
   Database["public"]["Tables"]["remplissage_contenants"]["Row"];
 
+export type Inventaire = Database["public"]["Tables"]["inventaire"]["Row"];
+
 export type InsertPayload<T> = {
   type: "INSERT";
   table: string;
