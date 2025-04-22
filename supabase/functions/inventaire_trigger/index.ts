@@ -4,16 +4,20 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { InsertPayload, Inventaire } from "../_shared/types/index.ts";
+import {
+  InsertPayload,
+  UpdatePayload,
+  Inventaire,
+} from "../_shared/types/index.ts";
 import { handle } from "../_shared/helpers.ts";
 import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 
-type Payload = InsertPayload<Inventaire>;
+type Payload = InsertPayload<Inventaire> | UpdatePayload<Inventaire>;
 
 Deno.serve(
   handle<Payload>(async (payload) => {
     const { type, record } = payload;
-    if (type === "INSERT") {
+    if (type === "INSERT" || type === "UPDATE") {
       // Met à jour les stocks du point de collecte à partir des données
       // de l'inventaire
       await supabaseAdmin.functions.invoke("compute_stocks", {

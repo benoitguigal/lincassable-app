@@ -37,7 +37,7 @@ END;
 $$;
 
 CREATE TRIGGER "inventaire_trigger"
-  AFTER INSERT ON "public"."inventaire"
+  AFTER INSERT OR UPDATE ON "public"."inventaire"
   FOR EACH ROW
   EXECUTE FUNCTION inventaire_trigger();
 

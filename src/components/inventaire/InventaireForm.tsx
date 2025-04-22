@@ -1,6 +1,6 @@
 import { UseFormReturnType, useSelect } from "@refinedev/antd";
 import { Inventaire, PointDeCollecte } from "../../types";
-import { DatePicker, Form, Input, InputNumber, Select } from "antd";
+import { Alert, DatePicker, Form, Input, InputNumber, Select } from "antd";
 import dayjs from "dayjs";
 import { positiveRule } from "../../utility/validation";
 
@@ -50,10 +50,6 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
         initialValue={0}
         style={{ width: 300 }}
         rules={[positiveRule, { required: true }]}
-        getValueFromEvent={(event) => {
-          const value = event.target.value;
-          return value === "" ? null : value;
-        }}
       >
         <InputNumber min={0} />
       </Form.Item>
@@ -63,10 +59,6 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
         initialValue={0}
         style={{ width: 300 }}
         rules={[positiveRule, { required: true }]}
-        getValueFromEvent={(event) => {
-          const value = event.target.value;
-          return value === "" ? null : value;
-        }}
       >
         <InputNumber min={0} />
       </Form.Item>
@@ -76,14 +68,18 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
         label="Stock paloxs"
         style={{ width: 300 }}
         rules={[positiveRule, { required: true }]}
-        getValueFromEvent={(event) => {
-          const value = event.target.value;
-          return value === "" ? null : value;
-        }}
       >
         <InputNumber min={0} />
       </Form.Item>
-      <Form.Item name="numero_paloxs"></Form.Item>
+      <Alert
+        type="info"
+        message={
+          "Une fois l'inventaire de stock renseigné," +
+          " les stocks des contenants se calculent automatiquement" +
+          " à partir des collectes qui ont lieu après la date" +
+          " de l'inventaire"
+        }
+      />
     </Form>
   );
 };
