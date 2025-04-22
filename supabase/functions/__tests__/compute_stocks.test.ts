@@ -41,16 +41,27 @@ describe("compute_stocks", () => {
 
     const pointDeCollecte = pointDeCollecteData![0];
 
-    // Crée un inventaire de stock
+    // Crée des inventaires de stock
     const { data: inventaireData, error: inventaireError } = await supabaseAdmin
       .from("inventaire")
-      .insert({
-        date: new Date("2025-01-01").toISOString(),
-        point_de_collecte_id: pointDeCollecte.id,
-        stock_casiers_33: 10,
-        stock_casiers_75: 15,
-        stock_paloxs: 1,
-      })
+      .insert([
+        // dernier inventaire en date, doit être pris en compte
+        {
+          date: new Date("2025-01-01").toISOString(),
+          point_de_collecte_id: pointDeCollecte.id,
+          stock_casiers_33: 10,
+          stock_casiers_75: 15,
+          stock_paloxs: 1,
+        },
+        // inventaire antérieur, ne doit pas être pris en compte
+        {
+          date: new Date("2024-12-25").toISOString(),
+          point_de_collecte_id: pointDeCollecte.id,
+          stock_casiers_33: 20,
+          stock_casiers_75: 25,
+          stock_paloxs: 0,
+        },
+      ])
       .select("*");
 
     expect(inventaireError).toBeNull();
@@ -80,6 +91,7 @@ describe("compute_stocks", () => {
     await supabaseAdmin
       .from("collecte")
       .insert([
+        // collecte ayant eu lieu après le dernier inventaire, doit être pris en compte
         {
           date: new Date("2025-01-10").toISOString(),
           point_de_collecte_id: pointDeCollecte.id,
@@ -89,6 +101,17 @@ describe("compute_stocks", () => {
           livraison_nb_casier_33_vide: 2, // -3 casiers 33,
           collecte_nb_palox_plein: 1,
           livraison_nb_palox_vide: 0, // -1 palox
+        },
+        // collecte ayant eu lien avant le dernier inventaire, ne doit pas être pris en compte
+        {
+          date: new Date("2024-12-27").toISOString(),
+          point_de_collecte_id: pointDeCollecte.id,
+          collecte_nb_casier_75_plein: 5,
+          livraison_nb_casier_75_vide: 3,
+          collecte_nb_casier_33_plein: 6,
+          livraison_nb_casier_33_vide: 8,
+          collecte_nb_palox_plein: 3,
+          livraison_nb_palox_vide: 2,
         },
       ])
       .select("*");
@@ -118,25 +141,25 @@ describe("compute_stocks", () => {
     const stockCasier33 = 15;
     const stockPalox = 1;
     // Crée un point de collecte
-    const { data: pointDeCollecteData, error: pointDeCollecteError } =
-      await supabaseAdmin
-        .from("point_de_collecte")
-        .insert({
-          nom: "Bureau INCASSABLE",
-          adresse: "134 Boulevard Longchamp, 13001 Marseille, France",
-          type: "Massification",
-          setup_date: "2024-09-20",
-          latitude: 43.3033002,
-          longitude: 5.3926264,
-          emails: ["benoit@lincassable.com"],
-          contacts: ["Benoit Guigal"],
-          telephones: [],
-          contenant_collecte_type: "casier_x12",
-          stock_casiers_75: stockCasier75,
-          stock_casiers_33: stockCasier33,
-          stock_paloxs: stockPalox,
-        })
-        .select("*");
+
+    await supabaseAdmin
+      .from("point_de_collecte")
+      .insert({
+        nom: "Bureau INCASSABLE",
+        adresse: "134 Boulevard Longchamp, 13001 Marseille, France",
+        type: "Massification",
+        setup_date: "2024-09-20",
+        latitude: 43.3033002,
+        longitude: 5.3926264,
+        emails: ["benoit@lincassable.com"],
+        contacts: ["Benoit Guigal"],
+        telephones: [],
+        contenant_collecte_type: "casier_x12",
+        stock_casiers_75: stockCasier75,
+        stock_casiers_33: stockCasier33,
+        stock_paloxs: stockPalox,
+      })
+      .select("*");
 
     // Met à jour les stocks
     await supabaseAdmin.functions.invoke("compute_stocks", { body: {} });
