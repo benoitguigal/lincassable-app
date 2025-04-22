@@ -151,6 +151,25 @@ Deno.serve(
         }
       }
     }
+
+    const date = type === "DELETE" ? old_record.date : record.date;
+    const pointDeCollecteId =
+      type === "DELETE"
+        ? old_record.point_de_collecte_id
+        : record.point_de_collecte_id;
+
+    if (
+      pointDeCollecteId &&
+      date &&
+      new Date(date).getTime() < new Date().getTime()
+    ) {
+      // Il y a eu une création / modification / suppression de collecte
+      // ayant eu lieu dans le passé, il faut donc mettre à jour les
+      // stocks de contenants du point.
+      await supabaseAdmin.functions.invoke("compute_stocks", {
+        body: { point_de_collecte_id: pointDeCollecteId },
+      });
+    }
   })
 );
 
