@@ -189,10 +189,10 @@ const PointDeCollecteForm: React.FC<Props> = ({
       </Form.Item>
       <Form.Item
         label="Stock casiers 75cl"
-        tooltip="Stock total incluant le stock tampon"
+        tooltip="Stock total incluant le stock tampon, calculé automatiquement à partir des inventaires de stock et des collectes"
         name="stock_casiers_75"
       >
-        <Input type="number" min={0} />
+        <Input type="number" min={0} disabled={true} />
       </Form.Item>
       <Form.Item
         label="Stock tampon de casiers 75cl"
@@ -203,10 +203,10 @@ const PointDeCollecteForm: React.FC<Props> = ({
       </Form.Item>
       <Form.Item
         label="Stock casiers 33cl"
-        tooltip="Stock total incluant le stock tampon"
+        tooltip="Stock total incluant le stock tampon, calculé automatiquement à partir des inventaires de stock et des collectes"
         name="stock_casiers_33"
       >
-        <Input type="number" min={0} />
+        <Input type="number" min={0} disabled={true} />
       </Form.Item>
       <Form.Item
         label="Stock tampon casiers 33cl"
@@ -215,8 +215,12 @@ const PointDeCollecteForm: React.FC<Props> = ({
       >
         <Input type="number" min={0} />
       </Form.Item>
-      <Form.Item label="Stock paloxs" name="stock_paloxs">
-        <Input type="number" min={0} />
+      <Form.Item
+        label="Stock paloxs"
+        name="stock_paloxs"
+        tooltip="Calculé automatiquement à partir des inventaires de stock et des collectes"
+      >
+        <Input type="number" min={0} disabled={true} />
       </Form.Item>
       <Form.Item label="Pratiques la consigne" name="consigne">
         <Select

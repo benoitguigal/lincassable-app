@@ -112,4 +112,47 @@ describe("compute_stocks", () => {
     expect(stock_casiers_33).toEqual(inventaire.stock_casiers_33 - 3);
     expect(stock_paloxs).toEqual(inventaire.stock_paloxs - 1);
   });
+
+  it("should not update stocks when there is no inventory", async () => {
+    const stockCasier75 = 10;
+    const stockCasier33 = 15;
+    const stockPalox = 1;
+    // Crée un point de collecte
+    const { data: pointDeCollecteData, error: pointDeCollecteError } =
+      await supabaseAdmin
+        .from("point_de_collecte")
+        .insert({
+          nom: "Bureau INCASSABLE",
+          adresse: "134 Boulevard Longchamp, 13001 Marseille, France",
+          type: "Massification",
+          setup_date: "2024-09-20",
+          latitude: 43.3033002,
+          longitude: 5.3926264,
+          emails: ["benoit@lincassable.com"],
+          contacts: ["Benoit Guigal"],
+          telephones: [],
+          contenant_collecte_type: "casier_x12",
+          stock_casiers_75: stockCasier75,
+          stock_casiers_33: stockCasier33,
+          stock_paloxs: stockPalox,
+        })
+        .select("*");
+
+    // Met à jour les stocks
+    await supabaseAdmin.functions.invoke("compute_stocks", { body: {} });
+
+    const {
+      data: pointsDeCollecteAfterComputation,
+      error: pointDeCollecteAfterComputationError,
+    } = await supabaseAdmin.from("point_de_collecte").select("*");
+
+    expect(pointDeCollecteAfterComputationError).toBeNull();
+
+    const { stock_casiers_75, stock_casiers_33, stock_paloxs } =
+      pointsDeCollecteAfterComputation![0];
+
+    expect(stock_casiers_75).toEqual(stockCasier75);
+    expect(stock_casiers_33).toEqual(stockCasier33);
+    expect(stock_paloxs).toEqual(stockPalox);
+  });
 });

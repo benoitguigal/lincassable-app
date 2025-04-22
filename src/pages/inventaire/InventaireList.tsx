@@ -63,7 +63,7 @@ const InventaireList: React.FC<IResourceComponentsProps> = () => {
         />
         <Table.Column
           dataIndex="point_de_collecte"
-          title="Point de collecte"
+          title="Point de collecte / massification"
           render={(pc: PointDeCollecte) => pc.nom}
         />
         <Table.Column dataIndex="stock_casiers_75" title="Stock casiers 75" />

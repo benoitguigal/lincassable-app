@@ -12,8 +12,6 @@ type Payload = { point_de_collecte_id?: number } | null;
 
 Deno.serve(
   handle<Payload>(async (payload) => {
-    console.log("payload", JSON.stringify(payload));
-
     const { point_de_collecte_id } = payload ?? {};
 
     let pointDeCollecteQuery = supabaseAdmin
@@ -32,7 +30,6 @@ Deno.serve(
       await pointDeCollecteQuery;
 
     if (pointsDeCollecteError) {
-      console.log(pointsDeCollecteError.message);
       throw pointsDeCollecteError;
     }
 
