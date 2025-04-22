@@ -191,6 +191,7 @@ const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item
         label="Stock casiers 75cl"
         rules={[positiveRule]}
+        initialValue={0}
         tooltip="Stock total incluant le stock tampon, calculé automatiquement à partir des inventaires de stock et des collectes"
         name="stock_casiers_75"
       >
@@ -199,6 +200,7 @@ const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item
         label="Stock tampon de casiers 75cl"
         rules={[positiveRule]}
+        initialValue={0}
         tooltip="Stock utilisé pour les rotations internes au sein du point de collecte"
         name="stock_casiers_75_tampon"
       >
@@ -207,6 +209,7 @@ const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item
         label="Stock casiers 33cl"
         rules={[positiveRule]}
+        initialValue={0}
         tooltip="Stock total incluant le stock tampon, calculé automatiquement à partir des inventaires de stock et des collectes"
         name="stock_casiers_33"
       >
@@ -215,6 +218,7 @@ const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item
         label="Stock tampon casiers 33cl"
         rules={[positiveRule]}
+        initialValue={0}
         tooltip="Stock utilisé pour les rotations internes au sein du point de collecte"
         name="stock_casiers_33_tampon"
       >
@@ -223,6 +227,7 @@ const PointDeCollecteForm: React.FC<Props> = ({
       <Form.Item
         label="Stock paloxs"
         rules={[positiveRule]}
+        initialValue={0}
         name="stock_paloxs"
         tooltip="Calculé automatiquement à partir des inventaires de stock et des collectes"
       >
