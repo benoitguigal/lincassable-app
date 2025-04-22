@@ -1,17 +1,10 @@
 import { UseFormReturnType, useSelect } from "@refinedev/antd";
 import { Inventaire, PointDeCollecte } from "../../types";
-import { DatePicker, Form, Input, Select } from "antd";
+import { DatePicker, Form, Input, InputNumber, Select } from "antd";
 import dayjs from "dayjs";
-import { Rule } from "antd/es/form";
+import { positiveRule } from "../../utility/validation";
 
 type Props = UseFormReturnType<Inventaire>;
-
-const positiveRule: Rule = {
-  validator: (_, value) =>
-    value >= 0
-      ? Promise.resolve()
-      : Promise.reject(new Error("Doit être positif")),
-};
 
 const InventaireForm: React.FC<Props> = ({ formProps }) => {
   const { selectProps: pointDeCollecteSelectProps } =
@@ -62,7 +55,7 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
           return value === "" ? null : value;
         }}
       >
-        <Input type="number" allowClear={true} min={0} />
+        <InputNumber min={0} />
       </Form.Item>
       <Form.Item
         name="stock_casiers_33"
@@ -75,7 +68,7 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
           return value === "" ? null : value;
         }}
       >
-        <Input type="number" allowClear={true} min={0} />
+        <InputNumber min={0} />
       </Form.Item>
       <Form.Item
         name="stock_paloxs"
@@ -88,7 +81,7 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
           return value === "" ? null : value;
         }}
       >
-        <Input type="number" allowClear={true} min={0} />
+        <InputNumber min={0} />
       </Form.Item>
       <Form.Item name="numero_paloxs"></Form.Item>
     </Form>
