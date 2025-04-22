@@ -10,11 +10,6 @@ type Props = {
 export const usePointDeCollecteForm = ({ action }: Props) => {
   const form = useForm<PointDeCollecte>({
     action,
-    defaultFormValues: {
-      stock_casiers_33: 0,
-      stock_casiers_75: 0,
-      stock_paloxs: 0,
-    },
   });
 
   const setFieldValue = form.formProps.form?.setFieldValue;
