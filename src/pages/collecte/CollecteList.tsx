@@ -29,14 +29,19 @@ import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 
 const select =
-  "*, tournee(*,transporteur(nom),zone_de_collecte(nom)),point_de_collecte!collecte_point_de_collecte_id_fkey(id,nom)";
+  "*, tournee(*,transporteur(nom),zone_de_collecte(nom))," +
+  "point_de_collecte!collecte_point_de_collecte_id_fkey(id,nom)," +
+  "point_de_massification:point_de_collecte!collecte_point_de_massification_id_fkey(id,nom)";
 
 type Record = Collecte & {
   tournee?: Tournee & {
     transporteur: Pick<Transporteur, "nom">;
     zone_de_collecte: Pick<ZoneDeCollecte, "nom">;
   };
-} & { point_de_collecte: Pick<PointDeCollecte, "id" | "nom"> };
+} & {
+  point_de_collecte: Pick<PointDeCollecte, "id" | "nom">;
+  point_de_massification: Pick<PointDeCollecte, "id" | "nom">;
+};
 
 const CollecteList: React.FC<IResourceComponentsProps> = () => {
   const { tableProps, setFilters, filters } = useTable<Record>({
@@ -278,6 +283,20 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
               return (
                 <Link to={`/point-de-collecte/show/${pointDeCollecte.id}`}>
                   {pointDeCollecte.nom}
+                </Link>
+              );
+            }
+            return "";
+          }}
+        />
+        <Table.Column
+          dataIndex="point_de_massification"
+          title="Point de massification"
+          render={(pointDeMassification: Record["point_de_massification"]) => {
+            if (pointDeMassification) {
+              return (
+                <Link to={`/point-de-collecte/show/${pointDeMassification.id}`}>
+                  {pointDeMassification.nom}
                 </Link>
               );
             }

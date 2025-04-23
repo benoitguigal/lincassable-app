@@ -348,6 +348,17 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           {...selectProps}
         />
       </Form.Item>
+      <Form.Item
+        name="point_de_massification_id"
+        label="Point de massification"
+        hidden={hasTournee}
+      >
+        <Select
+          placeholder="Choisir un point de massification"
+          style={{ width: 300 }}
+          {...selectProps}
+        />
+      </Form.Item>
 
       {!hasTournee && (
         <Form.Item
