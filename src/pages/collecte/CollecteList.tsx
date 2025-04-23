@@ -29,7 +29,7 @@ import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 
 const select =
-  "*, tournee(*,transporteur(nom),zone_de_collecte(nom)),point_de_collecte(id,nom)";
+  "*, tournee(*,transporteur(nom),zone_de_collecte(nom)),point_de_collecte!collecte_point_de_collecte_id_fkey(id,nom)";
 
 type Record = Collecte & {
   tournee?: Tournee & {
