@@ -351,6 +351,11 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
       <Form.Item
         name="point_de_massification_id"
         label="Point de massification"
+        rules={[
+          {
+            required: !hasTournee,
+          },
+        ]}
         hidden={hasTournee}
       >
         <Select
