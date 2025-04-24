@@ -27,12 +27,28 @@ Deno.serve(
         const dateIsModified = record.date !== old_record.date;
         const statutIsModified = record.statut !== old_record.statut;
         const prixIsModified = record.prix !== old_record.prix;
+        const pointDeMassificationIsModified =
+          record.point_de_massification_id !==
+          old_record.point_de_massification_id;
 
         if (dateIsModified) {
           // modifie la date des collectes correspondantes
           const { error } = await supabaseAdmin
             .from("collecte")
             .update({ date: record.date })
+            .eq("tournee_id", record.id);
+          if (error) {
+            throw error;
+          }
+        }
+
+        if (pointDeMassificationIsModified) {
+          // modifie le point de massification des collectes correspondantes
+          const { error } = await supabaseAdmin
+            .from("collecte")
+            .update({
+              point_de_massification_id: record.point_de_massification_id,
+            })
             .eq("tournee_id", record.id);
           if (error) {
             throw error;
@@ -61,9 +77,11 @@ Deno.serve(
               `\nAncien prix : ${old_record.prix} - Nouveau prix : ${record.prix}`;
           }
 
-          await webhooks.tournee.send({
-            content: msg,
-          });
+          if (Deno.env.get("DISCORD_NOTIFICATION") === "active") {
+            await webhooks.tournee.send({
+              content: msg,
+            });
+          }
         }
       }
     }

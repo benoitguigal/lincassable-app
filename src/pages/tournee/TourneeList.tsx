@@ -61,7 +61,7 @@ const TourneeList: React.FC<IResourceComponentsProps> = () => {
     },
     meta: {
       select:
-        "*, collecte(*,point_de_collecte(nom)),transporteur(nom),zone_de_collecte(nom)",
+        "*, collecte(*,point_de_collecte!collecte_point_de_collecte_id_fkey(nom)),transporteur(nom),zone_de_collecte(nom)",
     },
   });
 

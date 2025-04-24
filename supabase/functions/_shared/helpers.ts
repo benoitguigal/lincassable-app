@@ -34,6 +34,7 @@ export function handle<T>(
         },
       });
     } catch (error) {
+      console.log(error);
       Sentry.captureException(error);
       if (isAxiosError(error)) {
         if (error.response) {

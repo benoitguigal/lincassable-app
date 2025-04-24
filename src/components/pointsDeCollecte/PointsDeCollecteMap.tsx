@@ -15,6 +15,8 @@ function getMarkerColor(type: PointDeCollecteTypeEnum) {
       return "#FDEA18";
     case "Massification":
       return "#D5DBD6";
+    case "Tri":
+      return "black";
   }
 }
 

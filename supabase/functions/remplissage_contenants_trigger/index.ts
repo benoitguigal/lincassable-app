@@ -15,6 +15,7 @@ import { handle } from "../_shared/helpers.ts";
 Deno.serve(
   handle<InsertPayload<RemplissageContenants>>(async (payload) => {
     const { record } = payload;
+
     const { data: pointsDeCollecte, error } = await supabaseAdmin
       .from("point_de_collecte")
       .select("nom")
@@ -40,10 +41,11 @@ Deno.serve(
       if (record.remplissage_palox) {
         msg += `\nPalox rempli à ${record.remplissage_palox}%`;
       }
-
-      await webhooks.remplissage.send({
-        content: msg,
-      });
+      if (Deno.env.get("DISCORD_NOTIFICATION") === "active") {
+        await webhooks.remplissage.send({
+          content: msg,
+        });
+      }
     }
   })
 );

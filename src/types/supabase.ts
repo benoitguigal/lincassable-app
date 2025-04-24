@@ -61,6 +61,7 @@ export type Database = {
             | Database["public"]["Enums"]["palette_type"]
             | null
           point_de_collecte_id: number
+          point_de_massification_id: number | null
           tournee_id: number | null
         }
         Insert: {
@@ -114,6 +115,7 @@ export type Database = {
             | Database["public"]["Enums"]["palette_type"]
             | null
           point_de_collecte_id: number
+          point_de_massification_id?: number | null
           tournee_id?: number | null
         }
         Update: {
@@ -167,12 +169,20 @@ export type Database = {
             | Database["public"]["Enums"]["palette_type"]
             | null
           point_de_collecte_id?: number
+          point_de_massification_id?: number | null
           tournee_id?: number | null
         }
         Relationships: [
           {
             foreignKeyName: "collecte_point_de_collecte_id_fkey"
             columns: ["point_de_collecte_id"]
+            isOneToOne: false
+            referencedRelation: "point_de_collecte"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collecte_point_de_massification_id_fkey"
+            columns: ["point_de_massification_id"]
             isOneToOne: false
             referencedRelation: "point_de_collecte"
             referencedColumns: ["id"]
@@ -239,9 +249,9 @@ export type Database = {
           date: string
           id?: number
           point_de_collecte_id: number
-          stock_casiers_33?: number
-          stock_casiers_75?: number
-          stock_paloxs?: number
+          stock_casiers_33: number
+          stock_casiers_75: number
+          stock_paloxs: number
         }
         Update: {
           created_at?: string
@@ -883,7 +893,7 @@ export type Database = {
       contenant_collecte_type: "casier_x12" | "palox" | "casier_x24"
       palette_type: "Europe" | "VMF"
       point_de_collecte_statut: "archive" | "actif"
-      point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
+      point_de_collecte_type: "Magasin" | "Producteur" | "Massification" | "Tri"
       statut_mailing: "En attente" | "En cours" | "Envoyé" | "Échec"
       statut_palox: "En stock" | "Tri" | "Lavage" | "Point de collecte"
       statut_tournee:

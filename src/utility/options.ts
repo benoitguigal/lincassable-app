@@ -15,6 +15,7 @@ export const pointDeCollecteTypeOptions: PointDeCollecteTypeOption[] = [
   { value: "Magasin", label: "Magasin" },
   { value: "Producteur", label: "Producteur" },
   { value: "Massification", label: "Massification" },
+  { value: "Tri", label: "Centre de tri" },
 ];
 
 type ContenantDeCollecteTypeOption = {

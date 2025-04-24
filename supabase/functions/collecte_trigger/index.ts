@@ -53,7 +53,9 @@ async function getFullCollecte(collecte: Collecte) {
   // Récupère les objets liés
   const { data: collecteData, error: collecteError } = await supabaseAdmin
     .from("collecte")
-    .select("*,tournee(*,transporteur(*)),point_de_collecte(*)")
+    .select(
+      "*,tournee(*,transporteur(*)),point_de_collecte!collecte_point_de_collecte_id_fkey(*)"
+    )
     .eq("id", collecte.id);
 
   if (collecteError) {
@@ -140,15 +142,22 @@ Deno.serve(
           throw collecteUpdateError;
         }
       }
-      if (collecte.tournee?.date) {
-        // Utilise la date de la tournée pour renseigner la date de la collecte
-        const { error } = await supabaseAdmin
-          .from("collecte")
-          .update({ date: collecte.tournee.date })
-          .eq("id", record.id);
-        if (error) {
-          throw error;
-        }
+    }
+
+    if (type === "INSERT" && record.tournee_id) {
+      const collecte = await getFullCollecte(record);
+      // Met à jour les informations de la collecte à partir des informations
+      // de la tournéee (date, point de massification)
+      const { error } = await supabaseAdmin
+        .from("collecte")
+        .update({
+          date: collecte.tournee?.date,
+          point_de_massification_id:
+            collecte.tournee?.point_de_massification_id,
+        })
+        .eq("id", record.id);
+      if (error) {
+        throw error;
       }
     }
 
