@@ -1,5 +1,6 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Form } from "antd";
+import { Rule } from "antd/es/form";
 import { ReactNode } from "react";
 
 type FormListItemProps = {
@@ -7,6 +8,7 @@ type FormListItemProps = {
   label: string;
   labelSingular: string;
   children: ReactNode;
+  rules?: Rule[];
 };
 
 const FormListItem: React.FC<FormListItemProps> = ({
@@ -14,6 +16,7 @@ const FormListItem: React.FC<FormListItemProps> = ({
   label,
   labelSingular,
   children,
+  rules = [],
 }) => {
   return (
     <Form.List name={name}>
@@ -34,6 +37,7 @@ const FormListItem: React.FC<FormListItemProps> = ({
                     whitespace: true,
                     message: "Merci de renseigner ou supprimer ce champ",
                   },
+                  ...rules,
                 ]}
                 noStyle
               >
