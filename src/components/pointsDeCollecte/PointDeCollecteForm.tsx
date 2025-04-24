@@ -163,8 +163,17 @@ const PointDeCollecteForm: React.FC<Props> = ({
       <FormListItem name="contacts" label="Contacts" labelSingular="contact">
         <Input placeholder="Nom du contact" style={{ width: "60%" }} />
       </FormListItem>
-      <FormListItem name="emails" label="E-mails" labelSingular="e-mail">
-        <Input placeholder="E-mail de contact" style={{ width: "60%" }} />
+      <FormListItem
+        name="emails"
+        label="E-mails"
+        labelSingular="e-mail"
+        rules={[{ type: "email", message: "Email non valide" }]}
+      >
+        <Input
+          placeholder="E-mail de contact"
+          type="email"
+          style={{ width: "60%" }}
+        />
       </FormListItem>
       <FormListItem
         name="telephones"
