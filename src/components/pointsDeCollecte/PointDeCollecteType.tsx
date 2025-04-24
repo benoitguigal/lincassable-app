@@ -22,6 +22,9 @@ const PointDeCollecteType: React.FC<PointDeCollecteTypeProps> = ({ value }) => {
       color = "#EAEDEC";
       style = { color: "black" };
       break;
+    case "Tri":
+      color = "black";
+      style = { color: "white" };
   }
 
   return (

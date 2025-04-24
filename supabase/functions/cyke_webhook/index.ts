@@ -56,9 +56,11 @@ Deno.serve(
       discordMsg += `\nTournée L'INCASSABLE correspondante : https://app.lincassable.com/tournee/show/${collecte.tournee_id}`;
     }
 
-    await webhooks.cyke.send({
-      content: discordMsg,
-    });
+    if (Deno.env.get("DISCORD_NOTIFICATION") === "active") {
+      await webhooks.cyke.send({
+        content: discordMsg,
+      });
+    }
 
     if (event_type === "delivery_cancelled" && collecte) {
       // Désactive le lien entre la collecte L'INCASSABLE et la livraison Cyke

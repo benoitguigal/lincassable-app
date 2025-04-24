@@ -893,7 +893,7 @@ export type Database = {
       contenant_collecte_type: "casier_x12" | "palox" | "casier_x24"
       palette_type: "Europe" | "VMF"
       point_de_collecte_statut: "archive" | "actif"
-      point_de_collecte_type: "Magasin" | "Producteur" | "Massification"
+      point_de_collecte_type: "Magasin" | "Producteur" | "Massification" | "Tri"
       statut_mailing: "En attente" | "En cours" | "Envoyé" | "Échec"
       statut_palox: "En stock" | "Tri" | "Lavage" | "Point de collecte"
       statut_tournee:

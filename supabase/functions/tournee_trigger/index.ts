@@ -77,9 +77,11 @@ Deno.serve(
               `\nAncien prix : ${old_record.prix} - Nouveau prix : ${record.prix}`;
           }
 
-          await webhooks.tournee.send({
-            content: msg,
-          });
+          if (Deno.env.get("DISCORD_NOTIFICATION") === "active") {
+            await webhooks.tournee.send({
+              content: msg,
+            });
+          }
         }
       }
     }
