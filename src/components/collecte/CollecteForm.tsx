@@ -1,5 +1,6 @@
 import { UseModalFormReturnType, useSelect } from "@refinedev/antd";
 import {
+  Button,
   Checkbox,
   DatePicker,
   Flex,
@@ -12,6 +13,7 @@ import { Collecte, PointDeCollecte, Tournee } from "../../types";
 import { useEffect, useMemo, useState } from "react";
 import Decimal from "decimal.js";
 import dayjs from "dayjs";
+import { FaMagic } from "react-icons/fa";
 
 type Props = Pick<UseModalFormReturnType<Collecte>, "formProps">;
 
@@ -21,7 +23,7 @@ const paletteOptions = [
 ];
 
 const CollecteForm: React.FC<Props> = ({ formProps }) => {
-  const { selectProps } = useSelect<PointDeCollecte>({
+  const { selectProps, query } = useSelect<PointDeCollecte>({
     pagination: { mode: "off" },
     resource: "point_de_collecte",
     optionLabel: "nom",
@@ -102,6 +104,39 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     form?.setFieldValue("livraison_nb_palette_vide", 0);
     form?.setFieldValue("livraison_palette_vide_type", null);
   }
+
+  // Identifiant du point de collecte
+  const pointDeCollecteId = Form.useWatch("point_de_collecte_id", form);
+
+  const pointDeCollecte = useMemo(
+    () => query.data?.data.find((pc) => pc.id === pointDeCollecteId),
+    [pointDeCollecteId, query.data]
+  );
+
+  // Permet de compléter automatiquement le nombre de casiers / palox à collecter
+  // en fonction des stocks du point de collecte
+  const autoFillContenants = () => {
+    if (pointDeCollecte) {
+      if (pointDeCollecte.contenant_collecte_type === "casier_x12") {
+        setHasCasier(true);
+        const stockRotation =
+          pointDeCollecte.stock_casiers_75 -
+          pointDeCollecte.stock_casiers_75_tampon;
+        form?.setFieldValue("collecte_nb_casier_75_plein", stockRotation);
+        form?.setFieldValue("livraison_nb_casier_75_vide", stockRotation);
+      } else if (pointDeCollecte.contenant_collecte_type === "palox") {
+        setHasPalox(true);
+        form?.setFieldValue(
+          "collecte_nb_palox_plein",
+          pointDeCollecte.stock_paloxs
+        );
+        form?.setFieldValue(
+          "livraison_nb_palox_vide",
+          pointDeCollecte.stock_paloxs
+        );
+      }
+    }
+  };
 
   // Nombre de casiers pleins à collecter
   const collecteNbCasierPleins = Form.useWatch(
@@ -346,6 +381,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           placeholder="Choisir un point de collecte"
           style={{ width: 300 }}
           {...selectProps}
+          allowClear
         />
       </Form.Item>
       <Form.Item
@@ -909,6 +945,13 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             />
           </Form.Item>
         </Flex>
+        <Button
+          icon={<FaMagic />}
+          iconPosition="end"
+          onClick={() => autoFillContenants()}
+        >
+          Remplir automatiquement
+        </Button>
 
         <Form.Item
           name="collecte_nb_bouteilles"
