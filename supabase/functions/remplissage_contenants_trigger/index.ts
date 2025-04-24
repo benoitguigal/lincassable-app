@@ -16,26 +16,30 @@ Deno.serve(
   handle<InsertPayload<RemplissageContenants>>(async (payload) => {
     const { record } = payload;
 
-    const { data: pointsDeCollecte, error } = await supabaseAdmin
+    const { data: pointsDeCollecteData, error } = await supabaseAdmin
       .from("point_de_collecte")
-      .select("nom")
+      .select("*")
       .eq("id", record.point_de_collecte_id);
 
     if (error) {
       throw error;
     }
 
-    if (pointsDeCollecte?.length) {
+    if (pointsDeCollecteData?.length) {
       let msg = "";
 
+      const pointDeCollecte = pointsDeCollecteData[0];
+
       if (record.demande_collecte) {
-        msg += `Demande de collecte effectuée par ${pointsDeCollecte[0].nom}`;
+        msg += `Demande de collecte effectuée par ${pointDeCollecte.nom}`;
       } else {
-        msg += `Taux de remplissage renseigné par ${pointsDeCollecte[0].nom}`;
+        msg += `Taux de remplissage renseigné par ${pointDeCollecte.nom}`;
       }
 
       if (record.nb_casiers_plein) {
-        msg += `\n${record.nb_casiers_plein} casiers pleins`;
+        msg +=
+          `\n${record.nb_casiers_plein} casiers 75cl pleins sur un total de` +
+          ` ${pointDeCollecte.stock_casiers_75} (dont ${pointDeCollecte.stock_casiers_75_tampon} de stock tampon)`;
       }
 
       if (record.remplissage_palox) {
