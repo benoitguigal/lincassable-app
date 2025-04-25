@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       collecte: {
         Row: {
+          chargement_retour: number | null
           collecte_casier_33_plein_nb_palette: number
           collecte_casier_33_plein_palette_type:
             | Database["public"]["Enums"]["palette_type"]
@@ -65,6 +66,7 @@ export type Database = {
           tournee_id: number | null
         }
         Insert: {
+          chargement_retour?: number | null
           collecte_casier_33_plein_nb_palette?: number
           collecte_casier_33_plein_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
@@ -119,6 +121,7 @@ export type Database = {
           tournee_id?: number | null
         }
         Update: {
+          chargement_retour?: number | null
           collecte_casier_33_plein_nb_palette?: number
           collecte_casier_33_plein_palette_type?:
             | Database["public"]["Enums"]["palette_type"]

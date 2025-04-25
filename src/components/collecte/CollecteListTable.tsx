@@ -5,7 +5,6 @@ import { DeleteButton, useTable } from "@refinedev/antd";
 import { Popover, Space, Table } from "antd";
 import CollecteEditButton from "./CollecteEditButton";
 import CollecteCreateButton from "./CollecteCreateButton";
-import { chargementCollecte } from "../../utility/weights";
 import Decimal from "decimal.js";
 
 type CollecteListTableProps = {
@@ -162,40 +161,6 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
         return null;
       },
     },
-    // {
-    //   dataIndex: "point_de_collecte_id",
-    //   title: "Adresse",
-    //   render: (id: number) => {
-    //     if (pointDeCollecteById && id) {
-    //       return (
-    //         <>
-    //           <div style={{ marginBottom: "5px" }}>
-    //             {pointDeCollecteById[id]?.adresse}
-    //           </div>
-    //           <div style={{ fontStyle: "italic" }}>
-    //             {pointDeCollecteById[id]?.info}
-    //           </div>
-    //         </>
-    //       );
-    //     }
-    //     return null;
-    //   },
-    // },
-    // {
-    //   dataIndex: "point_de_collecte_id",
-    //   title: "Contact",
-    //   render: (id: number) => {
-    //     if (pointDeCollecteById && id) {
-    //       return (
-    //         <>
-    //           <div>{pointDeCollecteById[id]?.contacts[0]}</div>
-    //           <div>{pointDeCollecteById[id]?.telephones[0]}</div>
-    //         </>
-    //       );
-    //     }
-    //     return null;
-    //   },
-    // },
     ...(showColumns.casier
       ? [
           {
@@ -446,8 +411,9 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
         ]
       : []),
     {
-      title: "Chargement retour (hors palette, hors fûts)",
-      render: (_: any, record: Collecte) => chargementCollecte(record) + " kg",
+      title: "Poids max du chargement au retour",
+      dataIndex: "chargement_retour",
+      render: (value: number) => value + " kg",
     },
     ...(canEdit
       ? [
@@ -512,6 +478,7 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
             collecte_nb_fut_vide,
             collecte_nb_palette_vide,
             livraison_nb_palette_vide,
+            chargement_retour,
           }) => {
             totalLivraisonCasier += livraison_nb_casier_75_vide;
             totalCollecteCasier += collecte_nb_casier_75_plein;
@@ -525,12 +492,7 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
             totalCollecteFut += collecte_nb_fut_vide;
             totalCollectePaletteVide += collecte_nb_palette_vide;
             totalLivraisonPaletteVide += livraison_nb_palette_vide;
-            totalChargement += chargementCollecte({
-              collecte_nb_casier_75_plein,
-              collecte_nb_casier_33_plein,
-              collecte_nb_palox_plein,
-              collecte_nb_palette_bouteille,
-            });
+            totalChargement += chargement_retour ?? 0;
           }
         );
 

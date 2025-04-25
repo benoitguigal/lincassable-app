@@ -5,15 +5,18 @@ import {
   DatePicker,
   Flex,
   Form,
-  Input,
+  InputNumber,
   Select,
   TimePicker,
+  Tooltip,
 } from "antd";
 import { Collecte, PointDeCollecte, Tournee } from "../../types";
 import { useEffect, useMemo, useState } from "react";
 import Decimal from "decimal.js";
 import dayjs from "dayjs";
 import { FaMagic } from "react-icons/fa";
+import { chargementCollecte } from "../../utility/weights";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 type Props = Pick<UseModalFormReturnType<Collecte>, "formProps">;
 
@@ -30,6 +33,18 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     optionValue: "id",
   });
 
+  const { selectProps: pointDeMassificationSelectProps } =
+    useSelect<PointDeCollecte>({
+      pagination: { mode: "off" },
+      resource: "point_de_collecte",
+      optionLabel: "nom",
+      optionValue: "id",
+      filters: [
+        { field: "type", operator: "in", value: ["Massification", "Tri"] },
+        { field: "statut", operator: "ne", value: "archive" },
+      ],
+    });
+
   const { selectProps: tourneeSelectProps } = useSelect<Tournee>({
     pagination: { mode: "off" },
     resource: "tournee",
@@ -42,17 +57,6 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
   const { form, initialValues } = formProps;
 
   const hasTournee = !!formProps.initialValues?.tournee_id;
-
-  const handleCollecteChange = () => {
-    const nbCasiers = form?.getFieldValue("collecte_nb_casier_75_plein") ?? 0;
-    const nbCasiers33 = form?.getFieldValue("collecte_nb_casier_33_plein") ?? 0;
-    const nbPaloxs = form?.getFieldValue("collecte_nb_palox_plein") ?? 0;
-    const nbPalettes =
-      form?.getFieldValue("collecte_nb_palette_bouteille") ?? 0;
-    const nbBouteilles =
-      nbCasiers * 12 + nbCasiers33 * 24 + nbPaloxs * 550 + nbPalettes * 1200;
-    form?.setFieldValue("collecte_nb_bouteilles", nbBouteilles);
-  };
 
   const [hasCasier, setHasCasier] = useState(false);
   const [hasCasier33, setHasCasier33] = useState(false);
@@ -345,6 +349,34 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     }
   }, [initialValues]);
 
+  const collecteNbPaloxPleins = Form.useWatch("collecte_nb_palox_plein", form);
+  const collecteNbPalettesBouteille = Form.useWatch(
+    "collecte_nb_palette_bouteille",
+    form
+  );
+
+  useEffect(() => {
+    const nbBouteilles =
+      collecteNbCasierPleins * 12 +
+      collecteNbCasier33Pleins * 24 +
+      collecteNbPaloxPleins * 550 +
+      collecteNbPalettesBouteille * 1200;
+    form?.setFieldValue("collecte_nb_bouteilles", nbBouteilles);
+    const chargement = chargementCollecte({
+      collecte_nb_casier_75_plein: collecteNbCasierPleins,
+      collecte_nb_casier_33_plein: collecteNbCasier33Pleins,
+      collecte_nb_palox_plein: collecteNbPaloxPleins,
+      collecte_nb_palette_bouteille: collecteNbPalettesBouteille,
+    });
+    form?.setFieldValue("chargement_retour", chargement);
+  }, [
+    collecteNbCasierPleins,
+    collecteNbCasier33Pleins,
+    collecteNbPaloxPleins,
+    collecteNbPalettesBouteille,
+    form,
+  ]);
+
   const creneauDisableTime = {
     disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 19, 20, 21, 22, 23],
     disabledMinutes: (selectedHour: number) => {
@@ -397,7 +429,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
         <Select
           placeholder="Choisir un point de massification"
           style={{ width: 300 }}
-          {...selectProps}
+          {...pointDeMassificationSelectProps}
         />
       </Form.Item>
 
@@ -478,21 +510,14 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
         <Flex gap="middle" hidden={!hasCasier}>
           <Form.Item
             name="collecte_nb_casier_75_plein"
+            initialValue={0}
             label={
               <span>
                 <b>Collecte</b> - Nombre de casiers 12x75cl pleins
               </span>
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              onChange={() => {
-                handleCollecteChange();
-              }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
           <Form.Item
             label="Type de palette"
@@ -511,6 +536,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           </Form.Item>
           <Form.Item
             name="collecte_casier_75_plein_nb_palette"
+            initialValue={0}
             label="Nombre de palettes"
             hidden={!collecteCasierPaletteType}
             help={
@@ -519,25 +545,21 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
                 : ""
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
         </Flex>
 
         <Flex gap="middle" hidden={!hasCasier}>
           <Form.Item
             name="livraison_nb_casier_75_vide"
+            initialValue={0}
             label={
               <span>
                 <b>Livraison</b> - Nombre de casiers 12x75cl vides
               </span>
             }
           >
-            <Input type="number" defaultValue={0} style={{ width: 300 }} />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
           <Form.Item
             label="Type de palette"
@@ -556,6 +578,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           </Form.Item>
           <Form.Item
             name="livraison_casier_75_vide_nb_palette"
+            initialValue={0}
             label="Nombre de palettes"
             hidden={!livraisonCasierPaletteType}
             help={
@@ -564,12 +587,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
                 : ""
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
         </Flex>
 
@@ -589,21 +607,14 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
         <Flex gap="middle" hidden={!hasCasier33}>
           <Form.Item
             name="collecte_nb_casier_33_plein"
+            initialValue={0}
             label={
               <span>
                 <b>Collecte</b> - Nombre de casiers 24x33cl pleins
               </span>
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              onChange={() => {
-                handleCollecteChange();
-              }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
           <Form.Item
             label="Type de palette"
@@ -622,6 +633,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           </Form.Item>
           <Form.Item
             name="collecte_casier_33_plein_nb_palette"
+            initialValue={0}
             label="Nombre de palettes"
             hidden={!collecteCasier33PaletteType}
             help={
@@ -630,25 +642,21 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
                 : ""
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
         </Flex>
 
         <Flex gap="middle" hidden={!hasCasier33}>
           <Form.Item
             name="livraison_nb_casier_33_vide"
+            initialValue={0}
             label={
               <span>
                 <b>Livraison</b> - Nombre de casiers 24x33cl vides
               </span>
             }
           >
-            <Input type="number" defaultValue={0} style={{ width: 300 }} />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
           <Form.Item
             label="Type de palette"
@@ -667,6 +675,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           </Form.Item>
           <Form.Item
             name="livraison_casier_33_vide_nb_palette"
+            initialValue={0}
             label="Nombre de palettes"
             hidden={!livraisonCasier33PaletteType}
             help={
@@ -675,12 +684,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
                 : ""
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
         </Flex>
 
@@ -699,6 +703,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
         <Form.Item
           name="collecte_nb_palox_plein"
+          initialValue={0}
           hidden={!hasPalox}
           label={
             <span>
@@ -706,16 +711,11 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             </span>
           }
         >
-          <Input
-            type="number"
-            defaultValue={0}
-            style={{ width: 300 }}
-            onChange={handleCollecteChange}
-            min={0}
-          />
+          <InputNumber min={0} style={{ width: 300 }} />
         </Form.Item>
         <Form.Item
           name="livraison_nb_palox_vide"
+          initialValue={0}
           hidden={!hasPalox}
           label={
             <span>
@@ -723,12 +723,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             </span>
           }
         >
-          <Input
-            type="number"
-            defaultValue={0}
-            style={{ width: 300 }}
-            min={0}
-          />
+          <InputNumber min={0} style={{ width: 300 }} />
         </Form.Item>
 
         <Checkbox
@@ -746,6 +741,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
         <Form.Item
           name="collecte_nb_palette_bouteille"
+          initialValue={0}
           hidden={!hasPaletteBouteilles}
           label={
             <span>
@@ -753,16 +749,11 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             </span>
           }
         >
-          <Input
-            type="number"
-            defaultValue={0}
-            style={{ width: 300 }}
-            onChange={handleCollecteChange}
-            min={0}
-          />
+          <InputNumber min={0} style={{ width: 300 }} />
         </Form.Item>
         <Form.Item
           name="livraison_nb_palette_bouteille"
+          initialValue={0}
           hidden={!hasPaletteBouteilles}
           label={
             <span>
@@ -770,12 +761,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             </span>
           }
         >
-          <Input
-            type="number"
-            defaultValue={0}
-            style={{ width: 300 }}
-            min={0}
-          />
+          <InputNumber min={0} style={{ width: 300 }} />
         </Form.Item>
 
         <Checkbox
@@ -793,18 +779,14 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
         <Flex gap="middle" hidden={!hasFuts}>
           <Form.Item
             name="collecte_nb_fut_vide"
+            initialValue={0}
             label={
               <span>
                 <b>Collecte</b> - Nombre de fûts
               </span>
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
           <Form.Item label="Type de palette" name="collecte_fut_palette_type">
             <Select
@@ -820,6 +802,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           </Form.Item>
           <Form.Item
             name="collecte_fut_nb_palette"
+            initialValue={0}
             label="Nombre de palettes"
             hidden={!collecteFutsPaletteType}
             help={
@@ -828,29 +811,20 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
                 : ""
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
         </Flex>
         <Flex gap="middle" hidden={!hasFuts}>
           <Form.Item
             name="livraison_nb_fut_vide"
+            initialValue={0}
             label={
               <span>
                 <b>Livraison</b> - Nombre de fûts
               </span>
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
           <Form.Item label="Type de palette" name="livraison_fut_palette_type">
             <Select
@@ -866,6 +840,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           </Form.Item>
           <Form.Item
             name="livraison_fut_nb_palette"
+            initialValue={0}
             label="Nombre de palettes"
             hidden={!livraisonFutsPaletteType}
             help={
@@ -874,12 +849,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
                 : ""
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
         </Flex>
 
@@ -899,18 +869,14 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
         <Flex gap="middle" hidden={!hasPaletteVide}>
           <Form.Item
             name="collecte_nb_palette_vide"
+            initialValue={0}
             label={
               <span>
                 <b>Collecte</b> - Nombre de palettes vides
               </span>
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
           <Form.Item label="Type de palette" name="collecte_palette_vide_type">
             <Select
@@ -924,18 +890,14 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
         <Flex gap="middle" hidden={!hasPaletteVide}>
           <Form.Item
             name="livraison_nb_palette_vide"
+            initialValue={0}
             label={
               <span>
                 <b>Livraison</b> - Nombre de palettes vides
               </span>
             }
           >
-            <Input
-              type="number"
-              defaultValue={0}
-              style={{ width: 300 }}
-              min={0}
-            />
+            <InputNumber min={0} style={{ width: 300 }} />
           </Form.Item>
           <Form.Item label="Type de palette" name="livraison_palette_vide_type">
             <Select
@@ -955,11 +917,42 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
         <Form.Item
           name="collecte_nb_bouteilles"
+          initialValue={0}
           label={<b>TOTAL de bouteilles à collecter</b>}
           help="Calculé automatiquement mais peut-être ajusté manuellement"
           style={{ width: 300, marginTop: "1em" }}
         >
-          <Input type="number" defaultValue={0} style={{ width: 300 }} />
+          <InputNumber min={0} style={{ width: 300 }} />
+        </Form.Item>
+
+        <Form.Item
+          name="chargement_retour"
+          initialValue={0}
+          label={
+            <div>
+              Chargement retour (kg){" "}
+              <Tooltip
+                title={
+                  <div>
+                    Les variables suivantes sont utilisées pour le calcul :
+                    <br />
+                    POID_BOUTEILLE_75 = 0.54 kg <br />
+                    POID_BOUTEILLE_33 = 0.28 kg <br />
+                    POID_CASIER_75 = 2.27 kg <br />
+                    POID_CASIER_33 = 2.27 kg <br />
+                    POID_PALOX_VIDE = 72kg
+                    <br />
+                  </div>
+                }
+              >
+                <QuestionCircleOutlined />
+              </Tooltip>
+            </div>
+          }
+          help="Calculé automatiquement mais peut-être ajusté manuellement"
+          style={{ width: 300, marginTop: "1em" }}
+        >
+          <InputNumber min={0} style={{ width: 300 }} />
         </Form.Item>
       </Flex>
     </Form>
