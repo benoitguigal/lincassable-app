@@ -66,6 +66,7 @@ import PaloxCreate from "./pages/palox/PaloxCreate";
 import PaloxEdit from "./pages/palox/PaloxEdit";
 import MouvementsParPoint from "./pages/MouvementsParPoint";
 import "dayjs/locale/fr";
+import PointDeMassificationList from "./pages/PointDeMassificationList";
 
 dayjs.locale("fr");
 
@@ -190,6 +191,14 @@ function App() {
                     meta: { label: "Mouvements", parent: "stock_menu" },
                   },
                   {
+                    name: "point_de_massification",
+                    list: "point_de_massification",
+                    meta: {
+                      label: "Points de massification",
+                      parent: "stock_menu",
+                    },
+                  },
+                  {
                     name: "palox",
                     list: "palox",
                     create: "palox/create",
@@ -302,6 +311,9 @@ function App() {
                     </Route>
                     <Route path="/mouvement">
                       <Route index element={<MouvementsParPoint />} />
+                    </Route>
+                    <Route path="/point_de_massification">
+                      <Route index element={<PointDeMassificationList />} />
                     </Route>
                     <Route path="/inventaire">
                       <Route index element={<InventaireList />} />

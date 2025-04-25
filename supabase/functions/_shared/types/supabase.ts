@@ -450,6 +450,8 @@ export type Database = {
           stock_casiers_33: number
           stock_casiers_33_tampon: number
           stock_casiers_75: number
+          stock_casiers_75_plein: number | null
+          stock_casiers_75_plein_prevision: number | null
           stock_casiers_75_tampon: number
           stock_paloxs: number
           telephones: string[]
@@ -482,6 +484,8 @@ export type Database = {
           stock_casiers_33?: number
           stock_casiers_33_tampon?: number
           stock_casiers_75?: number
+          stock_casiers_75_plein?: number | null
+          stock_casiers_75_plein_prevision?: number | null
           stock_casiers_75_tampon?: number
           stock_paloxs?: number
           telephones?: string[]
@@ -514,6 +518,8 @@ export type Database = {
           stock_casiers_33?: number
           stock_casiers_33_tampon?: number
           stock_casiers_75?: number
+          stock_casiers_75_plein?: number | null
+          stock_casiers_75_plein_prevision?: number | null
           stock_casiers_75_tampon?: number
           stock_paloxs?: number
           telephones?: string[]

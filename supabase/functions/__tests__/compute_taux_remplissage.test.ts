@@ -55,6 +55,8 @@ describe("compute_taux_remplissage", () => {
           telephones: [],
           contenant_collecte_type: "casier_x12",
           stock_casiers_75: 200,
+          stock_casiers_75_plein: 20,
+          stock_casiers_75_plein_prevision: 20,
           stock_casiers_33: 0,
           stock_paloxs: 0,
         })
@@ -89,22 +91,21 @@ describe("compute_taux_remplissage", () => {
 
     // Crée une ramasse du centre de massification vers le centre de tri
     // Cette collecte sert de base pour le calcul du nombre de casiers pleins.
-    const { data: collecteData, error: collecteError } = await supabaseAdmin
+    const { error: collecteError } = await supabaseAdmin
       .from("collecte")
       .insert({
         date: "2025-02-26",
         point_de_collecte_id: pointDeMassification.id,
         point_de_massification_id: centreDeTri.id,
-        collecte_nb_casier_75_plein: 10,
-        livraison_nb_casier_75_vide: 10,
+        collecte_nb_casier_75_plein: 200,
+        livraison_nb_casier_75_vide: 200,
       })
       .select("*");
 
     expect(collecteError).toBeNull();
-    const collecte = collecteData![0];
 
     // Crée des collectes entre le point de collecte et le point de massification
-    const { data: deliveryData, error: deliveryError } = await supabaseAdmin
+    const { error: deliveryError } = await supabaseAdmin
       .from("collecte")
       .insert([
         {
@@ -118,7 +119,6 @@ describe("compute_taux_remplissage", () => {
           livraison_nb_casier_75_vide: 10,
         },
         // Les livraisons suivantes doivent êtres prises en compte dans le calcul
-        // du taux de remplissage
         {
           date: "2025-03-01",
           point_de_collecte_id: pointDeCollecte.id,
@@ -138,13 +138,30 @@ describe("compute_taux_remplissage", () => {
 
     expect(deliveryError).toBeNull();
 
-    // Invoque une première fois la fonction. Étant donné qu'aucune collecte n'a été effectuée
-    // ce jour, aucun taux de remplissage ne doit être crée
+    // Invoque une première fois la fonction.
     await supabaseAdmin.functions.invoke("compute_taux_remplissage", {
       body: {},
     });
 
-    // Ajoute une nouvelle collecte qui a lieu aujourd'hui
+    // Les collectes passées correspondent
+    // au nombre de casiers pleins renseignés sur le point de massification.
+    // Le taux de remplissage ne doit donc pas être renseigné et le stock de casiers pleins
+    // doit rester inchangé
+    let remplissageContenantsIsFilled = true;
+    try {
+      await waitFor(async () => {
+        const { data } = await supabaseAdmin
+          .from("remplissage_contenants")
+          .select("*");
+        expect(data?.length).toBeGreaterThan(0);
+      });
+    } catch (_err) {
+      remplissageContenantsIsFilled = false;
+    }
+
+    expect(remplissageContenantsIsFilled).toEqual(false);
+
+    // Ajoute une nouvelle collecte qui a lieu aujourd'hui et une autre dans le futur
     const { error: deliveryTodayError } = await supabaseAdmin
       .from("collecte")
       .insert([
@@ -154,6 +171,19 @@ describe("compute_taux_remplissage", () => {
           point_de_massification_id: pointDeMassification.id,
           collecte_nb_casier_75_plein: 5,
           livraison_nb_casier_75_vide: 5,
+        },
+        {
+          date: new Date(
+            Date.now() +
+              // dans deux jours
+              2 * 24 * 60 * 60 * 1000
+          )
+            .toISOString()
+            .split("T")[0],
+          point_de_collecte_id: pointDeCollecte.id,
+          point_de_massification_id: pointDeMassification.id,
+          collecte_nb_casier_75_plein: 7,
+          livraison_nb_casier_75_vide: 7,
         },
       ])
       .select("*");
@@ -166,13 +196,35 @@ describe("compute_taux_remplissage", () => {
     });
 
     await waitFor(async () => {
-      const { data, error } = await supabaseAdmin
+      const {
+        data: remplissageContenantsData,
+        error: remplissageContenantsError,
+      } = await supabaseAdmin
         .from("remplissage_contenants")
-        .select("*");
-      expect(error).toBeNull();
-      expect(data).toHaveLength(1);
-      const tauxRemplissage = data![0];
+        .select("*")
+        .eq("point_de_collecte_id", pointDeMassification.id);
+      expect(remplissageContenantsError).toBeNull();
+      expect(remplissageContenantsData).toHaveLength(1);
+      const tauxRemplissage = remplissageContenantsData![0];
       expect(tauxRemplissage.nb_casiers_plein).toEqual(25);
+
+      const {
+        data: pointDeMassificationAfterUpdateData,
+        error: pointDeMassificationAterUpdateError,
+      } = await supabaseAdmin
+        .from("point_de_collecte")
+        .select("*")
+        .eq("id", pointDeMassification.id);
+
+      expect(pointDeMassificationAterUpdateError).toBeNull();
+      const pointDeMassificationAfterUpdate =
+        pointDeMassificationAfterUpdateData![0];
+      expect(pointDeMassificationAfterUpdate.stock_casiers_75_plein).toEqual(
+        25
+      );
+      expect(
+        pointDeMassificationAfterUpdate.stock_casiers_75_plein_prevision
+      ).toEqual(32);
     });
   });
 });

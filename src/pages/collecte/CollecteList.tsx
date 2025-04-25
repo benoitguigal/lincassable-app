@@ -78,6 +78,18 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
     optionValue: "id",
   });
 
+  const { selectProps: pointDeMassificationSelectProps } =
+    useSelect<PointDeCollecte>({
+      resource: "point_de_collecte",
+      pagination: { mode: "off" },
+      optionLabel: "nom",
+      optionValue: "id",
+      filters: [
+        { field: "type", operator: "in", value: ["Massification", "Tri"] },
+        { field: "statut", operator: "ne", value: "archive" },
+      ],
+    });
+
   const pointDeCollecteById = useMemo(
     () =>
       (pointDeCollecteQuery.data?.data ?? []).reduce<{
@@ -109,6 +121,19 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
   const pointDeCollecteFilter = useMemo<BaseOption | null>(() => {
     const filter = filters.find(
       (f) => (f as LogicalFilter).field === "point_de_collecte_id"
+    );
+    if (filter) {
+      return {
+        value: filter.value,
+        label: pointDeCollecteById[filter.value]?.nom ?? "",
+      };
+    }
+    return null;
+  }, [filters, pointDeCollecteById]);
+
+  const pointDeMassificationFilter = useMemo<BaseOption | null>(() => {
+    const filter = filters.find(
+      (f) => (f as LogicalFilter).field === "point_de_massification_id"
     );
     if (filter) {
       return {
@@ -208,6 +233,29 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
           }}
         />
         <Select
+          {...pointDeMassificationSelectProps}
+          style={{ width: "250px" }}
+          allowClear
+          placeholder="Point de massification ou centre de tri"
+          value={pointDeMassificationFilter}
+          onChange={(value) => {
+            if (value) {
+              setFilters(
+                [{ field: "point_de_massification_id", operator: "eq", value }],
+                "merge"
+              );
+            } else {
+              setFilters(
+                filters.filter(
+                  (f) =>
+                    (f as LogicalFilter).field !== "point_de_massification_id"
+                ),
+                "replace"
+              );
+            }
+          }}
+        />
+        <Select
           {...transporteurSelectProps}
           style={{ width: "250px" }}
           allowClear
@@ -291,7 +339,7 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
         />
         <Table.Column
           dataIndex="point_de_massification"
-          title="Point de massification"
+          title="Point de massification ou centre de tri"
           render={(pointDeMassification: Record["point_de_massification"]) => {
             if (pointDeMassification) {
               return (
