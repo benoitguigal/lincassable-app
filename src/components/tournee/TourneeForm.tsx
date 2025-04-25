@@ -28,7 +28,10 @@ const TourneeForm: React.FC<Props> = ({ form, action }) => {
     useSelect<PointDeCollecte>({
       resource: "point_de_collecte",
       optionLabel: "nom",
-      filters: [{ field: "type", operator: "eq", value: "Massification" }],
+      filters: [
+        { field: "type", operator: "in", value: ["Massification", "Tri"] },
+        { field: "statut", operator: "ne", value: "archive" },
+      ],
     });
 
   const { selectProps: transporteurSelectProps } = useSelect<Transporteur>({

@@ -49,7 +49,10 @@ const CollecteList: React.FC<IResourceComponentsProps> = () => {
     pagination: { pageSize: 20, mode: "server" },
     sorters: {
       mode: "server",
-      initial: [{ field: "date", order: "desc" }],
+      initial: [
+        { field: "date", order: "desc" },
+        { field: "id", order: "desc" },
+      ],
     },
     filters: {
       initial: [
