@@ -142,6 +142,31 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     }
   };
 
+  const autoFillTotalBouteille = () => {
+    const nbBouteilles =
+      form?.getFieldValue("collecte_nb_casier_75_plein") * 12 +
+      form?.getFieldValue("collecte_nb_casier_33_plein") * 24 +
+      form?.getFieldValue("collecte_nb_palox_plein") * 550 +
+      form?.getFieldValue("collecte_nb_palette_bouteille") * 1200;
+    form?.setFieldValue("collecte_nb_bouteilles", nbBouteilles);
+  };
+
+  const autoFillChargement = () => {
+    const chargement = chargementCollecte({
+      collecte_nb_casier_75_plein: form?.getFieldValue(
+        "collecte_nb_casier_75_plein"
+      ),
+      collecte_nb_casier_33_plein: form?.getFieldValue(
+        "collecte_nb_casier_33_plein"
+      ),
+      collecte_nb_palox_plein: form?.getFieldValue("collecte_nb_palox_plein"),
+      collecte_nb_palette_bouteille: form?.getFieldValue(
+        "collecte_nb_palette_bouteille"
+      ),
+    });
+    form?.setFieldValue("chargement_retour", chargement);
+  };
+
   // Nombre de casiers pleins à collecter
   const collecteNbCasierPleins = Form.useWatch(
     "collecte_nb_casier_75_plein",
@@ -349,34 +374,6 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     }
   }, [initialValues]);
 
-  const collecteNbPaloxPleins = Form.useWatch("collecte_nb_palox_plein", form);
-  const collecteNbPalettesBouteille = Form.useWatch(
-    "collecte_nb_palette_bouteille",
-    form
-  );
-
-  useEffect(() => {
-    const nbBouteilles =
-      collecteNbCasierPleins * 12 +
-      collecteNbCasier33Pleins * 24 +
-      collecteNbPaloxPleins * 550 +
-      collecteNbPalettesBouteille * 1200;
-    form?.setFieldValue("collecte_nb_bouteilles", nbBouteilles);
-    const chargement = chargementCollecte({
-      collecte_nb_casier_75_plein: collecteNbCasierPleins,
-      collecte_nb_casier_33_plein: collecteNbCasier33Pleins,
-      collecte_nb_palox_plein: collecteNbPaloxPleins,
-      collecte_nb_palette_bouteille: collecteNbPalettesBouteille,
-    });
-    form?.setFieldValue("chargement_retour", chargement);
-  }, [
-    collecteNbCasierPleins,
-    collecteNbCasier33Pleins,
-    collecteNbPaloxPleins,
-    collecteNbPalettesBouteille,
-    form,
-  ]);
-
   const creneauDisableTime = {
     disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 19, 20, 21, 22, 23],
     disabledMinutes: (selectedHour: number) => {
@@ -491,6 +488,17 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             style={{ width: 300 }}
           />
         </Form.Item>
+      </Flex>
+
+      <Flex gap={5}>
+        <h4>Liste des contenants</h4>
+        <Tooltip title="Remplir automatiquement à partir des stocks. Pour les casiers 75cl, le chiffre est calculé en prenant le stock total moins le stock tampon">
+          <Button
+            icon={<FaMagic />}
+            iconPosition="end"
+            onClick={() => autoFillContenants()}
+          />
+        </Tooltip>
       </Flex>
 
       <Flex vertical gap="middle" align="flex-start">
@@ -907,19 +915,30 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
             />
           </Form.Item>
         </Flex>
-        <Button
-          icon={<FaMagic />}
-          iconPosition="end"
-          onClick={() => autoFillContenants()}
-        >
-          Remplir automatiquement
-        </Button>
 
         <Form.Item
           name="collecte_nb_bouteilles"
-          initialValue={0}
-          label={<b>TOTAL de bouteilles à collecter</b>}
-          help="Calculé automatiquement mais peut-être ajusté manuellement"
+          rules={[{ required: true }]}
+          label={
+            <div>
+              <b>TOTAL de bouteilles à collecter </b>
+              <Tooltip
+                title={
+                  <div>
+                    Remplir automatiquement avec les paramètres suivants :
+                    <br /> Nombre de bouteilles par palox = 550 <br />
+                    Nombre de bouteilles par palette = 1200 <br />
+                  </div>
+                }
+              >
+                <Button
+                  icon={<FaMagic />}
+                  iconPosition="end"
+                  onClick={() => autoFillTotalBouteille()}
+                />
+              </Tooltip>
+            </div>
+          }
           style={{ width: 300, marginTop: "1em" }}
         >
           <InputNumber min={0} style={{ width: 300 }} />
@@ -927,30 +946,33 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
         <Form.Item
           name="chargement_retour"
-          initialValue={0}
+          rules={[{ required: true }]}
           label={
             <div>
               Chargement retour (kg){" "}
               <Tooltip
                 title={
                   <div>
-                    Les variables suivantes sont utilisées pour le calcul :
+                    Remplir automatiquement avec les paramètres suivant :
                     <br />
-                    POID_BOUTEILLE_75 = 0.54 kg <br />
-                    POID_BOUTEILLE_33 = 0.28 kg <br />
-                    POID_CASIER_75 = 2.27 kg <br />
-                    POID_CASIER_33 = 2.27 kg <br />
-                    POID_PALOX_VIDE = 72kg
+                    Poids bouteille 75cl = 0.54 kg <br />
+                    Poids bouteille 33cl = 0.28 kg <br />
+                    Poids casier (75cl et 33cl) = 2.27 kg <br />
+                    Poids palox vide = 72kg <br />
+                    Nombre de bouteilles par palox = 550 <br />
+                    Nombre de bouteilles par palette = 1200
                     <br />
                   </div>
                 }
               >
-                <QuestionCircleOutlined />
+                <Button
+                  icon={<FaMagic />}
+                  iconPosition="end"
+                  onClick={() => autoFillChargement()}
+                />
               </Tooltip>
             </div>
           }
-          help="Calculé automatiquement mais peut-être ajusté manuellement"
-          style={{ width: 300, marginTop: "1em" }}
         >
           <InputNumber min={0} style={{ width: 300 }} />
         </Form.Item>
