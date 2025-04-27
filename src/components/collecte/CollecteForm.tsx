@@ -16,7 +16,6 @@ import Decimal from "decimal.js";
 import dayjs from "dayjs";
 import { FaMagic } from "react-icons/fa";
 import { chargementCollecte } from "../../utility/weights";
-import { QuestionCircleOutlined } from "@ant-design/icons";
 
 type Props = Pick<UseModalFormReturnType<Collecte>, "formProps">;
 
@@ -427,6 +426,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
           placeholder="Choisir un point de massification"
           style={{ width: 300 }}
           {...pointDeMassificationSelectProps}
+          allowClear
         />
       </Form.Item>
 

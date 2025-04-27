@@ -37,7 +37,9 @@ Deno.serve(
     }
     const { data: collecteData, error: collecteError } = await supabaseAdmin
       .from("collecte")
-      .select("*,tournee(*),point_de_collecte(*)")
+      .select(
+        "*,tournee(*),point_de_collecte!collecte_point_de_collecte_id_fkey(*)"
+      )
       .eq("cyke_id", payload.delivery.id);
 
     if (collecteError) {
