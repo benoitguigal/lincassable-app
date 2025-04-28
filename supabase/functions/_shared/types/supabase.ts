@@ -244,8 +244,11 @@ export type Database = {
           id: number
           point_de_collecte_id: number
           stock_casiers_33: number
+          stock_casiers_33_plein: number | null
           stock_casiers_75: number
+          stock_casiers_75_plein: number | null
           stock_paloxs: number
+          stock_paloxs_plein: number | null
         }
         Insert: {
           created_at?: string
@@ -253,8 +256,11 @@ export type Database = {
           id?: number
           point_de_collecte_id: number
           stock_casiers_33: number
+          stock_casiers_33_plein?: number | null
           stock_casiers_75: number
+          stock_casiers_75_plein?: number | null
           stock_paloxs: number
+          stock_paloxs_plein?: number | null
         }
         Update: {
           created_at?: string
@@ -262,8 +268,11 @@ export type Database = {
           id?: number
           point_de_collecte_id?: number
           stock_casiers_33?: number
+          stock_casiers_33_plein?: number | null
           stock_casiers_75?: number
+          stock_casiers_75_plein?: number | null
           stock_paloxs?: number
+          stock_paloxs_plein?: number | null
         }
         Relationships: [
           {
