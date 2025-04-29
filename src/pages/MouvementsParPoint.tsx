@@ -1,41 +1,12 @@
-import { useSelect } from "@refinedev/antd";
 import { IResourceComponentsProps, useList, useOne } from "@refinedev/core";
 import { Collecte, Inventaire, PointDeCollecte } from "../types";
-import { Alert, Select, Table } from "antd";
-import { useState } from "react";
-
-const columns = [
-  { title: "Évenement", dataIndex: "event", key: "event" },
-  { title: "Date", dataIndex: "date", key: "date" },
-  {
-    title: "Stock palox",
-    dataIndex: "stock_palox",
-    key: "stock_palox",
-  },
-  {
-    title: "Stock casier 75",
-    dataIndex: "stock_casier_75",
-    key: "stock_casier_75",
-  },
-  {
-    title: "Stock casier 33",
-    dataIndex: "stock_casier_33",
-    key: "stock_casier_33",
-  },
-];
+import { Alert, Table } from "antd";
+import { useParams } from "react-router-dom";
 
 const MouvementsParPoint: React.FC<IResourceComponentsProps> = () => {
-  const { selectProps: pointDeCollecteSelectProps } =
-    useSelect<PointDeCollecte>({
-      pagination: { mode: "off" },
-      resource: "point_de_collecte",
-      optionLabel: "nom",
-      optionValue: "id",
-    });
+  const params = useParams();
 
-  const [pointDeCollecteId, setPointDeCollecteId] = useState<
-    number | null | undefined
-  >(null);
+  const pointDeCollecteId = params.id;
 
   const { data: pointDeCollecteData } = useOne<PointDeCollecte>({
     resource: "point_de_collecte",
@@ -75,13 +46,89 @@ const MouvementsParPoint: React.FC<IResourceComponentsProps> = () => {
         operator: "eq",
         value: pointDeCollecteId,
       },
-      { field: "date", operator: "gt", value: inventaire?.date },
+      { field: "date", operator: "gte", value: inventaire?.date },
+    ],
+    queryOptions: { enabled: !!pointDeCollecteId && !!inventaire },
+  });
+
+  const { data: deliveryData } = useList<Collecte>({
+    resource: "collecte",
+    pagination: {
+      mode: "off",
+    },
+    sorters: [{ field: "date", order: "asc" }],
+    filters: [
+      {
+        field: "point_de_massification_id",
+        operator: "eq",
+        value: pointDeCollecteId,
+      },
+      { field: "date", operator: "gte", value: inventaire?.date },
     ],
     queryOptions: { enabled: !!pointDeCollecteId && !!inventaire },
   });
 
   const pointDeCollecte = pointDeCollecteData?.data;
   const collectes = collecteData?.data ?? [];
+  const deliveries = deliveryData?.data ?? [];
+
+  const rows = [
+    ...collectes.map((c) => ({ ...c, type: "collecte" })),
+    ...deliveries.map((d) => ({ ...d, type: "delivery" })),
+  ].sort(
+    (a, b) => new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime()
+  );
+
+  const isMassification =
+    pointDeCollecte?.type === "Massification" ||
+    pointDeCollecte?.type === "Tri";
+
+  const columns = [
+    { title: "Évenement", dataIndex: "event", key: "event" },
+    { title: "Date", dataIndex: "date", key: "date" },
+    {
+      title: "Stock palox",
+      dataIndex: "stock_palox",
+      key: "stock_palox",
+    },
+    ...(isMassification
+      ? [
+          {
+            title: "Stock palox plein",
+            dataIndex: "stock_palox_plein",
+            key: "stock_palox_plein",
+          },
+        ]
+      : []),
+    {
+      title: "Stock casier 75cl",
+      dataIndex: "stock_casier_75",
+      key: "stock_casier_75",
+    },
+    ...(isMassification
+      ? [
+          {
+            title: "Stock casier 75cl plein",
+            dataIndex: "stock_casier_75_plein",
+            key: "stock_casier_75_plein",
+          },
+        ]
+      : []),
+    {
+      title: "Stock casier 33cl",
+      dataIndex: "stock_casier_33",
+      key: "stock_casier_33",
+    },
+    ...(isMassification
+      ? [
+          {
+            title: "Stock casier 33cl plein",
+            dataIndex: "stock_casier_33_plein",
+            key: "stock_casier_33_plein",
+          },
+        ]
+      : []),
+  ];
 
   const dataSource = inventaire
     ? [
@@ -89,57 +136,107 @@ const MouvementsParPoint: React.FC<IResourceComponentsProps> = () => {
           event: <a href={`/inventaire/edit/${inventaire.id}`}>Inventaire</a>,
           date: inventaire.date.slice(0, 10),
           stock_casier_75: inventaire.stock_casiers_75,
+          stock_casier_75_plein: inventaire.stock_casiers_75_plein,
           stock_casier_33: inventaire.stock_casiers_33,
+          stock_casier_33_plein: inventaire.stock_casiers_33_plein,
           stock_palox: inventaire.stock_paloxs,
+          stock_palox_plein: inventaire.stock_paloxs_plein,
         },
-        ...collectes.map((collecte) => ({
-          event: <a href={`/collecte/edit/${collecte.id}`}>Collecte</a>,
-          date: collecte.date ?? "",
+        ...rows.map((row) => ({
+          event: (
+            <a href={`/collecte/edit/${row.id}`}>
+              {row.type === "collecte" ? "Collecte" : "Livraison"}
+            </a>
+          ),
+          date: row.date ?? "",
           stock_casier_75: (
             <div>
-              +{collecte.livraison_nb_casier_75_vide}
-              <br />-{collecte.collecte_nb_casier_75_plein}
+              {row.type === "collecte" ? "+" : "-"}
+              {row.livraison_nb_casier_75_vide}
+              <br />
+              {row.type === "collecte" ? "-" : "+"}
+              {row.collecte_nb_casier_75_plein}
             </div>
           ),
+          ...(isMassification
+            ? {
+                stock_casier_75_plein: (
+                  <div>
+                    {row.type === "collecte" ? "-" : "+"}
+                    {row.collecte_nb_casier_75_plein}
+                  </div>
+                ),
+              }
+            : {}),
+
           stock_casier_33: (
             <div>
-              +{collecte.livraison_nb_casier_33_vide}
-              <br />-{collecte.collecte_nb_casier_33_plein}
+              {row.type === "collecte" ? "+" : "-"}
+              {row.livraison_nb_casier_33_vide}
+              <br />
+              {row.type === "collecte" ? "-" : "+"}
+              {row.collecte_nb_casier_33_plein}
             </div>
           ),
+          ...(isMassification
+            ? {
+                stock_casier_33_plein: (
+                  <div>
+                    {row.type === "collecte" ? "-" : "+"}
+                    {row.collecte_nb_casier_33_plein}
+                  </div>
+                ),
+              }
+            : {}),
           stock_palox: (
             <div>
-              +{collecte.livraison_nb_palox_vide}
-              <br />-{collecte.collecte_nb_palox_plein}
+              {row.type === "collecte" ? "+" : "-"}
+              {row.livraison_nb_palox_vide}
+              <br />
+              {row.type === "collecte" ? "-" : "+"}
+              {row.collecte_nb_palox_plein}
             </div>
           ),
+          ...(isMassification
+            ? {
+                stock_palox_plein: (
+                  <div>
+                    {row.type === "collecte" ? "-" : "+"}
+                    {row.collecte_nb_palox_plein}
+                  </div>
+                ),
+              }
+            : {}),
         })),
         {
           date: <b>TOTAL</b>,
           stock_casier_75: <b>{pointDeCollecte?.stock_casiers_75}</b>,
+          stock_casier_75_plein: (
+            <b>{pointDeCollecte?.stock_casiers_75_plein}</b>
+          ),
           stock_casier_33: <b>{pointDeCollecte?.stock_casiers_33}</b>,
+          stock_casier_33_plein: (
+            <b>{pointDeCollecte?.stock_casiers_33_plein}</b>
+          ),
           stock_palox: <b>{pointDeCollecte?.stock_paloxs}</b>,
+          stock_palox_plein: <b>{pointDeCollecte?.stock_paloxs_plein}</b>,
         },
       ]
     : [];
 
   return (
     <div>
-      <h2>Mouvements de contenants par point depuis le dernier inventaire</h2>
-      <Select
-        {...pointDeCollecteSelectProps}
-        onChange={(value) => {
-          setPointDeCollecteId(value as any as number);
-        }}
-        style={{ width: "300px" }}
-        allowClear={true}
-        placeholder="Point de collecte / massification"
-      />
+      <h2>Mouvements depuis le dernier inventaire</h2>
+      <h3>{pointDeCollecte?.nom}</h3>
 
       {!!pointDeCollecteId &&
         (inventaire ? (
           <div style={{ marginTop: "2em" }}>
-            <Table columns={columns} dataSource={dataSource} />
+            <Table
+              columns={columns}
+              dataSource={dataSource}
+              pagination={false}
+            />
           </div>
         ) : (
           <Alert
