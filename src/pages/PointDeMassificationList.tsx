@@ -28,10 +28,6 @@ const PointDeMassificationList: React.FC<IResourceComponentsProps> = () => {
         dataIndex="stock_casiers_75_plein"
         title="Stocks casier 75 plein"
       />
-      <Table.Column
-        dataIndex="stock_casiers_75_plein_prevision"
-        title="Stock casier 75 plein prévisionnel"
-      />
     </Table>
   );
 };
