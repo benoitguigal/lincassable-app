@@ -12,7 +12,10 @@ import {
 import { Flex, Select, Space, Table } from "antd";
 import { EnvironmentOutlined } from "@ant-design/icons";
 import PointDeCollecteType from "./PointDeCollecteType";
-import { pointDeCollecteTypeOptions } from "../../utility/options";
+import {
+  contenantDeCollecteTypeOptions,
+  pointDeCollecteTypeOptions,
+} from "../../utility/options";
 import { PointDeCollecte, ZoneDeCollecte } from "../../types";
 import ContenantDeCollecteType from "../ContenantDeCollecteType";
 import PointDeCollecteName from "./PointDeCollecteName";
@@ -37,13 +40,6 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
     meta: { select: "*, zone_de_collecte(nom)" },
   });
 
-  const { selectProps: zoneDeCollecteSelectProps, query: zoneDeCollecteQuery } =
-    useSelect<ZoneDeCollecte>({
-      resource: "zone_de_collecte",
-      optionLabel: "nom",
-      optionValue: "id",
-    });
-
   const {
     selectProps: pointDeCollecteSelectProps,
     query: pointDeCollecteQuery,
@@ -53,16 +49,6 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
     optionLabel: "nom",
     optionValue: "id",
   });
-
-  const zoneDeCollecteById = useMemo(
-    () =>
-      (zoneDeCollecteQuery.data?.data ?? []).reduce<{
-        [key: number]: ZoneDeCollecte;
-      }>((acc, pc) => {
-        return { ...acc, [pc.id]: pc };
-      }, {}),
-    [zoneDeCollecteQuery]
-  );
 
   const pointDeCollecteById = useMemo(
     () =>
@@ -75,6 +61,12 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
   );
 
   const pointDeCollecteTypeByValue = pointDeCollecteTypeOptions.reduce<{
+    [key: string]: string;
+  }>((acc, curr) => {
+    return { ...acc, [curr.value]: curr.label };
+  }, {});
+
+  const contenantDeCollecteTypeByValue = contenantDeCollecteTypeOptions.reduce<{
     [key: string]: string;
   }>((acc, curr) => {
     return { ...acc, [curr.value]: curr.label };
@@ -102,18 +94,18 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
     return null;
   }, [filters, pointDeCollecteTypeByValue]);
 
-  const zoneDeCollecteFilter = useMemo<BaseOption | null>(() => {
+  const contenantDeCollecteTypeFilter = useMemo<BaseOption | null>(() => {
     const filter = filters.find(
-      (f) => (f as LogicalFilter).field === "zone_de_collecte_id"
+      (f) => (f as LogicalFilter).field === "contenant_collecte_type"
     );
     if (filter) {
       return {
         value: filter.value,
-        label: zoneDeCollecteById[filter.value]?.nom ?? "",
+        label: contenantDeCollecteTypeByValue[filter.value] ?? "",
       };
     }
     return null;
-  }, [filters, zoneDeCollecteById]);
+  }, [filters, contenantDeCollecteTypeByValue]);
 
   return (
     <>
@@ -153,21 +145,22 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
           }}
         />
         <Select
-          {...zoneDeCollecteSelectProps}
+          options={contenantDeCollecteTypeOptions}
           style={{ width: "200px" }}
           allowClear
-          placeholder="Zone de collecte"
-          value={zoneDeCollecteFilter}
+          placeholder="Type de contenant de collecte"
+          value={contenantDeCollecteTypeFilter}
           onChange={(value) => {
             if (value) {
               setFilters(
-                [{ field: "zone_de_collecte_id", operator: "eq", value }],
+                [{ field: "contenant_collecte_type", operator: "eq", value }],
                 "merge"
               );
             } else {
               setFilters(
                 filters.filter(
-                  (f) => (f as LogicalFilter).field !== "zone_de_collecte_id"
+                  (f) =>
+                    (f as LogicalFilter).field !== "contenant_collecte_type"
                 ),
                 "replace"
               );
@@ -220,7 +213,7 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
         <Table.Column
           dataIndex="contenant_collecte_type"
           hidden={!columns.includes("contenant_collecte_type")}
-          title="Type de contenants"
+          title="Type de contenant"
           render={(type) => <ContenantDeCollecteType value={type} />}
         />
         <Table.Column

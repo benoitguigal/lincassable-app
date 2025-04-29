@@ -10,9 +10,9 @@ import { List, ExportButton, useTable, useSelect } from "@refinedev/antd";
 import { Button, Flex, Select, Space, Table } from "antd";
 import { Inventaire, PointDeCollecte } from "../../types";
 import { pointDeCollecteTypeOptions } from "../../utility/options";
-import PointDeCollecteName from "../../components/pointsDeCollecte/PointDeCollecteName";
 import { EyeOutlined } from "@ant-design/icons";
 import { RefineButtonClassNames } from "@refinedev/ui-types";
+import { Link } from "react-router-dom";
 
 function getLatestInventaire(inventaires: Inventaire[]) {
   const latestInventaire = inventaires.reduce((latest, current) => {
@@ -160,36 +160,43 @@ const ContenantList: React.FC<IResourceComponentsProps> = () => {
           <Table.Column
             dataIndex="nom"
             title="Nom"
-            render={(_, record: PointDeCollecte) => (
-              <PointDeCollecteName pointDeCollecte={record} />
-            )}
+            render={(_, pointDeCollecte: Record) => {
+              if (pointDeCollecte) {
+                return (
+                  <Link to={`/point-de-collecte/edit/${pointDeCollecte.id}`}>
+                    {pointDeCollecte.nom}
+                  </Link>
+                );
+              }
+              return "";
+            }}
           />
           <Table.Column
             dataIndex="inventaire"
             title="Date du dernier inventaire"
             render={(value: Inventaire[]) => getLatestInventaire(value)}
           />
+          <Table.Column dataIndex="stock_paloxs" title="Palox" />
+          <Table.Column dataIndex="stock_paloxs_plein" title="Palox plein" />
+          <Table.Column dataIndex="stock_casiers_75" title="Casiers 75cl" />
           <Table.Column
-            dataIndex="stock_casiers_75"
-            title="Stock casiers 75cl"
+            dataIndex="stock_casiers_75_tampon"
+            title="Casiers 75cl tampon"
           />
           <Table.Column
             dataIndex="stock_casiers_75_plein"
-            title="Stock casiers 75cl plein"
+            title="Casiers 75cl plein"
           />
-          <Table.Column
-            dataIndex="stock_casiers_33"
-            title="Stock casiers 33cl"
-          />
+          <Table.Column dataIndex="stock_casiers_33" title="Casiers 33cl" />
           <Table.Column
             dataIndex="stock_casiers_33_plein"
-            title="Stock casiers 33cl plein"
+            title="Casiers 33cl plein"
           />
-          <Table.Column dataIndex="stock_paloxs" title="Stock palox" />
           <Table.Column
-            dataIndex="stock_paloxs_plein"
-            title="Stock palox plein"
+            dataIndex="stock_casiers_33_tampon"
+            title="Casiers 33cl tampon"
           />
+
           <Table.Column
             title="Actions"
             dataIndex="actions"
