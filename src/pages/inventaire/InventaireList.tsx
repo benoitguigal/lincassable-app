@@ -67,8 +67,20 @@ const InventaireList: React.FC<IResourceComponentsProps> = () => {
           render={(pc: PointDeCollecte) => pc.nom}
         />
         <Table.Column dataIndex="stock_casiers_75" title="Stock casiers 75" />
+        <Table.Column
+          dataIndex="stock_casiers_75_plein"
+          title="Stock casiers 75 plein"
+        />
         <Table.Column dataIndex="stock_casiers_33" title="Stock casiers 33" />
+        <Table.Column
+          dataIndex="stock_casiers_33_plein"
+          title="Stock casiers 33 plein"
+        />
         <Table.Column dataIndex="stock_paloxs" title="Stock paloxs" />
+        <Table.Column
+          dataIndex="stock_paloxs_plein"
+          title="Stock paloxs pleins"
+        />
         <Table.Column
           title="Actions"
           dataIndex="actions"

@@ -50,6 +50,7 @@ function getPackaging(collecte: Collecte): CykePackage {
 }
 
 async function getFullCollecte(collecte: Collecte) {
+  console.log(collecte.id);
   // Récupère les objets liés
   const { data: collecteData, error: collecteError } = await supabaseAdmin
     .from("collecte")

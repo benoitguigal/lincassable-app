@@ -66,7 +66,7 @@ import PaloxCreate from "./pages/palox/PaloxCreate";
 import PaloxEdit from "./pages/palox/PaloxEdit";
 import MouvementsParPoint from "./pages/MouvementsParPoint";
 import "dayjs/locale/fr";
-import PointDeMassificationList from "./pages/PointDeMassificationList";
+import ContenantList from "./pages/contenants/ContenantList";
 
 dayjs.locale("fr");
 
@@ -179,32 +179,27 @@ function App() {
                     },
                   },
                   {
+                    name: "contenants",
+                    list: "contenants",
+                    meta: {
+                      label: "Contenants",
+                      parent: "stock_menu",
+                    },
+                  },
+                  {
                     name: "inventaire",
                     list: "inventaire",
                     create: "inventaire/create",
                     edit: "inventaire/edit/:id",
                     meta: { parent: "stock_menu" },
                   },
-                  {
-                    name: "mouvement",
-                    list: "mouvement",
-                    meta: { label: "Mouvements", parent: "stock_menu" },
-                  },
-                  {
-                    name: "point_de_massification",
-                    list: "point_de_massification",
-                    meta: {
-                      label: "Points de massification",
-                      parent: "stock_menu",
-                    },
-                  },
-                  {
-                    name: "palox",
-                    list: "palox",
-                    create: "palox/create",
-                    edit: "palox/edit/:id",
-                    meta: { parent: "stock_menu", label: "Paloxs" },
-                  },
+                  // {
+                  //   name: "palox",
+                  //   list: "palox",
+                  //   create: "palox/create",
+                  //   edit: "palox/edit/:id",
+                  //   meta: { parent: "stock_menu", label: "Paloxs" },
+                  // },
                   {
                     name: "consigne",
                     list: "/consigne",
@@ -309,22 +304,22 @@ function App() {
                       <Route path="create" index element={<CollecteCreate />} />
                       <Route path="edit/:id" element={<CollecteEdit />} />
                     </Route>
-                    <Route path="/mouvement">
+                    <Route path="/mouvement/:id">
                       <Route index element={<MouvementsParPoint />} />
                     </Route>
-                    <Route path="/point_de_massification">
-                      <Route index element={<PointDeMassificationList />} />
+                    <Route path="/contenants">
+                      <Route index element={<ContenantList />} />
                     </Route>
                     <Route path="/inventaire">
                       <Route index element={<InventaireList />} />
                       <Route path="create" element={<InventaireCreate />} />
                       <Route path="edit/:id" element={<InventaireEdit />} />
                     </Route>
-                    <Route path="/palox">
+                    {/* <Route path="/palox">
                       <Route index element={<PaloxList />} />
                       <Route path="create" element={<PaloxCreate />} />
                       <Route path="edit/:id" element={<PaloxEdit />} />
-                    </Route>
+                    </Route> */}
                     <Route path="/consigne">
                       <Route index element={<ConsigneList />} />
                     </Route>
