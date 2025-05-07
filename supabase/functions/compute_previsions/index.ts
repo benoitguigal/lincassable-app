@@ -63,7 +63,7 @@ Deno.serve(
 
       const capacite =
         pointDeCollecte.contenant_collecte_type === "palox"
-          ? 550
+          ? 500
           : 12 *
             (pointDeCollecte.stock_casiers_75 -
               pointDeCollecte.stock_casiers_75_tampon);

@@ -18,8 +18,8 @@ export const POID_CASIER_33_PLEIN_KG =
   2.27;
 
 export const POID_PALOX_PLEIN_KG =
-  // 550 bouteilles de 540g
-  550 * POID_BOUTEILLE +
+  // 450 bouteilles de 540g
+  450 * POID_BOUTEILLE +
   // poid du palox vide
   72;
 

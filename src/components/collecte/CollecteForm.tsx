@@ -961,7 +961,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
                     Poids bouteille 33cl = 0.28 kg <br />
                     Poids casier (75cl et 33cl) = 2.27 kg <br />
                     Poids palox vide = 72kg <br />
-                    Nombre de bouteilles par palox = 550 <br />
+                    Nombre de bouteilles par palox = 450 <br />
                     Nombre de bouteilles par palette = 1200
                     <br />
                   </div>
