@@ -10,13 +10,17 @@ import { handle } from "../_shared/helpers.ts";
 type BrevoEvent = {
   event: string;
   email: string;
-  tags: string[];
+  tags?: string[];
 };
 
 Deno.serve(
   handle<BrevoEvent>(async (payload) => {
     const { event, email, tags }: BrevoEvent = payload;
-    if (tags.length !== 2 || tags[0] !== Deno.env.get("BREVO_WEBHOOK_KEY")) {
+    if (
+      !tags ||
+      tags.length !== 2 ||
+      tags[0] !== Deno.env.get("BREVO_WEBHOOK_KEY")
+    ) {
       return { status: "Forbidden" };
     }
     const mailing_id = Number(tags[1]);
