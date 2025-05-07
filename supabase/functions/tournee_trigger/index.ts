@@ -8,13 +8,17 @@ import supabaseAdmin from "../_shared/supabaseAdmin.ts";
 import { Tournee, UpdatePayload } from "../_shared/types/index.ts";
 import { webhooks } from "../_shared/discord.ts";
 import { handle } from "../_shared/helpers.ts";
+import { SendSmtpEmail } from "npm:@getbrevo/brevo";
+import { sendTransacEmail } from "../_shared/brevo.ts";
+
+const UI_HOST = Deno.env.get("UI_HOST");
 
 Deno.serve(
   handle<UpdatePayload<Tournee>>(async (payload) => {
     const { type, record, old_record } = payload;
     const { data: tournees } = await supabaseAdmin
       .from("tournee")
-      .select("*,zone_de_collecte(*),transporteur(*)")
+      .select("*,zone_de_collecte(*),transporteur(*,transporteur_users(*))")
       .eq("id", record.id);
 
     if (tournees?.length) {
@@ -30,6 +34,9 @@ Deno.serve(
         const pointDeMassificationIsModified =
           record.point_de_massification_id !==
           old_record.point_de_massification_id;
+        const isEnAttenteDeValidation =
+          record.statut === "En attente de validation" &&
+          old_record.statut !== "En attente de validation";
 
         if (dateIsModified) {
           // modifie la date des collectes correspondantes
@@ -52,6 +59,43 @@ Deno.serve(
             .eq("tournee_id", record.id);
           if (error) {
             throw error;
+          }
+        }
+
+        if (isEnAttenteDeValidation) {
+          // envoie un mail au transporteur
+          for (const userId of tournee.transporteur.transporteur_users.map(
+            (u) => u.user_id
+          )) {
+            if (userId) {
+              const {
+                data: { user },
+              } = await supabaseAdmin.auth.admin.getUserById(userId);
+              if (user?.email) {
+                const sendSmtpEmail = new SendSmtpEmail();
+                sendSmtpEmail.sender = {
+                  email: "contact@lincassable.com",
+                  name: "L'INCASSABLE",
+                };
+                sendSmtpEmail.subject =
+                  "Tournée L'INCASSABLE en attente de validation transporteur";
+                sendSmtpEmail.htmlContent = `<div>Bonjour</div>
+                <br/>
+                <div>
+                La tournée L'INCASSABLE du ${tournee.date} sur la zone ${tournee.zone_de_collecte.nom} est en attente de validation transporteur. 
+                Vous pouvez valider cette tournée en suivant ce <a href="${UI_HOST}/tournee/edit/${tournee.id}">ce lien</a>.
+                </div>
+                <br/>
+                <div>
+                Bien à vous
+                <br/>
+                L'équipe L'INCASSABLE
+                </div>
+                `;
+                sendSmtpEmail.to = [{ email: user.email }];
+                await sendTransacEmail(sendSmtpEmail);
+              }
+            }
           }
         }
 

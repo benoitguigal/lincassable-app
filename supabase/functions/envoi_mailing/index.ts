@@ -7,6 +7,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import brevo from "npm:@getbrevo/brevo";
 import supabaseClient from "../_shared/supabaseClient.ts";
 import { handle } from "../_shared/helpers.ts";
+import { sendTransacEmail } from "../_shared/brevo.ts";
 
 type Payload = { mailing_id: string };
 
@@ -31,7 +32,7 @@ Deno.serve(
     const { data: mailingData, error: mailingError } = await supabase
       .from("mailing")
       .select("*,mail_template(*)")
-      .eq("id", mailing_id);
+      .eq("id", Number(mailing_id));
 
     if (mailingError) {
       throw mailingError;
@@ -47,10 +48,6 @@ Deno.serve(
     if (mailsError) {
       throw mailsError;
     }
-
-    const brevoClient = new brevo.TransactionalEmailsApi();
-    const apiKey = brevoClient.authentications["apiKey"];
-    apiKey.apiKey = Deno.env.get("BREVO_API_KEY");
 
     const sendSmtpEmail = new brevo.SendSmtpEmail();
 
@@ -74,27 +71,30 @@ Deno.serve(
       });
     }
 
-    const { response } = await brevoClient.sendTransacEmail(sendSmtpEmail);
+    const brevoResponse = await sendTransacEmail(sendSmtpEmail);
 
-    if (response.statusCode === 201) {
-      await supabase
-        .from("mailing")
-        .update({ statut: "Envoyé", date_envoi: new Date().toISOString() })
-        .eq("id", mailing_id)
-        .select();
+    if (brevoResponse) {
+      const { response } = brevoResponse;
+      if (response.statusCode === 201) {
+        await supabase
+          .from("mailing")
+          .update({ statut: "Envoyé", date_envoi: new Date().toISOString() })
+          .eq("id", Number(mailing_id))
+          .select();
 
-      await supabase
-        .from("mail")
-        .update({ statut: "waiting" })
-        .eq("mailing_id", mailing_id)
-        .eq("statut", "created")
-        .select();
-    } else {
-      await supabase
-        .from("mailing")
-        .update({ statut: "Échec", date_envoi: new Date().toISOString() })
-        .eq("id", mailing_id)
-        .select();
+        await supabase
+          .from("mail")
+          .update({ statut: "waiting" })
+          .eq("mailing_id", Number(mailing_id))
+          .eq("statut", "created")
+          .select();
+      } else {
+        await supabase
+          .from("mailing")
+          .update({ statut: "Échec", date_envoi: new Date().toISOString() })
+          .eq("id", Number(mailing_id))
+          .select();
+      }
     }
   }, true)
 );
