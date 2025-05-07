@@ -145,7 +145,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     const nbBouteilles =
       form?.getFieldValue("collecte_nb_casier_75_plein") * 12 +
       form?.getFieldValue("collecte_nb_casier_33_plein") * 24 +
-      form?.getFieldValue("collecte_nb_palox_plein") * 550 +
+      form?.getFieldValue("collecte_nb_palox_plein") * 450 +
       form?.getFieldValue("collecte_nb_palette_bouteille") * 1200;
     form?.setFieldValue("collecte_nb_bouteilles", nbBouteilles);
   };
@@ -926,7 +926,9 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
                 title={
                   <div>
                     Remplir automatiquement avec les paramètres suivants :
-                    <br /> Nombre de bouteilles par palox = 550 <br />
+                    <br /> Nombre de bouteilles par casier 75cl = 12 <br />
+                    <br /> Nombre de bouteilles par casier 33cl = 24 <br />
+                    <br /> Nombre de bouteilles par palox = 450 <br />
                     Nombre de bouteilles par palette = 1200 <br />
                   </div>
                 }
