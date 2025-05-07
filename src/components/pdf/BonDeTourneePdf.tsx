@@ -13,6 +13,10 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingLeft: 20,
   },
+  info: {
+    fontSize: 12,
+    color: "red",
+  },
   table: {
     display: "table" as any,
     width: "auto",
@@ -399,6 +403,15 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
             {formatDate(tournee.date)} - {zoneDeCollecte?.nom}
           </Text>
         </View>
+        <View>
+          <Text style={{ paddingLeft: 20, marginTop: 5, ...styles.info }}>
+            MERCI DE CORRIGER LE NOMBRE DE CONTENANTS COLLECTÉS / LIVRÉS (LE CAS
+            ÉCHÉANT) <br />
+          </Text>
+          <Text style={{ paddingLeft: 20, marginTop: 1, ...styles.info }}>
+            ET DE NOTER LES N° DE PALOX DANS LES CADRES JAUNES
+          </Text>
+        </View>
         <View style={styles.table}>
           {/* En-tête du tableau */}
           <View style={styles.tableRow}>
@@ -434,6 +447,16 @@ const BonDeTourneePdf: React.FC<BonDeTourneeProps> = ({
                   }}
                 >
                   <Text style={styles.tableCell}>{column.cell}</Text>
+                  {Number(column.cell) > 0 && (
+                    <View
+                      style={{
+                        border: "1px solid black",
+                        width: "40em",
+                        height: "20em",
+                        backgroundColor: "#FDEA18",
+                      }}
+                    ></View>
+                  )}
                 </View>
               ))}
             </View>
