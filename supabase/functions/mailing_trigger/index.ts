@@ -36,9 +36,10 @@ function formatDate(dateStr: string | null) {
 
 // Récupère les variables à injecter dans le template
 async function getVariables({ mailing, pointDeCollecte }: GetVariablesOpts) {
-  const { tournee_id, ...variables } = (mailing.variables ?? {}) as {
-    [key: string]: string | number;
-  };
+  const { tournee_id, start_consigne, end_consigne, ...variables } =
+    (mailing.variables ?? {}) as {
+      [key: string]: string | number;
+    };
 
   let tournee: Tournee | null = null;
   let collecte: Collecte | null = null;
@@ -47,7 +48,7 @@ async function getVariables({ mailing, pointDeCollecte }: GetVariablesOpts) {
     const { data: tourneeData, error: tourneeError } = await supabaseAdmin
       .from("tournee")
       .select("*")
-      .eq("id", tournee_id);
+      .eq("id", Number(tournee_id));
 
     if (tourneeError) throw tourneeError;
 
@@ -56,7 +57,7 @@ async function getVariables({ mailing, pointDeCollecte }: GetVariablesOpts) {
     const { data: collecteData, error: collecteError } = await supabaseAdmin
       .from("collecte")
       .select("*")
-      .eq("tournee_id", tournee_id)
+      .eq("tournee_id", Number(tournee_id))
       .eq("point_de_collecte_id", pointDeCollecte.id);
 
     if (collecteError) {
@@ -79,17 +80,26 @@ async function getVariables({ mailing, pointDeCollecte }: GetVariablesOpts) {
       )
     : {};
 
+  const lienFormulaireRemplissage =
+    `${Deno.env.get("UI_HOST")}/point-de-collecte/taux-de-remplissage/${
+      pointDeCollecte.id
+    }?` +
+    `nom=${encodeURIComponent(pointDeCollecte.nom)}&contenant_collecte=${
+      pointDeCollecte.contenant_collecte_type
+    }`;
+
+  const lienFormulaireConsigne = `${Deno.env.get(
+    "UI_HOST"
+  )}/point-de-collecte/consigne/${pointDeCollecte.id}?nom=${encodeURIComponent(
+    pointDeCollecte.nom
+  )}&start=${start_consigne ?? ""}&end=${end_consigne ?? ""}`;
+
   return {
     ...formattedVariables,
     pointDeCollecte: {
       ...pointDeCollecte,
-      lienFormulaireRemplissage:
-        `${Deno.env.get("UI_HOST")}/point-de-collecte/taux-de-remplissage/${
-          pointDeCollecte.id
-        }?` +
-        `nom=${encodeURIComponent(pointDeCollecte.nom)}&contenant_collecte=${
-          pointDeCollecte.contenant_collecte_type
-        }`,
+      lienFormulaireRemplissage,
+      lienFormulaireConsigne,
     },
     tournee: tournee ? { ...tournee, date: formatDate(tournee.date) } : {},
     collecte: collecte ? { ...collecte, date: formatDate(collecte.date) } : {},
@@ -132,7 +142,16 @@ Deno.serve(
       const mails: MailInsert[] = [];
 
       for (const pointDeCollecte of pointsDeCollecteData) {
-        for (const email of pointDeCollecte.emails) {
+        const emails =
+          mailTemplate.destinataire_type === "emails"
+            ? pointDeCollecte.emails
+            : pointDeCollecte.emails_consigne;
+
+        const validEmails = emails.filter((email: string) =>
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+        );
+
+        for (const email of validEmails) {
           const variables = await getVariables({
             mailing: record,
             pointDeCollecte,

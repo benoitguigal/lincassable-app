@@ -336,6 +336,7 @@ export type Database = {
         Row: {
           corps: string
           created_at: string
+          destinataire_type: Database["public"]["Enums"]["destinataire_type"]
           id: number
           nom: string
           sujet: string
@@ -344,6 +345,7 @@ export type Database = {
         Insert: {
           corps: string
           created_at?: string
+          destinataire_type?: Database["public"]["Enums"]["destinataire_type"]
           id?: number
           nom: string
           sujet: string
@@ -352,6 +354,7 @@ export type Database = {
         Update: {
           corps?: string
           created_at?: string
+          destinataire_type?: Database["public"]["Enums"]["destinataire_type"]
           id?: number
           nom?: string
           sujet?: string
@@ -909,6 +912,7 @@ export type Database = {
         | "palox.insert"
       app_role: "staff" | "transporteur"
       contenant_collecte_type: "casier_x12" | "palox" | "casier_x24"
+      destinataire_type: "emails" | "emails_consigne"
       palette_type: "Europe" | "VMF"
       point_de_collecte_statut: "archive" | "actif"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification" | "Tri"
@@ -1084,6 +1088,7 @@ export const Constants = {
       ],
       app_role: ["staff", "transporteur"],
       contenant_collecte_type: ["casier_x12", "palox", "casier_x24"],
+      destinataire_type: ["emails", "emails_consigne"],
       palette_type: ["Europe", "VMF"],
       point_de_collecte_statut: ["archive", "actif"],
       point_de_collecte_type: ["Magasin", "Producteur", "Massification", "Tri"],
