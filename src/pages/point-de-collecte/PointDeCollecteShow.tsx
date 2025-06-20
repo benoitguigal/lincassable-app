@@ -117,6 +117,18 @@ const PointDeCollecteShow = () => {
       <NumberField value={pointDeCollecte?.stock_paloxs ?? 0} />
       <Title level={5}>Pratique la consigne ?</Title>
       <TextField value={pointDeCollecte?.consigne ? "Oui" : "Non"} />
+      {pointDeCollecte?.consigne && (
+        <>
+          <Title level={5}>Emails consigne</Title>
+          <>
+            {pointDeCollecte?.emails_consigne?.map((item: any) => (
+              <div>
+                <EmailField value={item} key={item} />
+              </div>
+            ))}
+          </>
+        </>
+      )}
       <Title level={5}>Formulaire consigne 2ème semestre 2024</Title>
       {pointDeCollecte && pointDeCollecteConsigneFormulaire2024Url && (
         <UrlField value={pointDeCollecteConsigneFormulaire2024Url} />

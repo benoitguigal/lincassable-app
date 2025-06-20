@@ -336,6 +336,7 @@ export type Database = {
         Row: {
           corps: string
           created_at: string
+          destinataire_type: Database["public"]["Enums"]["destinataire_type"]
           id: number
           nom: string
           sujet: string
@@ -344,6 +345,7 @@ export type Database = {
         Insert: {
           corps: string
           created_at?: string
+          destinataire_type?: Database["public"]["Enums"]["destinataire_type"]
           id?: number
           nom: string
           sujet: string
@@ -352,6 +354,7 @@ export type Database = {
         Update: {
           corps?: string
           created_at?: string
+          destinataire_type?: Database["public"]["Enums"]["destinataire_type"]
           id?: number
           nom?: string
           sujet?: string
@@ -450,6 +453,7 @@ export type Database = {
             | null
           created_at: string
           emails: string[]
+          emails_consigne: string[]
           horaires: string | null
           id: number
           info: string | null
@@ -485,6 +489,7 @@ export type Database = {
             | null
           created_at?: string
           emails?: string[]
+          emails_consigne?: string[]
           horaires?: string | null
           id?: number
           info?: string | null
@@ -520,6 +525,7 @@ export type Database = {
             | null
           created_at?: string
           emails?: string[]
+          emails_consigne?: string[]
           horaires?: string | null
           id?: number
           info?: string | null
@@ -834,15 +840,11 @@ export type Database = {
     }
     Functions: {
       authorize_transporteur: {
-        Args: {
-          transporteur: number
-        }
+        Args: { transporteur: number }
         Returns: boolean
       }
       authorize_user: {
-        Args: {
-          requested_permission: string
-        }
+        Args: { requested_permission: string }
         Returns: boolean
       }
       get_point_de_collecte_count: {
@@ -854,9 +856,7 @@ export type Database = {
         Returns: number
       }
       set_role: {
-        Args: {
-          event: Json
-        }
+        Args: { event: Json }
         Returns: Json
       }
       truncate_tables: {
@@ -912,6 +912,7 @@ export type Database = {
         | "palox.insert"
       app_role: "staff" | "transporteur"
       contenant_collecte_type: "casier_x12" | "palox" | "casier_x24"
+      destinataire_type: "emails" | "emails_consigne"
       palette_type: "Europe" | "VMF"
       point_de_collecte_statut: "archive" | "actif"
       point_de_collecte_type: "Magasin" | "Producteur" | "Massification" | "Tri"
@@ -931,27 +932,29 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DefaultSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -959,20 +962,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -980,20 +985,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -1001,21 +1008,23 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
@@ -1024,7 +1033,76 @@ export type CompositeTypes<
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      app_permission: [
+        "point_de_collecte.select",
+        "point_de_collecte.insert",
+        "point_de_collecte.update",
+        "point_de_collecte.delete",
+        "tournee.select",
+        "tournee.insert",
+        "tournee.update",
+        "tournee.delete",
+        "collecte.select",
+        "collecte.insert",
+        "collecte.update",
+        "collecte.delete",
+        "transporteur.select",
+        "transporteur.insert",
+        "transporteur.update",
+        "transporteur.delete",
+        "transporteur_users.select",
+        "transporteur_users.update",
+        "transporteur_users.insert",
+        "transporteur_users.delete",
+        "zone_de_collecte.select",
+        "zone_de_collecte.update",
+        "zone_de_collecte.insert",
+        "zone_de_collecte.delete",
+        "prevision.select",
+        "mailing.select",
+        "mailing.insert",
+        "mailing.update",
+        "mailing.delete",
+        "mail_template.select",
+        "mail_statut.select",
+        "mail_statut.insert",
+        "mail_statut.update",
+        "mail_template.update",
+        "mail_template.insert",
+        "mail_template.delete",
+        "inventaire.select",
+        "inventaire.update",
+        "inventaire.delete",
+        "inventaire.insert",
+        "palox.select",
+        "palox.update",
+        "palox.delete",
+        "palox.insert",
+      ],
+      app_role: ["staff", "transporteur"],
+      contenant_collecte_type: ["casier_x12", "palox", "casier_x24"],
+      destinataire_type: ["emails", "emails_consigne"],
+      palette_type: ["Europe", "VMF"],
+      point_de_collecte_statut: ["archive", "actif"],
+      point_de_collecte_type: ["Magasin", "Producteur", "Massification", "Tri"],
+      statut_mailing: ["En attente", "En cours", "Envoyé", "Échec"],
+      statut_palox: ["En stock", "Tri", "Lavage", "Point de collecte"],
+      statut_tournee: [
+        "En cours de préparation",
+        "En attente de validation",
+        "Validé",
+        "Réalisé",
+        "Clôturé",
+      ],
+      type_de_vehicule: ["12 T", "19 T", "VL", "velo"],
+    },
+  },
+} as const
 
