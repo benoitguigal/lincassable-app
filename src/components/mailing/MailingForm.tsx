@@ -4,9 +4,10 @@ import {
   useSelect,
 } from "@refinedev/antd";
 import { Mailing, MailTemplate, PointDeCollecte } from "../../types";
-import { DatePicker, Form, Input, Select } from "antd";
+import { Button, DatePicker, Flex, Form, Input, Select, Tooltip } from "antd";
 import { useMemo } from "react";
 import dayjs from "dayjs";
+import { FaMagic } from "react-icons/fa";
 
 type Props = UseFormReturnType<Mailing> | UseModalFormReturnType<Mailing>;
 
@@ -17,7 +18,7 @@ type Variable = {
 };
 
 const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
-  const { selectProps: mailTemplateSelectProps, query } =
+  const { selectProps: mailTemplateSelectProps, query: mailTemplateQuery } =
     useSelect<MailTemplate>({
       pagination: { mode: "off" },
       resource: "mail_template",
@@ -25,13 +26,25 @@ const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
       optionValue: "id",
     });
 
-  const { selectProps: pointDeCollecteSelectProps } =
-    useSelect<PointDeCollecte>({
-      pagination: { mode: "off" },
-      resource: "point_de_collecte",
-      optionLabel: "nom",
-      optionValue: "id",
-    });
+  const {
+    selectProps: pointDeCollecteSelectProps,
+    query: pointDeCollecteQuery,
+  } = useSelect<PointDeCollecte>({
+    pagination: { mode: "off" },
+    resource: "point_de_collecte",
+    optionLabel: "nom",
+    optionValue: "id",
+  });
+
+  const selectAllPointsWithConsigne = () => {
+    const selected = (pointDeCollecteQuery.data?.data ?? []).filter(
+      (pc) => pc.consigne && pc.statut === "actif"
+    );
+    form.setFieldValue(
+      "point_de_collecte_ids",
+      selected.map((s) => s.id)
+    );
+  };
 
   const { selectProps: tourneeSelectProps } = useSelect<PointDeCollecte>({
     pagination: { mode: "off" },
@@ -44,12 +57,12 @@ const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
 
   const mailtemplatesById = useMemo(
     () =>
-      (query.data?.data ?? []).reduce<{
+      (mailTemplateQuery.data?.data ?? []).reduce<{
         [key: number]: MailTemplate;
       }>((acc, template) => {
         return { ...acc, [template.id]: template };
       }, {}),
-    [query.data]
+    [mailTemplateQuery.data]
   );
 
   const mailTemplate = useMemo(
@@ -135,7 +148,25 @@ const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
           allowClear={true}
         />
       </Form.Item>
-      <Form.Item name="point_de_collecte_ids" label="Destinataires">
+
+      <Form.Item
+        name="point_de_collecte_ids"
+        label={
+          <Flex gap={5}>
+            <div>Destinataires</div>
+            {mailTemplate &&
+              mailTemplate.destinataire_type === "emails_consigne" && (
+                <Tooltip title="Sélectionner tous les points qui pratiquent la consigne">
+                  <Button
+                    icon={<FaMagic />}
+                    iconPosition="end"
+                    onClick={() => selectAllPointsWithConsigne()}
+                  />
+                </Tooltip>
+              )}
+          </Flex>
+        }
+      >
         <Select
           {...pointDeCollecteSelectProps}
           mode="tags"
@@ -143,6 +174,7 @@ const MailingForm: React.FC<Props> = ({ formProps, onFinish, form }) => {
           placeholder="Point de collecte"
         />
       </Form.Item>
+
       {((mailTemplate?.variables ?? []) as Variable[]).map((variable) => (
         <Form.Item
           name={variable.name}
