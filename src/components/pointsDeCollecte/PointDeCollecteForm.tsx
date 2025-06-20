@@ -47,6 +47,9 @@ const PointDeCollecteForm: React.FC<Props> = ({
       ],
     });
 
+  const { form } = formProps;
+  const consigne = Form.useWatch("consigne", form);
+
   return (
     <Form {...formProps} layout="vertical">
       <Form.Item
@@ -250,6 +253,21 @@ const PointDeCollecteForm: React.FC<Props> = ({
           ]}
         />
       </Form.Item>
+      {consigne && (
+        <FormListItem
+          name="emails_consigne"
+          label="E-mails consigne"
+          labelSingular="e-mail"
+          rules={[{ type: "email", message: "Email non valide" }]}
+        >
+          <Input
+            placeholder="E-mail de contact"
+            type="email"
+            style={{ width: "60%" }}
+          />
+        </FormListItem>
+      )}
+
       <Form.Item
         label="Inclure dans les prévisions de collecte"
         name="previsible"
