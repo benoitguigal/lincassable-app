@@ -50,7 +50,6 @@ function getPackaging(collecte: Collecte): CykePackage {
 }
 
 async function getFullCollecte(collecte: Collecte) {
-  console.log(collecte.id);
   // Récupère les objets liés
   const { data: collecteData, error: collecteError } = await supabaseAdmin
     .from("collecte")
@@ -118,15 +117,22 @@ Deno.serve(
     if (type === "DELETE" && old_record.cyke_id && cykeSync) {
       // Annule la livraison cyke
       await cykeClient.delivery.cancel(old_record.cyke_id);
-    } else if (type === "UPDATE" && record.cyke_id && cykeSync) {
+    }
+
+    if (type === "UPDATE" && old_record.cyke_id && record.cyke_id && cykeSync) {
       const collecte = await getFullCollecte(record);
       // Met à jour les informations de la collecte
       const data = getDelivery(collecte);
       // Met à jour la livraison cyke
       await cykeClient.delivery.update(record.cyke_id, data);
-    } else if (type === "INSERT" && !record.cyke_id) {
+    }
+
+    if (type === "INSERT") {
+      let updateAfterInsert = {};
+
       const collecte = await getFullCollecte(record);
       const cykeConnexion = collecte?.tournee?.transporteur?.cyke_connexion;
+
       if (cykeConnexion && cykeSync && !record.cyke_id) {
         // Crée une livraison Cyke par API
         const data = getDelivery(collecte);
@@ -134,31 +140,30 @@ Deno.serve(
         const { id } = created;
 
         // Ajoute l'identifiant de la livraison Cyke à la collecte L'INCASSABLE
+        updateAfterInsert = { ...updateAfterInsert, cyke_id: id };
+      }
+
+      if (record.tournee_id) {
+        const collecte = await getFullCollecte(record);
+        // Met à jour les informations de la collecte à partir des informations
+        // de la tournéee (date, point de massification)
+        updateAfterInsert = {
+          ...updateAfterInsert,
+          date: collecte.tournee?.date,
+          point_de_massification_id:
+            collecte.tournee?.point_de_massification_id,
+        };
+      }
+
+      if (Object.keys(updateAfterInsert).length) {
         const { error: collecteUpdateError } = await supabaseAdmin
           .from("collecte")
-          .update({ cyke_id: id })
+          .update(updateAfterInsert)
           .eq("id", record.id);
 
         if (collecteUpdateError) {
           throw collecteUpdateError;
         }
-      }
-    }
-
-    if (type === "INSERT" && record.tournee_id) {
-      const collecte = await getFullCollecte(record);
-      // Met à jour les informations de la collecte à partir des informations
-      // de la tournéee (date, point de massification)
-      const { error } = await supabaseAdmin
-        .from("collecte")
-        .update({
-          date: collecte.tournee?.date,
-          point_de_massification_id:
-            collecte.tournee?.point_de_massification_id,
-        })
-        .eq("id", record.id);
-      if (error) {
-        throw error;
       }
     }
 
