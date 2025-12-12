@@ -109,11 +109,11 @@ const PointDeCollecteShow = () => {
       )}
       <Title level={5}>Stock casiers 75cl</Title>
       <NumberField value={pointDeCollecte?.stock_casiers_75 ?? 0} />
-      <Title level={5}>Stock casiers 75cl en rotation</Title>
+      <Title level={5}>Stock tempon casiers 75cl</Title>
       <NumberField value={pointDeCollecte?.stock_casiers_75_tampon ?? 0} />
       <Title level={5}>Stock casiers 33cl</Title>
       <NumberField value={pointDeCollecte?.stock_casiers_33 ?? 0} />
-      <Title level={5}>Stock casiers 33cl en rotation</Title>
+      <Title level={5}>Stock tampon casiers 33cl en rotation</Title>
       <NumberField value={pointDeCollecte?.stock_casiers_33_tampon ?? 0} />
       <Title level={5}>Stock paloxs</Title>
       <NumberField value={pointDeCollecte?.stock_paloxs ?? 0} />
