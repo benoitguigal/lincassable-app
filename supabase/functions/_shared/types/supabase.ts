@@ -451,6 +451,7 @@ export type Database = {
           contenant_collecte_type:
             | Database["public"]["Enums"]["contenant_collecte_type"]
             | null
+          contenant_collecte_types: Database["public"]["Enums"]["contenant_collecte_type"][]
           created_at: string
           emails: string[]
           emails_consigne: string[]
@@ -487,6 +488,7 @@ export type Database = {
           contenant_collecte_type?:
             | Database["public"]["Enums"]["contenant_collecte_type"]
             | null
+          contenant_collecte_types?: Database["public"]["Enums"]["contenant_collecte_type"][]
           created_at?: string
           emails?: string[]
           emails_consigne?: string[]
@@ -523,6 +525,7 @@ export type Database = {
           contenant_collecte_type?:
             | Database["public"]["Enums"]["contenant_collecte_type"]
             | null
+          contenant_collecte_types?: Database["public"]["Enums"]["contenant_collecte_type"][]
           created_at?: string
           emails?: string[]
           emails_consigne?: string[]

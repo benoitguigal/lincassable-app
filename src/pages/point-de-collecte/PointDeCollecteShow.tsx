@@ -100,9 +100,11 @@ const PointDeCollecteShow = () => {
       <Title level={5}>Type de contenant de collecte</Title>
       {pointDeCollecte && pointDeCollecte.contenant_collecte_type && (
         <div>
-          <ContenantDeCollecteType
-            value={pointDeCollecte.contenant_collecte_type}
-          />
+          {pointDeCollecte.contenant_collecte_types.map(
+            (contenant_collecte_type) => (
+              <ContenantDeCollecteType value={contenant_collecte_type} />
+            )
+          )}
         </div>
       )}
       <Title level={5}>Stock casiers 75cl</Title>
