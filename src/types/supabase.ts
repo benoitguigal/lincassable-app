@@ -625,28 +625,37 @@ export type Database = {
           date: string
           demande_collecte: boolean
           id: number
+          nb_casiers_33_plein: number | null
+          nb_casiers_33_total: number | null
           nb_casiers_plein: number | null
           nb_casiers_total: number | null
           point_de_collecte_id: number
           remplissage_palox: number | null
+          remplissage_palox_2: number | null
         }
         Insert: {
           date?: string
           demande_collecte?: boolean
           id?: number
+          nb_casiers_33_plein?: number | null
+          nb_casiers_33_total?: number | null
           nb_casiers_plein?: number | null
           nb_casiers_total?: number | null
           point_de_collecte_id: number
           remplissage_palox?: number | null
+          remplissage_palox_2?: number | null
         }
         Update: {
           date?: string
           demande_collecte?: boolean
           id?: number
+          nb_casiers_33_plein?: number | null
+          nb_casiers_33_total?: number | null
           nb_casiers_plein?: number | null
           nb_casiers_total?: number | null
           point_de_collecte_id?: number
           remplissage_palox?: number | null
+          remplissage_palox_2?: number | null
         }
         Relationships: [
           {

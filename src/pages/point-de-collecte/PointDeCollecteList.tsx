@@ -26,7 +26,7 @@ const tableColumnOptions = [
   },
   { value: "zone_de_collecte_id", label: "Zone de collecte" },
   {
-    value: "contenant_collecte_type",
+    value: "contenant_collecte_types",
     label: "Type de contentants",
     default: true,
   },

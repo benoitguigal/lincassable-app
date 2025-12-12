@@ -222,7 +222,7 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
 
         <Table.Column
           dataIndex="contenant_collecte_types"
-          hidden={!columns.includes("contenant_collecte_type")}
+          hidden={!columns.includes("contenant_collecte_types")}
           title="Type de contenant"
           render={(types: ContenantDeCollecteTypeEnum[]) => {
             return types.map((type) => (

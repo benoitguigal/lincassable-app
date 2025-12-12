@@ -49,7 +49,7 @@ const PrevisionListTable: React.FC = () => {
     },
     meta: {
       select:
-        "*, point_de_collecte!inner(nom,contenant_collecte_type,stock_casiers_75,stock_paloxs,collecte_par_id,statut)",
+        "*, point_de_collecte!inner(nom,contenant_collecte_types,stock_casiers_75,stock_paloxs,collecte_par_id,statut)",
     },
   });
 
@@ -67,13 +67,18 @@ const PrevisionListTable: React.FC = () => {
       <Table.Column<Record> dataIndex="capacite" title="Capacité" />
       <Table.Column<Record>
         dataIndex="point_de_collecte"
-        title="Type de contenant"
-        render={(value) => value.contenant_collecte_type}
+        title="Types de contenant"
+        render={(value) => value.contenant_collecte_types.join(" ")}
       />
       <Table.Column<Record>
         dataIndex="point_de_collecte"
-        title="Stock casiers"
+        title="Stock casiers 75cl"
         render={(value) => value.stock_casiers_75}
+      />
+      <Table.Column<Record>
+        dataIndex="point_de_collecte"
+        title="Stock casiers 33cl"
+        render={(value) => value.stock_casiers_33}
       />
       <Table.Column<Record>
         dataIndex="point_de_collecte"

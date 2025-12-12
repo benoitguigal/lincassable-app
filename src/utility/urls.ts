@@ -7,9 +7,7 @@ export function getPointDeCollecteFormulaireRemplissageUrl(
 ) {
   return (
     `${VITE_HOST}/point-de-collecte/taux-de-remplissage/${pointDeCollecte.id}?` +
-    `nom=${encodeURIComponent(pointDeCollecte.nom)}&contenant_collecte=${
-      pointDeCollecte.contenant_collecte_type
-    }`
+    `nom=${encodeURIComponent(pointDeCollecte.nom)}`
   );
 }
 
