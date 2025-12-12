@@ -1,8 +1,9 @@
 import React from "react";
 import { IResourceComponentsProps, useCreate, useGo } from "@refinedev/core";
-import { Form, Input, Button, Radio, Space } from "antd";
+import { Form, Input, Button, Radio, Space, Alert } from "antd";
 import { useParams, useSearchParams } from "react-router-dom";
 import LincassableLogo from "../../static/images/lincassable_logo.png";
+import { Title } from "@refinedev/antd";
 
 const DemandeCollecte: React.FC<IResourceComponentsProps> = () => {
   const { id: pointDeCollecteId } = useParams();
@@ -40,8 +41,10 @@ const DemandeCollecte: React.FC<IResourceComponentsProps> = () => {
 
   const nbCasiersTotal = Form.useWatch("nb_casiers_total", form);
   const nbCasiers = Form.useWatch("nb_casiers_plein", form);
-  const contenantCollecte = Form.useWatch("contenant_collecte", form);
+  const nbCasiers33Total = Form.useWatch("nb_casiers_33_total", form);
+  const nbCasiers33 = Form.useWatch("nb_casiers_33_plein", form);
   let nbCasiersTotalHelp = "";
+  let nbCasiers33TotalHelp = "";
 
   if (!!nbCasiersTotal && !!nbCasiers) {
     if (parseInt(nbCasiersTotal) >= parseInt(nbCasiers)) {
@@ -50,6 +53,16 @@ const DemandeCollecte: React.FC<IResourceComponentsProps> = () => {
       } casiers vides`;
     } else {
       nbCasiersTotalHelp = `Le stock de casiers total devrait être supérieur au nombre de casiers pleins`;
+    }
+  }
+
+  if (!!nbCasiers33Total && !!nbCasiers33) {
+    if (parseInt(nbCasiers33Total) >= parseInt(nbCasiers33)) {
+      nbCasiersTotalHelp = `Il vous reste ${
+        nbCasiers33Total - nbCasiers33
+      } casiers vides`;
+    } else {
+      nbCasiers33TotalHelp = `Le stock de casiers total devrait être supérieur au nombre de casiers pleins`;
     }
   }
 
@@ -63,6 +76,9 @@ const DemandeCollecte: React.FC<IResourceComponentsProps> = () => {
           justifyContent: "center",
           margin: 0,
           paddingTop: 60,
+          paddingLeft: 20,
+          paddingRight: 20,
+          paddingBottom: 60,
         }}
       >
         <div>
@@ -77,24 +93,13 @@ const DemandeCollecte: React.FC<IResourceComponentsProps> = () => {
             form={form}
             initialValues={{
               demande_collecte: true,
-              contenant_collecte:
-                searchParams.get("contenant_collecte") ?? "casier",
             }}
             layout="vertical"
             autoComplete="off"
             style={{ maxWidth: 500, marginTop: "2em" }}
-            onFinish={({
-              contenant_collecte,
-              remplissage_palox,
-              nb_casiers_plein,
-              nb_casiers_total,
-              ...values
-            }) => {
+            onFinish={(values) => {
               return onSubmit({
                 point_de_collecte_id: parseInt(pointDeCollecteId),
-                ...(contenant_collecte === "palox"
-                  ? { remplissage_palox }
-                  : { nb_casiers_plein, nb_casiers_total }),
                 ...values,
               });
             }}
@@ -110,53 +115,54 @@ const DemandeCollecte: React.FC<IResourceComponentsProps> = () => {
                 </Space>
               </Radio.Group>
             </Form.Item>
+
+            <Alert
+              style={{ marginBottom: 20 }}
+              type="info"
+              message="Renseignez ci-dessous les taux de remplissage correspondant à vos contenants de collecte"
+            ></Alert>
+
+            <h3>Casiers 75cl</h3>
             <Form.Item
-              label="Type de contenants de collecte"
-              name="contenant_collecte"
+              label="Nombre de casiers 75cl pleins"
+              name={"nb_casiers_plein"}
             >
-              <Radio.Group>
-                <Space direction="vertical">
-                  <Radio value="casier_x12">Casier</Radio>
-                  <Radio value="palox">Palox</Radio>
-                </Space>
-              </Radio.Group>
+              <Input type="number" min={0} />
             </Form.Item>
-            {contenantCollecte === "palox" ? (
-              <>
-                <Form.Item
-                  label="Taux de remplissage palox (en %)"
-                  name={"remplissage_palox"}
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <Input type="number" min={0} max={100} />
-                </Form.Item>
-              </>
-            ) : (
-              <>
-                <Form.Item
-                  label="Nombre de casiers pleins"
-                  name={"nb_casiers_plein"}
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <Input type="number" min={0} />
-                </Form.Item>
-                <Form.Item
-                  label="Stock total de casiers (vides et pleins)"
-                  help={nbCasiersTotalHelp}
-                  name={"nb_casiers_total"}
-                >
-                  <Input type="number" min={0} />
-                </Form.Item>
-              </>
-            )}
+            <Form.Item
+              label="Stock total de casiers 75cl (vides et pleins)"
+              help={nbCasiersTotalHelp}
+              name={"nb_casiers_total"}
+            >
+              <Input type="number" min={0} />
+            </Form.Item>
+            <h3>Casiers 33cl</h3>
+            <Form.Item
+              label="Nombre de casiers 33cl pleins"
+              name={"nb_casiers_33_plein"}
+            >
+              <Input type="number" min={0} />
+            </Form.Item>
+            <Form.Item
+              label="Stock total de casiers 33cl (vides et pleins)"
+              help={nbCasiers33TotalHelp}
+              name={"nb_casiers_33_total"}
+            >
+              <Input type="number" min={0} />
+            </Form.Item>
+            <h3>Palox</h3>
+            <Form.Item
+              label="Taux de remplissage palox n°1 (en %)"
+              name={"remplissage_palox"}
+            >
+              <Input type="number" min={0} max={100} />
+            </Form.Item>
+            <Form.Item
+              label="Taux de remplissage palox n°2 (en %)"
+              name={"remplissage_palox_2"}
+            >
+              <Input type="number" min={0} max={100} />
+            </Form.Item>
 
             <Button style={{ marginTop: "1em" }} htmlType="submit">
               Envoyer
