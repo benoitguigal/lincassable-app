@@ -20,8 +20,14 @@ import {
 } from "../_shared/types/index.ts";
 import { handle } from "../_shared/helpers.ts";
 
-const casier: Pick<CykePackage, "name" | "volume_dm3" | "weight_kg"> = {
-  name: "Caisses à bouteille (max 16)",
+const casier75: Pick<CykePackage, "name" | "volume_dm3" | "weight_kg"> = {
+  name: "Caisses à bouteille 12x75cl (max 16)",
+  volume_dm3: 30,
+  weight_kg: 8,
+};
+
+const casier33: Pick<CykePackage, "name" | "volume_dm3" | "weight_kg"> = {
+  name: "Caisses à bouteille 24x33cl (max 16)",
   volume_dm3: 30,
   weight_kg: 8,
 };
@@ -39,14 +45,40 @@ function getPlace(pointDeCollecte: PointDeCollecte): CykePlace {
   };
 }
 
-function getPackaging(collecte: Collecte): CykePackage {
-  return {
-    ...casier,
-    amount:
-      // FIXME comment faire si deux chiffres différents
-      collecte.collecte_nb_casier_75_plein ??
-      collecte.livraison_nb_casier_75_vide,
-  };
+function getPackagings(collecte: Collecte): CykePackage[] {
+  let packagings: CykePackage[] = [];
+
+  if (
+    collecte.collecte_nb_casier_75_plein ||
+    collecte.livraison_nb_casier_75_vide
+  ) {
+    packagings = [
+      ...packagings,
+      {
+        ...casier75,
+        amount:
+          collecte.collecte_nb_casier_75_plein ??
+          collecte.livraison_nb_casier_75_vide,
+      },
+    ];
+  }
+
+  if (
+    collecte.collecte_nb_casier_33_plein ||
+    collecte.livraison_nb_casier_33_vide
+  ) {
+    packagings = [
+      ...packagings,
+      {
+        ...casier33,
+        amount:
+          collecte.collecte_nb_casier_33_plein ??
+          collecte.livraison_nb_casier_33_vide,
+      },
+    ];
+  }
+
+  return packagings;
 }
 
 async function getFullCollecte(collecte: Collecte) {
@@ -98,7 +130,7 @@ function getDelivery(
       slot_ending_at: slotEndingAt.toISOString(),
       place: getPlace(pointDeCollecte),
     },
-    packages: [getPackaging(collecte)],
+    packages: getPackagings(collecte),
   };
   return delivery;
 }
