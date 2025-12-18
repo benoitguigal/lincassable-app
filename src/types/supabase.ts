@@ -20,6 +20,7 @@ export type Database = {
           collecte_casier_75_plein_palette_type:
             | Database["public"]["Enums"]["palette_type"]
             | null
+          collecte_casier_palette_mix_75_33: boolean
           collecte_fut_nb_palette: number
           collecte_fut_palette_type:
             | Database["public"]["Enums"]["palette_type"]
@@ -48,6 +49,7 @@ export type Database = {
           livraison_casier_75_vide_palette_type:
             | Database["public"]["Enums"]["palette_type"]
             | null
+          livraison_casier_palette_mix_75_33: boolean
           livraison_fut_nb_palette: number
           livraison_fut_palette_type:
             | Database["public"]["Enums"]["palette_type"]
@@ -75,6 +77,7 @@ export type Database = {
           collecte_casier_75_plein_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
             | null
+          collecte_casier_palette_mix_75_33?: boolean
           collecte_fut_nb_palette?: number
           collecte_fut_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
@@ -103,6 +106,7 @@ export type Database = {
           livraison_casier_75_vide_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
             | null
+          livraison_casier_palette_mix_75_33?: boolean
           livraison_fut_nb_palette?: number
           livraison_fut_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
@@ -130,6 +134,7 @@ export type Database = {
           collecte_casier_75_plein_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
             | null
+          collecte_casier_palette_mix_75_33?: boolean
           collecte_fut_nb_palette?: number
           collecte_fut_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
@@ -158,6 +163,7 @@ export type Database = {
           livraison_casier_75_vide_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
             | null
+          livraison_casier_palette_mix_75_33?: boolean
           livraison_fut_nb_palette?: number
           livraison_fut_palette_type?:
             | Database["public"]["Enums"]["palette_type"]
@@ -859,22 +865,10 @@ export type Database = {
         Args: { requested_permission: string }
         Returns: boolean
       }
-      get_point_de_collecte_count: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      get_total_bouteilles_collecte: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      set_role: {
-        Args: { event: Json }
-        Returns: Json
-      }
-      truncate_tables: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      get_point_de_collecte_count: { Args: never; Returns: number }
+      get_total_bouteilles_collecte: { Args: never; Returns: number }
+      set_role: { Args: { event: Json }; Returns: Json }
+      truncate_tables: { Args: never; Returns: undefined }
     }
     Enums: {
       app_permission:
@@ -944,21 +938,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -976,14 +974,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -999,14 +999,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -1022,14 +1024,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -1037,14 +1041,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
