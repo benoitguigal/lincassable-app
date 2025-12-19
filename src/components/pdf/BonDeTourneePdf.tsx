@@ -75,39 +75,65 @@ function formatPaletteType(type: string | null) {
 function conditionnements(collecte: Collecte): string {
   let result = "";
 
-  if (collecte.collecte_nb_casier_75_plein > 0) {
-    if (collecte.collecte_casier_75_plein_nb_palette > 0) {
-      const nbCasierParPalette = new Decimal(
-        collecte.collecte_nb_casier_75_plein
-      )
-        .dividedBy(collecte.collecte_casier_75_plein_nb_palette)
-        .toDecimalPlaces(0);
-      result +=
-        `[collecte] ${collecte.collecte_casier_75_plein_nb_palette} palettes ` +
-        `${formatPaletteType(
-          collecte.collecte_casier_75_plein_palette_type
-        )} de ${nbCasierParPalette}` +
-        ` casiers 75cl (${collecte.collecte_nb_casier_75_plein})\n`;
-    } else {
-      result += `[collecte] ${collecte.collecte_nb_casier_75_plein} casiers 75cl\n`;
-    }
-  }
+  if (
+    collecte.collecte_nb_casier_75_plein > 0 &&
+    collecte.collecte_nb_casier_33_plein > 0 &&
+    collecte.collecte_casier_palette_mix_75_33 &&
+    collecte.collecte_casier_75_plein_nb_palette > 0 &&
+    collecte.collecte_casier_33_plein_nb_palette > 0
+  ) {
+    const nbCasier75ParPalette = new Decimal(
+      collecte.collecte_nb_casier_75_plein
+    )
+      .dividedBy(collecte.collecte_casier_75_plein_nb_palette)
+      .toDecimalPlaces(0);
+    const nbCasier33ParPalette = new Decimal(
+      collecte.collecte_nb_casier_33_plein
+    )
+      .dividedBy(collecte.collecte_casier_33_plein_nb_palette)
+      .toDecimalPlaces(0);
 
-  if (collecte.collecte_nb_casier_33_plein > 0) {
-    if (collecte.collecte_casier_33_plein_nb_palette > 0) {
-      const nbCasierParPalette = new Decimal(
-        collecte.collecte_nb_casier_33_plein
-      )
-        .dividedBy(collecte.collecte_casier_33_plein_nb_palette)
-        .toDecimalPlaces(0);
-      result +=
-        `[collecte] ${collecte.collecte_casier_33_plein_nb_palette} palettes ` +
-        `${formatPaletteType(
-          collecte.collecte_casier_33_plein_palette_type
-        )} de ${nbCasierParPalette}` +
-        ` casiers 33cl (${collecte.collecte_nb_casier_33_plein})\n`;
-    } else {
-      result += `[collecte] ${collecte.collecte_nb_casier_33_plein} casiers 33cl\n`;
+    result +=
+      `[collecte] ${collecte.collecte_casier_75_plein_nb_palette} palettes ` +
+      `${formatPaletteType(
+        collecte.collecte_casier_75_plein_palette_type
+      )} de ${nbCasier75ParPalette}` +
+      ` casiers 75cl (${collecte.collecte_nb_casier_75_plein})` +
+      ` et ${nbCasier33ParPalette} casiers 33cl (${collecte.collecte_nb_casier_33_plein})\n`;
+  } else {
+    if (collecte.collecte_nb_casier_75_plein > 0) {
+      if (collecte.collecte_casier_75_plein_nb_palette > 0) {
+        const nbCasierParPalette = new Decimal(
+          collecte.collecte_nb_casier_75_plein
+        )
+          .dividedBy(collecte.collecte_casier_75_plein_nb_palette)
+          .toDecimalPlaces(0);
+        result +=
+          `[collecte] ${collecte.collecte_casier_75_plein_nb_palette} palettes ` +
+          `${formatPaletteType(
+            collecte.collecte_casier_75_plein_palette_type
+          )} de ${nbCasierParPalette}` +
+          ` casiers 75cl (${collecte.collecte_nb_casier_75_plein})\n`;
+      } else {
+        result += `[collecte] ${collecte.collecte_nb_casier_75_plein} casiers 75cl\n`;
+      }
+    }
+    if (collecte.collecte_nb_casier_33_plein > 0) {
+      if (collecte.collecte_casier_33_plein_nb_palette > 0) {
+        const nbCasierParPalette = new Decimal(
+          collecte.collecte_nb_casier_33_plein
+        )
+          .dividedBy(collecte.collecte_casier_33_plein_nb_palette)
+          .toDecimalPlaces(0);
+        result +=
+          `[collecte] ${collecte.collecte_casier_33_plein_nb_palette} palettes ` +
+          `${formatPaletteType(
+            collecte.collecte_casier_33_plein_palette_type
+          )} de ${nbCasierParPalette}` +
+          ` casiers 33cl (${collecte.collecte_nb_casier_33_plein})\n`;
+      } else {
+        result += `[collecte] ${collecte.collecte_nb_casier_33_plein} casiers 33cl\n`;
+      }
     }
   }
 
@@ -138,39 +164,66 @@ function conditionnements(collecte: Collecte): string {
       )} vides\n`;
   }
 
-  if (collecte.livraison_nb_casier_75_vide > 0) {
-    if (collecte.livraison_casier_75_vide_nb_palette) {
-      const nbCasierParPalette = new Decimal(
-        collecte.livraison_nb_casier_75_vide
-      )
-        .dividedBy(collecte.livraison_casier_75_vide_nb_palette)
-        .toDecimalPlaces(0);
-      result +=
-        `[livraison] ${collecte.livraison_casier_75_vide_nb_palette} palettes ` +
-        `${formatPaletteType(
-          collecte.livraison_casier_75_vide_palette_type
-        )} de ${nbCasierParPalette}` +
-        ` casiers 75cl (${collecte.livraison_nb_casier_75_vide})\n`;
-    } else {
-      result += `[livraison] ${collecte.livraison_nb_casier_75_vide} casiers 75cl\n`;
-    }
-  }
+  if (
+    collecte.livraison_nb_casier_75_vide > 0 &&
+    collecte.livraison_nb_casier_33_vide > 0 &&
+    collecte.livraison_casier_palette_mix_75_33 &&
+    collecte.livraison_casier_75_vide_nb_palette > 0 &&
+    collecte.livraison_casier_33_vide_nb_palette > 0
+  ) {
+    const nbCasier75ParPalette = new Decimal(
+      collecte.livraison_nb_casier_75_vide
+    )
+      .dividedBy(collecte.livraison_casier_75_vide_nb_palette)
+      .toDecimalPlaces(0);
+    const nbCasier33ParPalette = new Decimal(
+      collecte.livraison_nb_casier_33_vide
+    )
+      .dividedBy(collecte.livraison_casier_33_vide_nb_palette)
+      .toDecimalPlaces(0);
 
-  if (collecte.livraison_nb_casier_33_vide > 0) {
-    if (collecte.livraison_casier_33_vide_nb_palette > 0) {
-      const nbCasierParPalette = new Decimal(
-        collecte.livraison_nb_casier_33_vide
-      )
-        .dividedBy(collecte.livraison_casier_33_vide_nb_palette)
-        .toDecimalPlaces(0);
-      result +=
-        `[livraison] ${collecte.livraison_casier_33_vide_nb_palette} palettes ` +
-        `${formatPaletteType(
-          collecte.livraison_casier_33_vide_palette_type
-        )} de ${nbCasierParPalette}` +
-        ` casiers 33cl (${collecte.livraison_nb_casier_33_vide})\n`;
-    } else {
-      result += `[livraison] ${collecte.livraison_nb_casier_33_vide} casiers 33cl\n`;
+    result +=
+      `[collecte] ${collecte.livraison_casier_75_vide_nb_palette} palettes ` +
+      `${formatPaletteType(
+        collecte.livraison_casier_75_vide_palette_type
+      )} de ${nbCasier75ParPalette}` +
+      ` casiers 75cl (${collecte.livraison_nb_casier_75_vide})` +
+      ` et ${nbCasier33ParPalette} casiers 33cl (${collecte.livraison_nb_casier_33_vide})\n`;
+  } else {
+    if (collecte.livraison_nb_casier_75_vide > 0) {
+      if (collecte.livraison_casier_75_vide_nb_palette) {
+        const nbCasierParPalette = new Decimal(
+          collecte.livraison_nb_casier_75_vide
+        )
+          .dividedBy(collecte.livraison_casier_75_vide_nb_palette)
+          .toDecimalPlaces(0);
+        result +=
+          `[livraison] ${collecte.livraison_casier_75_vide_nb_palette} palettes ` +
+          `${formatPaletteType(
+            collecte.livraison_casier_75_vide_palette_type
+          )} de ${nbCasierParPalette}` +
+          ` casiers 75cl (${collecte.livraison_nb_casier_75_vide})\n`;
+      } else {
+        result += `[livraison] ${collecte.livraison_nb_casier_75_vide} casiers 75cl\n`;
+      }
+    }
+
+    if (collecte.livraison_nb_casier_33_vide > 0) {
+      if (collecte.livraison_casier_33_vide_nb_palette > 0) {
+        const nbCasierParPalette = new Decimal(
+          collecte.livraison_nb_casier_33_vide
+        )
+          .dividedBy(collecte.livraison_casier_33_vide_nb_palette)
+          .toDecimalPlaces(0);
+        result +=
+          `[livraison] ${collecte.livraison_casier_33_vide_nb_palette} palettes ` +
+          `${formatPaletteType(
+            collecte.livraison_casier_33_vide_palette_type
+          )} de ${nbCasierParPalette}` +
+          ` casiers 33cl (${collecte.livraison_nb_casier_33_vide})\n`;
+      } else {
+        result += `[livraison] ${collecte.livraison_nb_casier_33_vide} casiers 33cl\n`;
+      }
     }
   }
 
