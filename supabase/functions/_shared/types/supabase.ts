@@ -208,27 +208,33 @@ export type Database = {
       consigne: {
         Row: {
           consigne: number
+          consigne_20: number
           created_at: string
           date: string
           deconsigne: number
+          deconsigne_20: number
           id: number
           montant: number
           point_de_collecte_id: number | null
         }
         Insert: {
           consigne: number
+          consigne_20?: number
           created_at?: string
           date: string
           deconsigne: number
+          deconsigne_20?: number
           id?: number
           montant: number
           point_de_collecte_id?: number | null
         }
         Update: {
           consigne?: number
+          consigne_20?: number
           created_at?: string
           date?: string
           deconsigne?: number
+          deconsigne_20?: number
           id?: number
           montant?: number
           point_de_collecte_id?: number | null

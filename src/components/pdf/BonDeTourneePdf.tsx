@@ -183,7 +183,7 @@ function conditionnements(collecte: Collecte): string {
       .toDecimalPlaces(0);
 
     result +=
-      `[collecte] ${collecte.livraison_casier_75_vide_nb_palette} palettes ` +
+      `[livraison] ${collecte.livraison_casier_75_vide_nb_palette} palettes ` +
       `${formatPaletteType(
         collecte.livraison_casier_75_vide_palette_type
       )} de ${nbCasier75ParPalette}` +
