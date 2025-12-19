@@ -382,6 +382,26 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     }
   }, [initialValues]);
 
+  useEffect(() => {
+    if (
+      livraisonNbCasierPalette === 0 ||
+      livraisonNbCasier33Palette === 0 ||
+      livraisonNbCasierPalette !== livraisonNbCasier33Palette
+    ) {
+      form?.setFieldValue("livraison_casier_palette_mix_75_33", false);
+    }
+  }, [form, livraisonNbCasierPalette, livraisonNbCasier33Palette]);
+
+  useEffect(() => {
+    if (
+      collecteNbCasierPalette === 0 ||
+      collecteNbCasier33Palette === 0 ||
+      collecteNbCasierPalette !== collecteNbCasier33Palette
+    ) {
+      form?.setFieldValue("collecte_casier_palette_mix_75_33", false);
+    }
+  }, [form, collecteNbCasierPalette, collecteNbCasier33Palette]);
+
   const creneauDisableTime = {
     disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 19, 20, 21, 22, 23],
     disabledMinutes: (selectedHour: number) => {
@@ -987,6 +1007,34 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
         >
           <InputNumber min={0} style={{ width: 300 }} />
         </Form.Item>
+
+        {collecteNbCasierPalette &&
+        collecteNbCasier33Palette &&
+        collecteNbCasierPalette === collecteNbCasier33Palette ? (
+          <Form.Item
+            name="collecte_casier_palette_mix_75_33"
+            valuePropName="checked"
+          >
+            <Checkbox>
+              Mixer les casiers 75cl et 33cl sur la même palette lors de la{" "}
+              <b>collecte</b>
+            </Checkbox>
+          </Form.Item>
+        ) : null}
+
+        {livraisonNbCasierPalette &&
+        livraisonNbCasier33Palette &&
+        livraisonNbCasierPalette === livraisonNbCasier33Palette ? (
+          <Form.Item
+            name="livraison_casier_palette_mix_75_33"
+            valuePropName="checked"
+          >
+            <Checkbox>
+              Mixer les casiers 75cl et 33cl sur la même palette lors de la{" "}
+              <b>livraison</b>
+            </Checkbox>
+          </Form.Item>
+        ) : null}
       </Flex>
     </Form>
   );

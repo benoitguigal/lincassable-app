@@ -185,7 +185,10 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                         <div>
                           <i>
                             {nbPalettes} palettes {paletteType} de{" "}
-                            {nbCasierParPalette} casiers
+                            {nbCasierParPalette} casiers{" "}
+                            {record.collecte_casier_palette_mix_75_33
+                              ? " (mélangé avec les casiers 33cl)"
+                              : ""}
                           </i>
                         </div>
                       )}
@@ -213,6 +216,9 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                           <i>
                             {nbPalettes} palettes {paletteType} de{" "}
                             {nbCasierParPalette} casiers
+                            {record.livraison_casier_palette_mix_75_33
+                              ? " (mélangé avec les casiers 33cl)"
+                              : ""}
                           </i>
                         </div>
                       )}
@@ -249,6 +255,9 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                           <i>
                             {nbPalettes} palettes {paletteType} de{" "}
                             {nbCasierParPalette} casiers
+                            {record.collecte_casier_palette_mix_75_33
+                              ? " (mélangé avec les casiers 75cl)"
+                              : ""}
                           </i>
                         </div>
                       )}
@@ -276,6 +285,9 @@ const CollecteListTable: React.FC<CollecteListTableProps> = ({
                           <i>
                             {nbPalettes} palettes {paletteType} de{" "}
                             {nbCasierParPalette} casiers
+                            {record.livraison_casier_palette_mix_75_33
+                              ? " (mélangé avec les casiers 75cl)"
+                              : ""}
                           </i>
                         </div>
                       )}
