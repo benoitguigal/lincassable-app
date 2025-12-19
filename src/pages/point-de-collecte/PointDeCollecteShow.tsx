@@ -107,11 +107,15 @@ const PointDeCollecteShow = () => {
           )}
         </div>
       )}
-      <Title level={5}>Stock casiers 75cl</Title>
+      <Title level={5}>
+        Stock casiers 75cl total (incluant le stock tampon)
+      </Title>
       <NumberField value={pointDeCollecte?.stock_casiers_75 ?? 0} />
       <Title level={5}>Stock tampon casiers 75cl</Title>
       <NumberField value={pointDeCollecte?.stock_casiers_75_tampon ?? 0} />
-      <Title level={5}>Stock casiers 33cl</Title>
+      <Title level={5}>
+        Stock casiers 33cl total (incluant le stock tampon)
+      </Title>
       <NumberField value={pointDeCollecte?.stock_casiers_33 ?? 0} />
       <Title level={5}>Stock tampon casiers 33cl</Title>
       <NumberField value={pointDeCollecte?.stock_casiers_33_tampon ?? 0} />
