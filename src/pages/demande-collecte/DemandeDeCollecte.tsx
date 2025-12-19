@@ -50,7 +50,7 @@ const DemandeCollecte: React.FC<IResourceComponentsProps> = () => {
     if (parseInt(nbCasiersTotal) >= parseInt(nbCasiers)) {
       nbCasiersTotalHelp = `Il vous reste ${
         nbCasiersTotal - nbCasiers
-      } casiers vides`;
+      } casiers 75cl vides`;
     } else {
       nbCasiersTotalHelp = `Le stock de casiers total devrait être supérieur au nombre de casiers pleins`;
     }
@@ -58,9 +58,9 @@ const DemandeCollecte: React.FC<IResourceComponentsProps> = () => {
 
   if (!!nbCasiers33Total && !!nbCasiers33) {
     if (parseInt(nbCasiers33Total) >= parseInt(nbCasiers33)) {
-      nbCasiersTotalHelp = `Il vous reste ${
+      nbCasiers33TotalHelp = `Il vous reste ${
         nbCasiers33Total - nbCasiers33
-      } casiers vides`;
+      } casiers 33cl vides`;
     } else {
       nbCasiers33TotalHelp = `Le stock de casiers total devrait être supérieur au nombre de casiers pleins`;
     }
