@@ -4,13 +4,14 @@ import {
   useCreateMany,
   useGo,
 } from "@refinedev/core";
-import { Button, DatePicker, Flex, Form, InputNumber } from "antd";
+import { Button, DatePicker, Flex, Form, Grid, InputNumber } from "antd";
 import { useParams, useSearchParams } from "react-router-dom";
 import LincassableLogo from "../../static/images/lincassable_logo.png";
 import getMonthsBetween from "../../utility/getMonthsBetween";
 import dayjs from "dayjs";
 import "./ConsigneCreate.css";
 import { useMemo } from "react";
+import Decimal from "decimal.js";
 
 type FormValues = {
   consignes: {
@@ -18,6 +19,8 @@ type FormValues = {
     point_de_collecte_id: number;
     consigne: number;
     deconsigne: number;
+    consigne_20: number;
+    deconsigne_20: number;
     montant: number;
   }[];
 };
@@ -25,6 +28,9 @@ type FormValues = {
 const ConsigneCreate: React.FC<IResourceComponentsProps> = () => {
   const { id: pointDeCollecteId } = useParams();
   const go = useGo();
+
+  const { useBreakpoint } = Grid;
+  const screens = useBreakpoint();
 
   const [form] = Form.useForm<FormValues>();
 
@@ -61,8 +67,14 @@ const ConsigneCreate: React.FC<IResourceComponentsProps> = () => {
       return null;
     }
     return consignes.map((c) => ({
-      consigne: c.consigne * 0.5,
-      deconsigne: c.deconsigne * 0.5,
+      consigne: new Decimal(c.consigne * 0.5).toDecimalPlaces(2).toNumber(),
+      deconsigne: new Decimal(c.deconsigne * 0.5).toDecimalPlaces(2).toNumber(),
+      consigne_20: new Decimal(c.consigne_20 * 0.2)
+        .toDecimalPlaces(2)
+        .toNumber(),
+      deconsigne_20: new Decimal(c.deconsigne_20 * 0.2)
+        .toDecimalPlaces(2)
+        .toNumber(),
     }));
   }, [consignes]);
 
@@ -77,6 +89,8 @@ const ConsigneCreate: React.FC<IResourceComponentsProps> = () => {
         point_de_collecte_id: pointDeCollecteId,
         consigne: 0,
         deconsigne: 0,
+        consigne_20: 0,
+        deconsigne_20: 0,
         montant: 0.5,
       })),
     };
@@ -88,8 +102,7 @@ const ConsigneCreate: React.FC<IResourceComponentsProps> = () => {
           width: "100%",
           display: "flex",
           justifyContent: "center",
-          margin: 0,
-          paddingTop: 60,
+          margin: 50,
         }}
       >
         <div>
@@ -128,8 +141,19 @@ const ConsigneCreate: React.FC<IResourceComponentsProps> = () => {
                     const deconsigneEuro = consignesEuro
                       ? consignesEuro[field.key].deconsigne
                       : 0;
+                    const consigne20Euro = consignesEuro
+                      ? consignesEuro[field.key].consigne_20
+                      : 0;
+                    const deconsigne20Euro = consignesEuro
+                      ? consignesEuro[field.key].deconsigne_20
+                      : 0;
                     return (
-                      <Flex key={field.key} gap={20} className="consignes">
+                      <Flex
+                        key={field.key}
+                        gap={screens.lg ? 20 : 0}
+                        vertical={!screens.lg}
+                        className="consignes"
+                      >
                         <Form.Item
                           name={[field.name, "date"]}
                           label="Mois"
@@ -148,7 +172,7 @@ const ConsigneCreate: React.FC<IResourceComponentsProps> = () => {
                           name={[field.name, "consigne"]}
                           label={
                             <div>
-                              Nombre de <b>consigne</b> encaissées
+                              Nombre de <b>consigne à 50c</b> encaissées
                             </div>
                           }
                           help={consigneEuro ? `Soit ${consigneEuro} €` : ""}
@@ -159,11 +183,37 @@ const ConsigneCreate: React.FC<IResourceComponentsProps> = () => {
                           name={[field.name, "deconsigne"]}
                           label={
                             <div>
-                              Nombre de <b>déconsigne</b> remboursées
+                              Nombre de <b>déconsigne à 50c</b> remboursées
                             </div>
                           }
                           help={
                             deconsigneEuro ? `Soit ${deconsigneEuro} €` : ""
+                          }
+                        >
+                          <InputNumber min={0} style={{ width: fieldWidth }} />
+                        </Form.Item>
+                        <Form.Item
+                          name={[field.name, "consigne_20"]}
+                          label={
+                            <div>
+                              Nombre de <b>consigne à 20c</b> encaissées
+                            </div>
+                          }
+                          help={
+                            consigne20Euro ? `Soit ${consigne20Euro} €` : ""
+                          }
+                        >
+                          <InputNumber min={0} style={{ width: fieldWidth }} />
+                        </Form.Item>
+                        <Form.Item
+                          name={[field.name, "deconsigne_20"]}
+                          label={
+                            <div>
+                              Nombre de <b>déconsigne à 20c</b> remboursées
+                            </div>
+                          }
+                          help={
+                            deconsigne20Euro ? `Soit ${deconsigne20Euro} €` : ""
                           }
                         >
                           <InputNumber min={0} style={{ width: fieldWidth }} />

@@ -29,7 +29,9 @@ describe("collecte_trigger", () => {
           emails: ["biocoop@lincassable.com"],
           contacts: ["M Biocoop"],
           telephones: [],
-          contenant_collecte_type: "casier_x12",
+          contenant_collecte_types: [
+            "casier_x12",
+          ] as Database["public"]["Enums"]["contenant_collecte_type"][],
           stock_casiers_75: 10,
           stock_casiers_33: 0,
           stock_paloxs: 0,
@@ -53,7 +55,9 @@ describe("collecte_trigger", () => {
           emails: ["massification@lincassable.com"],
           contacts: ["Benoit Guigal"],
           telephones: [],
-          contenant_collecte_type: "casier_x12",
+          contenant_collecte_types: [
+            "casier_x12",
+          ] as Database["public"]["Enums"]["contenant_collecte_type"][],
           stock_casiers_75: 200,
           stock_casiers_33: 0,
           stock_paloxs: 0,

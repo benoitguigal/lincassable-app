@@ -29,7 +29,9 @@ describe("compute_stocks", () => {
           emails: ["biocoop@lincassable.com"],
           contacts: ["M Biocoop"],
           telephones: [],
-          contenant_collecte_type: "casier_x12",
+          contenant_collecte_types: [
+            "casier_x12",
+          ] as Database["public"]["Enums"]["contenant_collecte_type"][],
           stock_casiers_75: 0,
           stock_casiers_33: 0,
           stock_paloxs: 0,
@@ -55,7 +57,9 @@ describe("compute_stocks", () => {
           emails: ["massification@lincassable.com"],
           contacts: ["M collecte"],
           telephones: [],
-          contenant_collecte_type: "casier_x12",
+          contenant_collecte_types: [
+            "casier_x12",
+          ] as Database["public"]["Enums"]["contenant_collecte_type"][],
           stock_casiers_75: 0,
           stock_casiers_33: 0,
           stock_paloxs: 0,
@@ -81,7 +85,9 @@ describe("compute_stocks", () => {
           emails: ["trin@lincassable.com"],
           contacts: ["M tri"],
           telephones: [],
-          contenant_collecte_type: "casier_x12",
+          contenant_collecte_types: [
+            "casier_x12",
+          ] as Database["public"]["Enums"]["contenant_collecte_type"][],
           stock_casiers_75: 0,
           stock_casiers_33: 0,
           stock_paloxs: 0,
@@ -402,7 +408,9 @@ describe("compute_stocks", () => {
         emails: ["benoit@lincassable.com"],
         contacts: ["Benoit Guigal"],
         telephones: [],
-        contenant_collecte_type: "casier_x12",
+        contenant_collecte_types: [
+          "casier_x12",
+        ] as Database["public"]["Enums"]["contenant_collecte_type"][],
         stock_casiers_75: stockCasier75,
         stock_casiers_33: stockCasier33,
         stock_paloxs: stockPalox,

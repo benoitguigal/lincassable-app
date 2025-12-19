@@ -42,8 +42,18 @@ Deno.serve(
           ` ${pointDeCollecte.stock_casiers_75} (dont ${pointDeCollecte.stock_casiers_75_tampon} de stock tampon)`;
       }
 
+      if (record.nb_casiers_33_plein) {
+        msg +=
+          `\n${record.nb_casiers_33_plein} casiers 33cl pleins sur un total de` +
+          ` ${pointDeCollecte.stock_casiers_33} (dont ${pointDeCollecte.stock_casiers_33_tampon} de stock tampon)`;
+      }
+
       if (record.remplissage_palox) {
-        msg += `\nPalox rempli à ${record.remplissage_palox}%`;
+        msg += `\nPalox n°1 rempli à ${record.remplissage_palox}%`;
+      }
+
+      if (record.remplissage_palox_2) {
+        msg += `\nPalox n°2 rempli à ${record.remplissage_palox_2}%`;
       }
       if (Deno.env.get("DISCORD_NOTIFICATION") === "active") {
         await webhooks.remplissage.send({

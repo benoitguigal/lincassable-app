@@ -63,7 +63,7 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
       <Form.Item
         name="stock_casiers_75"
         label="Stock casiers 75cl"
-        tooltip="Stock total (vides + pleins)"
+        tooltip="Stock total incluant le stock tampon (vides + pleins)"
         initialValue={0}
         style={{ width: 300 }}
         rules={[positiveRule, { required: true }]}
@@ -89,7 +89,7 @@ const InventaireForm: React.FC<Props> = ({ formProps }) => {
       <Form.Item
         name="stock_casiers_33"
         label="Stock casiers 33cl"
-        tooltip="Stock total (vides + pleins)"
+        tooltip="Stock total incluant le stock tampon (vides + pleins)"
         initialValue={0}
         style={{ width: 300 }}
         rules={[positiveRule, { required: true }]}

@@ -62,35 +62,50 @@ const DemandeDeCollecteList: React.FC<IResourceComponentsProps> = () => {
         />
         <Table.Column
           dataIndex="nb_casiers_plein"
-          title="Nombre de casiers pleins"
+          title="Nombre de casiers 75cl pleins"
         />
         <Table.Column
           dataIndex="nb_casiers_total"
-          title="Stocks de contenants (via formulaire)"
+          title="Stocks de casiers 75cl (via formulaire)"
         />
         <Table.Column
           dataIndex="point_de_collecte_id"
-          title="Stock de contenants (en base)"
+          title="Stock de casiers 75cl (en base)"
           render={(value) => {
             const pointDeCollecte = pointDeCollecteById[value];
             if (pointDeCollecte) {
-              switch (pointDeCollecte.contenant_collecte_type) {
-                case "casier_x12":
-                  return pointDeCollecte.stock_casiers_75;
-                case "palox":
-                  return pointDeCollecte.stock_paloxs;
-                case "casier_x24":
-                  return pointDeCollecte.stock_casiers_33;
-                default:
-                  return "";
-              }
+              return pointDeCollecte.stock_casiers_75;
+            }
+            return "";
+          }}
+        />
+        <Table.Column
+          dataIndex="nb_casiers_33_plein"
+          title="Nombre de casiers 33cl pleins"
+        />
+        <Table.Column
+          dataIndex="nb_casiers_33_total"
+          title="Stocks de casiers 33cl (via formulaire)"
+        />
+        <Table.Column
+          dataIndex="point_de_collecte_id"
+          title="Stock de casiers 33cl (en base)"
+          render={(value) => {
+            const pointDeCollecte = pointDeCollecteById[value];
+            if (pointDeCollecte) {
+              return pointDeCollecte.stock_casiers_33;
             }
             return "";
           }}
         />
         <Table.Column
           dataIndex="remplissage_palox"
-          title="Remplissage palox"
+          title="Remplissage palox n°1"
+          render={(value) => (value ? `${value}%` : "")}
+        />
+        <Table.Column
+          dataIndex="remplissage_palox_2"
+          title="Remplissage palox n°2"
           render={(value) => (value ? `${value}%` : "")}
         />
       </Table>

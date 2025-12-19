@@ -187,7 +187,7 @@ const PointDeCollecteForm: React.FC<Props> = ({
       </FormListItem>
       <Form.Item
         label="Type de contenants de collecte"
-        name="contenant_collecte_type"
+        name="contenant_collecte_types"
         rules={[
           {
             required: true,
@@ -196,6 +196,7 @@ const PointDeCollecteForm: React.FC<Props> = ({
       >
         <Select
           options={contenantDeCollecteTypeOptions}
+          mode={"tags"}
           allowClear
           placeholder="Type de contenant"
         />

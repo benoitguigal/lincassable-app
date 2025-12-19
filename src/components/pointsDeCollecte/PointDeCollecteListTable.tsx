@@ -16,7 +16,11 @@ import {
   contenantDeCollecteTypeOptions,
   pointDeCollecteTypeOptions,
 } from "../../utility/options";
-import { PointDeCollecte, ZoneDeCollecte } from "../../types";
+import {
+  ContenantDeCollecteTypeEnum,
+  PointDeCollecte,
+  ZoneDeCollecte,
+} from "../../types";
 import ContenantDeCollecteType from "../ContenantDeCollecteType";
 import PointDeCollecteName from "./PointDeCollecteName";
 
@@ -96,7 +100,7 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
 
   const contenantDeCollecteTypeFilter = useMemo<BaseOption | null>(() => {
     const filter = filters.find(
-      (f) => (f as LogicalFilter).field === "contenant_collecte_type"
+      (f) => (f as LogicalFilter).field === "contenant_collecte_types"
     );
     if (filter) {
       return {
@@ -153,14 +157,20 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
           onChange={(value) => {
             if (value) {
               setFilters(
-                [{ field: "contenant_collecte_type", operator: "eq", value }],
+                [
+                  {
+                    field: "contenant_collecte_types",
+                    operator: "ina",
+                    value: [value],
+                  },
+                ],
                 "merge"
               );
             } else {
               setFilters(
                 filters.filter(
                   (f) =>
-                    (f as LogicalFilter).field !== "contenant_collecte_type"
+                    (f as LogicalFilter).field !== "contenant_collecte_types"
                 ),
                 "replace"
               );
@@ -211,10 +221,14 @@ const PointDeCollecteListTable: React.FC<PointDeCollecteListTableProps> = ({
         />
 
         <Table.Column
-          dataIndex="contenant_collecte_type"
-          hidden={!columns.includes("contenant_collecte_type")}
+          dataIndex="contenant_collecte_types"
+          hidden={!columns.includes("contenant_collecte_types")}
           title="Type de contenant"
-          render={(type) => <ContenantDeCollecteType value={type} />}
+          render={(types: ContenantDeCollecteTypeEnum[]) => {
+            return types.map((type) => (
+              <ContenantDeCollecteType value={type} />
+            ));
+          }}
         />
         <Table.Column
           dataIndex="stock_paloxs"

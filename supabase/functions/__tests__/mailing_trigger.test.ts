@@ -51,11 +51,13 @@ describe("envoi_mailing", () => {
           emails: ["benoit@lincassable.com"],
           contacts: ["Benoit Guigal"],
           telephones: [],
-          contenant_collecte_type: "casier_x12",
+          contenant_collecte_types: [
+            "casier_x12",
+          ] as Database["public"]["Enums"]["contenant_collecte_type"][],
           stock_casiers_75: 12,
           stock_paloxs: 0,
         })
-        .select();
+        .select("*");
 
     expect(pointDeCollecteError).toBeNull();
 

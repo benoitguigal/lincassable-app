@@ -120,14 +120,23 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
   // en fonction des stocks du point de collecte
   const autoFillContenants = () => {
     if (pointDeCollecte) {
-      if (pointDeCollecte.contenant_collecte_type === "casier_x12") {
+      if (pointDeCollecte.contenant_collecte_types.includes("casier_x12")) {
         setHasCasier(true);
         const stockRotation =
           pointDeCollecte.stock_casiers_75 -
           pointDeCollecte.stock_casiers_75_tampon;
         form?.setFieldValue("collecte_nb_casier_75_plein", stockRotation);
         form?.setFieldValue("livraison_nb_casier_75_vide", stockRotation);
-      } else if (pointDeCollecte.contenant_collecte_type === "palox") {
+      }
+      if (pointDeCollecte.contenant_collecte_types.includes("casier_x24")) {
+        setHasCasier33(true);
+        const stockRotation =
+          pointDeCollecte.stock_casiers_33 -
+          pointDeCollecte.stock_casiers_33_tampon;
+        form?.setFieldValue("collecte_nb_casier_33_plein", stockRotation);
+        form?.setFieldValue("livraison_nb_casier_33_vide", stockRotation);
+      }
+      if (pointDeCollecte.contenant_collecte_types.includes("palox")) {
         setHasPalox(true);
         form?.setFieldValue(
           "collecte_nb_palox_plein",
@@ -373,6 +382,26 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
     }
   }, [initialValues]);
 
+  useEffect(() => {
+    if (
+      livraisonNbCasierPalette === 0 ||
+      livraisonNbCasier33Palette === 0 ||
+      livraisonNbCasierPalette !== livraisonNbCasier33Palette
+    ) {
+      form?.setFieldValue("livraison_casier_palette_mix_75_33", false);
+    }
+  }, [form, livraisonNbCasierPalette, livraisonNbCasier33Palette]);
+
+  useEffect(() => {
+    if (
+      collecteNbCasierPalette === 0 ||
+      collecteNbCasier33Palette === 0 ||
+      collecteNbCasierPalette !== collecteNbCasier33Palette
+    ) {
+      form?.setFieldValue("collecte_casier_palette_mix_75_33", false);
+    }
+  }, [form, collecteNbCasierPalette, collecteNbCasier33Palette]);
+
   const creneauDisableTime = {
     disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 7, 19, 20, 21, 22, 23],
     disabledMinutes: (selectedHour: number) => {
@@ -492,7 +521,7 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
 
       <Flex gap={5}>
         <h4>Liste des contenants</h4>
-        <Tooltip title="Remplir automatiquement à partir des stocks. Pour les casiers 75cl, le chiffre est calculé en prenant le stock total moins le stock tampon">
+        <Tooltip title="Remplir automatiquement à partir des stocks. Pour les casiers 75cl et 33cl, le chiffre est calculé en prenant le stock total moins le stock tampon">
           <Button
             icon={<FaMagic />}
             iconPosition="end"
@@ -978,6 +1007,34 @@ const CollecteForm: React.FC<Props> = ({ formProps }) => {
         >
           <InputNumber min={0} style={{ width: 300 }} />
         </Form.Item>
+
+        {collecteNbCasierPalette &&
+        collecteNbCasier33Palette &&
+        collecteNbCasierPalette === collecteNbCasier33Palette ? (
+          <Form.Item
+            name="collecte_casier_palette_mix_75_33"
+            valuePropName="checked"
+          >
+            <Checkbox>
+              Mixer les casiers 75cl et 33cl sur la même palette lors de la{" "}
+              <b>collecte</b>
+            </Checkbox>
+          </Form.Item>
+        ) : null}
+
+        {livraisonNbCasierPalette &&
+        livraisonNbCasier33Palette &&
+        livraisonNbCasierPalette === livraisonNbCasier33Palette ? (
+          <Form.Item
+            name="livraison_casier_palette_mix_75_33"
+            valuePropName="checked"
+          >
+            <Checkbox>
+              Mixer les casiers 75cl et 33cl sur la même palette lors de la{" "}
+              <b>livraison</b>
+            </Checkbox>
+          </Form.Item>
+        ) : null}
       </Flex>
     </Form>
   );
